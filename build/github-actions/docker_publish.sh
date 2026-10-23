@@ -1,22 +1,29 @@
 #!/usr/bin/env bash
+set -euo pipefail
 
 PLATFORM="linux/amd64,linux/arm64"
 
+# Do not publish when the previously built test image fails runtime checks.
+docker run --rm --network none --entrypoint sh campsych/concerto-platform:test \
+  /usr/local/share/concerto/php/verify-runtime.sh
+docker run --rm --network none --entrypoint php campsych/concerto-platform:test \
+  /app/concerto/tests/php-runtime/check.php
+
 echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
 
-if [[ -n $GITHUB_REF_NAME ]]
+if [[ -n ${GITHUB_REF_NAME:-} ]]
 then
   docker buildx build --platform $PLATFORM --push -t campsych/concerto-platform:$GITHUB_REF_NAME .
   if [[ $GITHUB_REF_NAME = master ]]; then docker buildx build --platform $PLATFORM --push -t campsych/concerto-platform:latest .; fi
 fi
 
-if [[ -n $GITHUB_SHA ]]
+if [[ -n ${GITHUB_SHA:-} ]]
 then
   COMMIT_SHORT=${GITHUB_SHA:0:7}
   docker buildx build --platform $PLATFORM --push -t campsych/concerto-platform:$COMMIT_SHORT .
 fi
 
-if [[ -n $GITHUB_REF_NAME ]]
+if [[ -n ${GITHUB_REF_NAME:-} ]]
 then
   if [[ $GITHUB_REF_NAME =~ ^(v)?([0-9]+)\.([0-9]+)\.([0-9]+)$ ]]
   then

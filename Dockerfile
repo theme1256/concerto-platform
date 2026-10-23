@@ -1,4 +1,22 @@
-FROM ubuntu:20.04
+FROM ubuntu:20.04 AS php-build
+COPY build/docker/php/build-source.sh build/docker/php/source.lock /tmp/concerto-php/
+RUN sh /tmp/concerto-php/build-source.sh
+
+FROM ubuntu:20.04 AS php-runtime
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    ca-certificates libargon2-1 libcurl4 libonig5 libreadline8 libsodium23 \
+    libsqlite3-0 libssl1.1 libxml2 libzip5 zlib1g \
+ && rm -rf /var/lib/apt/lists/*
+COPY --from=php-build /opt/concerto/php /opt/concerto/php
+COPY build/docker/php /usr/local/share/concerto/php
+COPY build/docker/php/php.ini /etc/php/7.4/fpm/php.ini
+COPY build/docker/php-fpm/php-fpm.conf /etc/php/7.4/fpm/php-fpm.conf
+COPY build/docker/php-fpm/www.conf /etc/php/7.4/fpm/pool.d/www.conf
+COPY build/docker/php-fpm/start.sh /usr/local/bin/concerto-start-php-fpm
+RUN sh /usr/local/share/concerto/php/install-runtime.sh \
+ && sh /usr/local/share/concerto/php/verify-runtime.sh
+
+FROM php-runtime AS concerto
 MAINTAINER Przemyslaw Lis <przemek@concertoplatform.com>
 
 ARG CRAN_MIRROR=https://cloud.r-project.org
@@ -90,12 +108,6 @@ RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone \
     libssl-dev \
     locales \
     nginx \
-    php7.4-curl \
-    php7.4-mbstring \
-    php7.4-mysql \
-    php7.4-xml \
-    php7.4-zip \
-    php-fpm \
     procps \
     r-base \
     r-base-dev \
@@ -126,7 +138,9 @@ RUN rm -rf /app/concerto/src/Concerto/PanelBundle/Resources/public/files \
  && rm -rf /app/concerto/src/Concerto/TestBundle/Resources/sessions \
  && rm -rf /app/concerto/src/Concerto/PanelBundle/Resources/import
 
-EXPOSE 80 9000
+RUN sh /usr/local/share/concerto/php/verify-runtime.sh
+
+EXPOSE 80
 WORKDIR /app/concerto
 HEALTHCHECK --interval=1m --start-period=1m CMD curl -f http://localhost/api/check/health || exit 1
 
@@ -166,6 +180,6 @@ CMD if [ "$CONCERTO_COOKIES_SECURE" = "true" ]; \
  && cat /app/concerto/build/docker/nginx/concerto.conf.tpl | sed "s/{{nginx_port}}/$NGINX_PORT/g" | sed "s|{{nginx_server_conf}}|$NGINX_SERVER_CONF|g" | sed "s|{{base_dir}}|$BASE_DIR|g" > /etc/nginx/sites-available/concerto.conf \
  && service nginx start \
  && . /app/concerto/cron/concerto.forker.guard.sh  \
- && /etc/init.d/php7.4-fpm start \
+ && /usr/local/bin/concerto-start-php-fpm \
  && cron \
  && tail -F -n 0 var/logs/prod.log var/logs/forker.log

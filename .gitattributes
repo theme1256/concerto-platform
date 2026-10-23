@@ -1,0 +1,2 @@
+# Docker executes these scripts on Linux, including checkouts made on Windows.
+*.sh text eol=lf
