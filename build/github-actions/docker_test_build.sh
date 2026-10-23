@@ -1,5 +1,12 @@
 #!/usr/bin/env bash
+set -euo pipefail
 
 PLATFORM="linux/amd64"
 
-docker buildx build --platform $PLATFORM --load -t campsych/concerto-platform:test .
+docker buildx build --pull --platform "$PLATFORM" --load -t campsych/concerto-platform:test .
+docker run --rm --network none --entrypoint sh campsych/concerto-platform:test \
+  /usr/local/share/concerto/php/verify-runtime.sh
+docker run --rm --network none --entrypoint php campsych/concerto-platform:test \
+  /app/concerto/tests/php-runtime/check.php
+docker run --rm --network none --entrypoint Rscript campsych/concerto-platform:test \
+  --vanilla /app/concerto/tests/r-runtime/check.R /app/concerto

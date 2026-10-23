@@ -1,4 +1,17 @@
-concerto.init = function(dbConnectionParams, publicDir, platformUrl, appUrl, maxExecTime, maxIdleTime, keepAliveToleranceTime, sessionStorage, redisConnectionParams, sessionFilesExpiration, serviceFifoDir){
+concerto.init = function(
+    dbConnectionParams,
+    publicDir,
+    platformUrl,
+    appUrl,
+    maxExecTime,
+    maxIdleTime,
+    keepAliveToleranceTime,
+    sessionStorage,
+    redisConnectionParams,
+    sessionFilesExpiration,
+    serviceFifoDir,
+    contentCache = TRUE
+){
     SOURCE_PROCESS <<- 1
     SOURCE_SERVER <<- 2
 
@@ -26,7 +39,7 @@ concerto.init = function(dbConnectionParams, publicDir, platformUrl, appUrl, max
 
     concerto <<- list()
     concerto$cache <<- list(tests=list(), templates=list(), tables=list())
-    concerto$cacheEnabled <<- T
+    concerto$cacheEnabled <<- contentCache
     concerto$globals <<- list()
     concerto$templateParams <<- list()
     concerto$globalTemplateParams <<- list()

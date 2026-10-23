@@ -1,0 +1,4 @@
+# Official PHP security-team backport, linked from https://www.php.net/archive/2026.php
+# https://github.com/php/php-src/tree/PHP-7.4-CVE-2026-109618-109619
+PHP_SOURCE_COMMIT=712e60f9edfd03f0960fc4fc3c2c375f42b90aa2
+PHP_SOURCE_SHA256=c85c8cae6cd97c8688eb0bb2385d2341b74606153d19c3c8688183c3bc760d47

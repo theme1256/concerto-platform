@@ -43,7 +43,7 @@ parameters:
 
     security:
       nameIdEncrypted: false
-      authnRequestSigned: false
+      authnRequestsSigned: false
       logoutRequestSigned: false
       logoutResponseSigned: false
       signMetadata: false

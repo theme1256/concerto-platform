@@ -15,6 +15,7 @@ ENV_CONCERTO_R_SESSION_STORAGE = Sys.getenv("CONCERTO_R_SESSION_STORAGE")
 ENV_CONCERTO_R_WORKING_DIR = Sys.getenv("CONCERTO_R_WORKING_DIR")
 ENV_CONCERTO_R_SESSION_FILES_EXPIRATION = Sys.getenv("CONCERTO_R_SESSION_FILES_EXPIRATION")
 ENV_CONCERTO_R_SERVICE_FIFO_PATH = Sys.getenv("CONCERTO_R_SERVICE_FIFO_PATH")
+ENV_CONCERTO_R_CONTENT_CACHE = as.numeric(Sys.getenv("CONCERTO_R_CONTENT_CACHE", 1)) == 1
 
 concerto5:::concerto.init(
     dbConnectionParams = fromJSON(ENV_CONCERTO_R_DB_CONNECTION),
@@ -25,9 +26,10 @@ concerto5:::concerto.init(
     maxIdleTime = as.numeric(ENV_CONCERTO_R_MAX_IDLE_TIME),
     keepAliveToleranceTime = as.numeric(ENV_CONCERTO_R_KEEP_ALIVE_TOLERANCE_TIME),
     sessionStorage = ENV_CONCERTO_R_SESSION_STORAGE,
-    redisConnectionParams = ENV_CONCERTO_R_REDIS_CONNECTION,
-    sessionFilesExpiration = fromJSON(ENV_CONCERTO_R_SESSION_FILES_EXPIRATION),
-    serviceFifoDir = ENV_CONCERTO_R_SERVICE_FIFO_PATH
+    redisConnectionParams = fromJSON(ENV_CONCERTO_R_REDIS_CONNECTION),
+    sessionFilesExpiration = ENV_CONCERTO_R_SESSION_FILES_EXPIRATION,
+    serviceFifoDir = ENV_CONCERTO_R_SERVICE_FIFO_PATH,
+    contentCache = ENV_CONCERTO_R_CONTENT_CACHE
 )
 
 concerto5:::concerto.run(
