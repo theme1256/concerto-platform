@@ -744,6 +744,7 @@ class Test extends ATopEntity implements \JsonSerializable
         return "Test (name:" . $this->getName() . ")";
     }
 
+    #[\ReturnTypeWillChange]
     public function jsonSerialize(&$dependencies = array(), &$normalizedIdsMap = null)
     {
         if (self::isDependencyReserved($dependencies, "Test", $this->id))

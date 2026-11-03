@@ -40,7 +40,7 @@ abstract class AEntity
         return $this;
     }
 
-    public function updateTopEntity(User $user = null)
+    public function updateTopEntity(?User $user = null)
     {
         $this->getTopEntity()->setUpdated(new DateTime("now"));
         $this->getTopEntity()->setUpdatedBy($user);

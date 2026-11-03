@@ -226,7 +226,7 @@ class TestSessionLog implements \JsonSerializable {
      * @param Test $test
      * @return TestSessionLog
      */
-    public function setTest(Test $test = null)
+    public function setTest(?Test $test = null)
     {
         $this->test = $test;
 
@@ -267,6 +267,7 @@ class TestSessionLog implements \JsonSerializable {
         $this->setUpdated(new DateTime("now"));
     }
 
+    #[\ReturnTypeWillChange]
     public function jsonSerialize(&$dependencies = array())
     {
         return array(

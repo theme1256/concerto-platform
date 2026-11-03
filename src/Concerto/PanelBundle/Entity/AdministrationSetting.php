@@ -111,6 +111,7 @@ class AdministrationSetting implements \JsonSerializable {
         return $this->exposed;
     }
 
+    #[\ReturnTypeWillChange]
     public function jsonSerialize(&$dependencies = array()) {
         return array(
             "class_name" => "AdministrationSetting",

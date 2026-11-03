@@ -257,6 +257,7 @@ class ScheduledTask implements \JsonSerializable
         return $this->info;
     }
 
+    #[\ReturnTypeWillChange]
     public function jsonSerialize(&$dependencies = array())
     {
         return array(

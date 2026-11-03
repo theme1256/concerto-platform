@@ -142,7 +142,7 @@ class TestNodeController extends ASectionController
         $result = $this->service->addDynamicPort(
             $object_id,
             $request->get("name"),
-            (integer)$type
+            (int)$type
         );
 
         $errors = $this->trans($result["errors"]);

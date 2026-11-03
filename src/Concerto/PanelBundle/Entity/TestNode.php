@@ -370,6 +370,7 @@ class TestNode extends AEntity implements \JsonSerializable
         return "TestNode (#" . $this->getId() . ", title:" . ($this->getTitle() ? $this->getTitle() : $this->getSourceTest()->getName()) . ")";
     }
 
+    #[\ReturnTypeWillChange]
     public function jsonSerialize(&$dependencies = array(), &$normalizedIdsMap = null)
     {
         if ($this->sourceTest != null)

@@ -112,7 +112,7 @@ class TestWizardParamService extends ASectionService
         return array("object" => $object, "errors" => $errors);
     }
 
-    public function update(TestWizardParam $object, TestWizardParam $originalObject = null, $flush = true)
+    public function update(TestWizardParam $object, ?TestWizardParam $originalObject = null, $flush = true)
     {
         $isNew = $object->getId() === null;
         $changeSet = $this->repository->getChangeSet($object);
@@ -122,7 +122,7 @@ class TestWizardParamService extends ASectionService
         }
     }
 
-    private function onObjectSaved(TestWizardParam $object, TestWizardParam $originalObject = null, $flush = true)
+    private function onObjectSaved(TestWizardParam $object, ?TestWizardParam $originalObject = null, $flush = true)
     {
         $this->updateValues($object, $originalObject, $flush);
     }

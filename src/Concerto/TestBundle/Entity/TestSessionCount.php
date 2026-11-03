@@ -83,6 +83,7 @@ class TestSessionCount implements \JsonSerializable {
         return $this->count;
     }
 
+    #[\ReturnTypeWillChange]
     public function jsonSerialize() {
         $serialized = array(
             "x" => $this->created->getTimestamp(),

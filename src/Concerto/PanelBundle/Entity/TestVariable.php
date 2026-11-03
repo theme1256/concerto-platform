@@ -221,7 +221,7 @@ class TestVariable extends AEntity implements \JsonSerializable
      * @param Test $test
      * @return TestVariable
      */
-    public function setTest(Test $test = null)
+    public function setTest(?Test $test = null)
     {
         $this->test = $test;
 
@@ -404,6 +404,7 @@ class TestVariable extends AEntity implements \JsonSerializable
         return sha1($json);
     }
 
+    #[\ReturnTypeWillChange]
     public function jsonSerialize(&$dependencies = array(), &$normalizedIdsMap = null)
     {
         $wizard = $this->getTest()->getSourceWizard();

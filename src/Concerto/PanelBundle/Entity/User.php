@@ -174,6 +174,26 @@ class User extends ATopEntity implements AdvancedUserInterface, \Serializable, \
             ) = unserialize($serialized);
     }
 
+    public function __serialize(): array
+    {
+        return array(
+            $this->id,
+            $this->username,
+            $this->password,
+            $this->salt
+        );
+    }
+
+    public function __unserialize(array $data): void
+    {
+        list (
+            $this->id,
+            $this->username,
+            $this->password,
+            $this->salt
+            ) = $data;
+    }
+
     /**
      * Set username
      *
@@ -423,6 +443,7 @@ class User extends ATopEntity implements AdvancedUserInterface, \Serializable, \
         return null;
     }
 
+    #[\ReturnTypeWillChange]
     public function jsonSerialize(&$dependencies = array())
     {
         return array(

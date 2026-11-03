@@ -254,6 +254,7 @@ class TestWizardStep extends AEntity implements \JsonSerializable
         return $this->getWizard();
     }
 
+    #[\ReturnTypeWillChange]
     public function jsonSerialize(&$dependencies = array(), &$normalizedIdsMap = null)
     {
         //sorting for prettier diffs

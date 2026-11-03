@@ -43,6 +43,7 @@ class Client extends BaseClient implements \JsonSerializable {
         return $this->id;
     }
 
+    #[\ReturnTypeWillChange]
     public function jsonSerialize() {
         return array(
             "class_name" => "Client",

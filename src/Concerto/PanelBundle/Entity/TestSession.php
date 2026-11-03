@@ -209,7 +209,7 @@ class TestSession
      * @param Test $test
      * @return TestSession
      */
-    public function setTest(Test $test = null)
+    public function setTest(?Test $test = null)
     {
         $this->test = $test;
 

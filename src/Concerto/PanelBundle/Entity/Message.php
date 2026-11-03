@@ -163,6 +163,7 @@ class Message implements \JsonSerializable
         return $this->message;
     }
 
+    #[\ReturnTypeWillChange]
     public function jsonSerialize(&$dependencies = array())
     {
         return array(

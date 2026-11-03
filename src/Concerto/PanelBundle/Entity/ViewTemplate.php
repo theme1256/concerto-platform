@@ -295,6 +295,7 @@ class ViewTemplate extends ATopEntity implements \JsonSerializable
         return sha1($json);
     }
 
+    #[\ReturnTypeWillChange]
     public function jsonSerialize(&$dependencies = array(), &$normalizedIdsMap = null)
     {
         if (self::isDependencyReserved($dependencies, "ViewTemplate", $this->id))
