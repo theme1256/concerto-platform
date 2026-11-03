@@ -1,6 +1,9 @@
 security:
-    encoders:
-        Concerto\PanelBundle\Entity\User: 
+    enable_authenticator_manager: true
+
+    # Legacy salted SHA-1, unchanged so existing password hashes keep working.
+    password_hashers:
+        Concerto\PanelBundle\Entity\User:
           algorithm: sha1
           encode_as_base64: false
           iterations: 1
@@ -12,8 +15,8 @@ security:
     firewalls:
         admin_area:
           pattern: ^/admin
-          logout_on_user_change: true
-          form_login: 
+          user_checker: Concerto\PanelBundle\Security\UserChecker
+          form_login:
             login_path: login
             check_path: login_check
             default_target_path: index
@@ -23,25 +26,21 @@ security:
           two_factor:
             auth_form_path: 2fa_login
             check_path: 2fa_login_check
-            
+
         oauth_token:
           pattern:    ^/oauth/v2/token
-          logout_on_user_change: true
           security:   false
 
         api:
           pattern:    ^/api(/data|/runner)
-          logout_on_user_change: true
-          fos_oauth:  true
+          oauth2:     true
           stateless:  true
-          anonymous:  false
 
+        # Token is optional here: requests without one stay unauthenticated.
         open_api:
           pattern:    ^/api(/check|/saml)
-          logout_on_user_change: true
-          fos_oauth:  true
+          oauth2:     true
           stateless:  true
-          anonymous:  true
 
     access_control:
         - { path: ^/admin/2fa, role: IS_AUTHENTICATED_2FA_IN_PROGRESS }

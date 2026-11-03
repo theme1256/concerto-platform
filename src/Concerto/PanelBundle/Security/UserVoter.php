@@ -13,12 +13,12 @@ class UserVoter extends Voter
 
     const ATTR_ACCESS = 'access';
 
-    protected function supports($attribute, $object)
+    protected function supports($attribute, $object): bool
     {
         return $object instanceof User && in_array($attribute, array(self::ATTR_ACCESS));
     }
 
-    protected function voteOnAttribute($attribute, $object, TokenInterface $token)
+    protected function voteOnAttribute($attribute, $object, TokenInterface $token): bool
     {
         if (!$token->getUser() instanceof UserInterface || !$token->getUser() instanceof User) {
             return false;

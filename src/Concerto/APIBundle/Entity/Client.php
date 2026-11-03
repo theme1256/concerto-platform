@@ -3,55 +3,43 @@
 namespace Concerto\APIBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
-use FOS\OAuthServerBundle\Entity\Client as BaseClient;
-use \Doctrine\Common\Collections\ArrayCollection;
+use League\Bundle\OAuth2ServerBundle\Model\AbstractClient;
 
 /**
- * Client
+ * OAuth2 API client (league/oauth2-server-bundle).
  *
- * @ORM\Table()
+ * The identifier is longer than the bundle's default (32) so that clients migrated from
+ * FOSOAuthServerBundle keep their "<id>_<randomId>" public id. See OAuthClientMigrator.
+ *
+ * @ORM\Table(name="oauth2_client")
  * @ORM\Entity(repositoryClass="Concerto\APIBundle\Repository\ClientRepository")
  */
-class Client extends BaseClient implements \JsonSerializable {
-
+class Client extends AbstractClient implements \JsonSerializable
+{
     /**
-     * @var integer
+     * @var string
      *
-     * @ORM\Column(name="id", type="integer")
      * @ORM\Id
-     * @ORM\GeneratedValue(strategy="AUTO")
+     * @ORM\Column(type="string", length=128)
      */
-    protected $id;
+    protected $identifier;
 
-    /**
-     * @ORM\OneToMany(targetEntity="AccessToken", mappedBy="client", cascade={"remove"})
-     */
-    private $accessTokens;
-
-    public function __construct() {
-        parent::__construct();
-
-        $this->accessTokens = new ArrayCollection();
+    public function getId()
+    {
+        return $this->getIdentifier();
     }
 
     /**
-     * Get id
-     *
-     * @return integer 
+     * @return mixed
      */
-    public function getId() {
-        return $this->id;
-    }
-
     #[\ReturnTypeWillChange]
-    public function jsonSerialize() {
+    public function jsonSerialize()
+    {
         return array(
             "class_name" => "Client",
-            "id" => $this->getId(),
-            "randomId" => $this->getRandomId(),
-            "fullId" => $this->getId() . "_" . $this->getRandomId(),
+            "id" => $this->getIdentifier(),
+            "fullId" => $this->getIdentifier(),
             "secret" => $this->getSecret()
         );
     }
-
 }

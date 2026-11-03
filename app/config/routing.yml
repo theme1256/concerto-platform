@@ -23,7 +23,7 @@ remove_trailing_slash:
 2fa_login:
     path: /admin/2fa
     defaults:
-        _controller: "scheb_two_factor.form_controller:form"
+        _controller: "scheb_two_factor.form_controller::form"
 
 2fa_login_check:
     path: /admin/2fa_check

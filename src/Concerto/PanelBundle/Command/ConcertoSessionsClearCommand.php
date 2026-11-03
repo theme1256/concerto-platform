@@ -24,7 +24,7 @@ class ConcertoSessionsClearCommand extends Command
         $this->setName("concerto:sessions:clear")->setDescription("Clearing session files.");
     }
 
-    protected function execute(InputInterface $input, OutputInterface $output)
+    protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $this->maintenanceService->deleteOldSessions();
 

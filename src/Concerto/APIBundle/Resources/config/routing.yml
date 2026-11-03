@@ -2,8 +2,8 @@ concerto_api:
     resource: "@ConcertoAPIBundle/Controller/"
     type:     annotation
     
-fos_oauth_server_token:
-    resource: "@FOSOAuthServerBundle/Resources/config/routing/token.xml"
-
-fos_oauth_server_authorize:
-    resource: "@FOSOAuthServerBundle/Resources/config/routing/authorize.xml"
+# OAuth2 token endpoint (client_credentials), same path as with FOSOAuthServerBundle.
+oauth2_token:
+    path: /oauth/v2/token
+    controller: league.oauth2_server.controller.token::indexAction
+    methods: [POST]

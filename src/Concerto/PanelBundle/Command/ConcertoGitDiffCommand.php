@@ -45,7 +45,7 @@ class ConcertoGitDiffCommand extends Command
     private function diff()
     {
         $command = $this->getDiffCommand();
-        $process = new Process($command);
+        $process = Process::fromShellCommandline($command);
         $process->setTimeout(null);
         $process->start();
         $process->wait();
@@ -55,7 +55,7 @@ class ConcertoGitDiffCommand extends Command
         return $process->getExitCode() === 0;
     }
 
-    protected function execute(InputInterface $input, OutputInterface $output)
+    protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $this->output = $output;
         $this->sha = $input->getOption("sha");

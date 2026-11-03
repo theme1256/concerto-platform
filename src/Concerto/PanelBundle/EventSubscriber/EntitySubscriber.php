@@ -64,7 +64,7 @@ class EntitySubscriber implements EventSubscriber
         }
     }
 
-    public function getSubscribedEvents()
+    public function getSubscribedEvents(): array
     {
         return array(
             Events::prePersist,

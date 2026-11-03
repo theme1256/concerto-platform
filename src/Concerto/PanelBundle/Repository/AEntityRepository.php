@@ -21,7 +21,7 @@ abstract class AEntityRepository extends EntityRepository
         $this->getEntityManager()->flush();
     }
 
-    public function clear()
+    public function clear(): void
     {
         $this->getEntityManager()->clear();
     }

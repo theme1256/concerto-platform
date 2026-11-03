@@ -47,7 +47,7 @@ class ConcertoGitCommitCommand extends Command
     private function commit()
     {
         $command = $this->getCommitCommand();
-        $process = new Process($command);
+        $process = Process::fromShellCommandline($command);
         $process->setTimeout(null);
         $process->start();
         $process->wait();
@@ -57,7 +57,7 @@ class ConcertoGitCommitCommand extends Command
         return $process->getExitCode() === 0;
     }
 
-    protected function execute(InputInterface $input, OutputInterface $output)
+    protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $this->output = $output;
         $this->localGitRepoPath = $this->gitService->getGitRepoPath();

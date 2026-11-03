@@ -267,6 +267,9 @@ class TestSessionLog implements \JsonSerializable {
         $this->setUpdated(new DateTime("now"));
     }
 
+    /**
+     * @return mixed
+     */
     #[\ReturnTypeWillChange]
     public function jsonSerialize(&$dependencies = array())
     {

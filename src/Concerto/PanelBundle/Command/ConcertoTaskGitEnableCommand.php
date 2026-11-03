@@ -109,7 +109,7 @@ class ConcertoTaskGitEnableCommand extends ConcertoScheduledTaskCommand
     private function clone()
     {
         $command = $this->getCloneCommand();
-        $process = new Process($command);
+        $process = Process::fromShellCommandline($command);
         $process->start();
         $process->setTimeout(null);
         $process->wait();

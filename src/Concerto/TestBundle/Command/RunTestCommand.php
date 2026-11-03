@@ -28,7 +28,7 @@ class RunTestCommand extends Command
         $this->addOption("debug", null, InputOption::VALUE_NONE, "print debug output?");
     }
 
-    protected function execute(InputInterface $input, OutputInterface $output)
+    protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $name = $input->getArgument("name");
         $params = $input->getArgument("params");

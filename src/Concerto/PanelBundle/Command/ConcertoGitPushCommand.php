@@ -36,7 +36,7 @@ class ConcertoGitPushCommand extends Command
     private function push()
     {
         $command = $this->getPushCommand();
-        $process = new Process($command);
+        $process = Process::fromShellCommandline($command);
         $process->setTimeout(null);
         $process->start();
         $process->wait();
@@ -46,7 +46,7 @@ class ConcertoGitPushCommand extends Command
         return $process->getExitCode() === 0;
     }
 
-    protected function execute(InputInterface $input, OutputInterface $output)
+    protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $this->output = $output;
         $this->localGitRepoPath = $this->gitService->getGitRepoPath();

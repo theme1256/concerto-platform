@@ -2,6 +2,6 @@ imports:
     - { resource: services.yml }
 
 services:
-    test.security.encoder_factory:
-        alias: security.encoder_factory
+    test.security.user_password_hasher:
+        alias: security.user_password_hasher
         public: true

@@ -24,7 +24,7 @@ class ConcertoSessionsLogCommand extends Command {
         $this->setName("concerto:sessions:log")->setDescription("Log session count.");
     }
 
-    protected function execute(InputInterface $input, OutputInterface $output) {
+    protected function execute(InputInterface $input, OutputInterface $output): int {
         $this->sessionCountService->updateCountRecord();
 
         return 0;

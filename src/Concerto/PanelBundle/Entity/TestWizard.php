@@ -320,6 +320,9 @@ class TestWizard extends ATopEntity implements \JsonSerializable
         return "TestWizard (#" . $this->getId() . ", name:" . $this->getName() . ")";
     }
 
+    /**
+     * @return mixed
+     */
     #[\ReturnTypeWillChange]
     public function jsonSerialize(&$dependencies = array(), &$normalizedIdsMap = null)
     {

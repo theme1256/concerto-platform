@@ -12,15 +12,15 @@ class UserControllerTest extends AFunctionalTest
 
     private static $repository;
 
-    public static function setUpBeforeClass()
+    public static function setUpBeforeClass(): void
     {
         $client = static::createClient();
-        self::$encoderFactory = $client->getContainer()->get("test.security.encoder_factory");
+        self::$passwordHasher = $client->getContainer()->get("test.security.user_password_hasher");
         self::$entityManager = $client->getContainer()->get("doctrine")->getManager();
         self::$repository = static::$entityManager->getRepository("ConcertoPanelBundle:User");
     }
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $repo = self::$entityManager->getRepository("ConcertoPanelBundle:User");
         foreach ($repo->findAll() as $user) {
@@ -51,9 +51,8 @@ class UserControllerTest extends AFunctionalTest
         $user->setEmail("username@domain.com");
         $user->setUsername("admin");
         $user->addRole($role);
-        $encoder = self::$encoderFactory->getEncoder($user);
-        $password = $encoder->encodePassword("admin", $user->getSalt());
-        $passwordConfirmation = $encoder->encodePassword("admin", $user->getSalt());
+        $password = self::$passwordHasher->hashPassword($user, "admin");
+        $passwordConfirmation = self::$passwordHasher->hashPassword($user, "admin");
         $user->setPassword($password);
         $user->setPasswordConfirmation($passwordConfirmation);
         $user->setAccessibility(ATopEntity::ACCESS_PUBLIC);

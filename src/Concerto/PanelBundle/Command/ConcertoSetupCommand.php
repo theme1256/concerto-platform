@@ -12,21 +12,27 @@ use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Input\ArrayInput;
 use Symfony\Component\HttpKernel\KernelInterface;
 use Symfony\Component\Process\Process;
-use Symfony\Component\Security\Core\Encoder\EncoderFactoryInterface;
+use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
+use Concerto\APIBundle\Service\OAuthClientMigrator;
+use Concerto\APIBundle\Service\OAuthKeyService;
 
 class ConcertoSetupCommand extends Command
 {
     private $doctrine;
     private $kernel;
-    private $encoderFactory;
+    private $passwordHasher;
     private $projectDir;
+    private $oauthKeyService;
+    private $oauthClientMigrator;
 
-    public function __construct(ManagerRegistry $doctrine, KernelInterface $kernel, EncoderFactoryInterface $encoderFactory, $projectDir)
+    public function __construct(ManagerRegistry $doctrine, KernelInterface $kernel, UserPasswordHasherInterface $passwordHasher, $projectDir, OAuthKeyService $oauthKeyService, OAuthClientMigrator $oauthClientMigrator)
     {
         $this->doctrine = $doctrine;
         $this->kernel = $kernel;
-        $this->encoderFactory = $encoderFactory;
+        $this->passwordHasher = $passwordHasher;
         $this->projectDir = $projectDir;
+        $this->oauthKeyService = $oauthKeyService;
+        $this->oauthClientMigrator = $oauthClientMigrator;
 
         parent::__construct();
     }
@@ -49,6 +55,17 @@ class ConcertoSetupCommand extends Command
         ));
         $command->run($updateInput, $output);
         $output->writeln("database up to date");
+    }
+
+    private function setupOAuth(OutputInterface $output)
+    {
+        if ($this->oauthKeyService->ensureKeys()) {
+            $output->writeln("OAuth key pair generated");
+        }
+        $migrated = $this->oauthClientMigrator->migrate();
+        if ($migrated !== null) {
+            $output->writeln("migrated $migrated API client(s) from FOSOAuthServerBundle");
+        }
     }
 
     private function initializeUsers(InputInterface $input, OutputInterface $output)
@@ -80,9 +97,8 @@ class ConcertoSetupCommand extends Command
         if (count($users) === 0) {
 
             $user = new User();
-            $encoder = $this->encoderFactory->getEncoder($user);
             $user->setSalt(md5(time()));
-            $pass = $encoder->encodePassword($input->getOption("admin-pass"), $user->getSalt());
+            $pass = $this->passwordHasher->hashPassword($user, $input->getOption("admin-pass"));
             $user->addRole($role);
             $user->setUsername("admin");
             $user->setPassword($pass);
@@ -96,9 +112,10 @@ class ConcertoSetupCommand extends Command
         }
     }
 
-    protected function execute(InputInterface $input, OutputInterface $output)
+    protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $this->updateSchema($input, $output);
+        $this->setupOAuth($output);
         $this->initializeUsers($input, $output);
 
         return 0;

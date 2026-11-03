@@ -6,7 +6,7 @@ use Concerto\PanelBundle\Entity\TestSession;
 use Concerto\PanelBundle\Repository\TestSessionRepository;
 use Concerto\PanelBundle\Service\AdministrationService;
 use Psr\Log\LoggerInterface;
-use Symfony\Bridge\Doctrine\RegistryInterface;
+use Doctrine\Persistence\ManagerRegistry;
 use Concerto\PanelBundle\Service\TestSessionService;
 use Symfony\Component\Process\Process;
 
@@ -24,7 +24,7 @@ abstract class ASessionRunnerService
     protected $runnerType = -1;
     protected $environment;
 
-    public function __construct($environment, LoggerInterface $logger, $testRunnerSettings, $projectDir, RegistryInterface $doctrine, TestSessionCountService $testSessionCountService, AdministrationService $administrationService, TestSessionRepository $testSessionRepository)
+    public function __construct($environment, LoggerInterface $logger, $testRunnerSettings, $projectDir, ManagerRegistry $doctrine, TestSessionCountService $testSessionCountService, AdministrationService $administrationService, TestSessionRepository $testSessionRepository)
     {
         $this->logger = $logger;
         $this->testRunnerSettings = $testRunnerSettings;
@@ -438,9 +438,7 @@ abstract class ASessionRunnerService
         $sessionFilesExpiration = $this->administrationService->getSettingValue("session_files_expiration");
         $serviceFifoPath = $this->getServiceFifoDir();
 
-        $process = new Process($cmd);
-        $process->setEnhanceWindowsCompatibility(false);
-        $process->inheritEnvironmentVariables(true);
+        $process = Process::fromShellCommandline($cmd);
 
         $r_environ_path = $this->testRunnerSettings["r_environ_session_path"];
         $r_profile_path = $this->testRunnerSettings['r_profile_session_path'];

@@ -21,7 +21,7 @@ services:
 
 #repositories
     Concerto\TestBundle\Repository\TestSessionCountRepository:
-        factory: doctrine.orm.entity_manager:getRepository
+        factory: ['@doctrine.orm.entity_manager', 'getRepository']
         arguments: [ Concerto\TestBundle\Entity\TestSessionCount]
 
 #controller

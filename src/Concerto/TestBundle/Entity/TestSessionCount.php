@@ -83,6 +83,9 @@ class TestSessionCount implements \JsonSerializable {
         return $this->count;
     }
 
+    /**
+     * @return mixed
+     */
     #[\ReturnTypeWillChange]
     public function jsonSerialize() {
         $serialized = array(

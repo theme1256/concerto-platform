@@ -36,7 +36,7 @@ class ConcertoGitFetchCommand extends Command
     private function fetch()
     {
         $command = $this->getFetchCommand();
-        $process = new Process($command);
+        $process = Process::fromShellCommandline($command);
         $process->setTimeout(null);
         $process->start();
         $process->wait();
@@ -46,7 +46,7 @@ class ConcertoGitFetchCommand extends Command
         return $process->getExitCode() === 0;
     }
 
-    protected function execute(InputInterface $input, OutputInterface $output)
+    protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $this->output = $output;
         $this->localGitRepoPath = $this->gitService->getGitRepoPath();

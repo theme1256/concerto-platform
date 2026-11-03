@@ -7,7 +7,7 @@ parameters:
 framework:
     test: ~
     session:
-        storage_id: session.storage.mock_file
+        storage_factory_id: session.storage.factory.mock_file
     profiler:
         enabled: false
 
@@ -29,5 +29,5 @@ doctrine:
                 password: "%env(DB_TEST_PASSWORD)%"
                 charset:  UTF8
                 # if using pdo_sqlite as your database driver, add the path in parameters.yml
-                # e.g. database_path: %kernel.root_dir%/data/data.db3
+                # e.g. database_path: %kernel.project_dir%/app/data/data.db3
                 # path:     %database_path%

@@ -2,7 +2,7 @@
 
 namespace Concerto\PanelBundle\EventSubscriber;
 
-use Symfony\Component\HttpKernel\Event\GetResponseEvent;
+use Symfony\Component\HttpKernel\Event\RequestEvent;
 use Symfony\Component\HttpKernel\KernelEvents;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
@@ -14,7 +14,7 @@ class LocaleSubscriber implements EventSubscriberInterface {
         $this->defaultLocale = $defaultLocale;
     }
 
-    public function onKernelRequest(GetResponseEvent $event) {
+    public function onKernelRequest(RequestEvent $event) {
         $request = $event->getRequest();
         if (!$request->hasPreviousSession()) {
             return;
@@ -27,7 +27,7 @@ class LocaleSubscriber implements EventSubscriberInterface {
         }
     }
 
-    public static function getSubscribedEvents() {
+    public static function getSubscribedEvents(): array {
         return array(
             KernelEvents::REQUEST => array(array('onKernelRequest', 17))
         );

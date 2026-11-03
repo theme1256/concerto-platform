@@ -37,7 +37,7 @@ class ConcertoGitHistoryCommand extends Command
     private function history()
     {
         $command = $this->getHistoryCommand();
-        $process = new Process($command);
+        $process = Process::fromShellCommandline($command);
         $process->setTimeout(null);
         $process->start();
         $process->wait();
@@ -47,7 +47,7 @@ class ConcertoGitHistoryCommand extends Command
         return $process->getExitCode() === 0;
     }
 
-    protected function execute(InputInterface $input, OutputInterface $output)
+    protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $this->output = $output;
         $this->localGitRepoPath = $this->gitService->getGitRepoPath();

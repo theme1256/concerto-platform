@@ -13,13 +13,13 @@ class TestRunnerControllerTest extends AFunctionalTest {
     private static $repository;
     private static $testRepository;
 
-    public static function setUpBeforeClass() {
+    public static function setUpBeforeClass(): void {
         parent::setUpBeforeClass();
         self::$repository = static::$entityManager->getRepository("ConcertoPanelBundle:TestSession");
         self::$testRepository = static::$entityManager->getRepository("ConcertoPanelBundle:Test");
     }
 
-    protected function setUp() {
+    protected function setUp(): void {
         parent::setUp();
 
         $client = self::createLoggedClient();

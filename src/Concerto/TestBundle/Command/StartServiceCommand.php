@@ -41,13 +41,12 @@ class StartServiceCommand extends Command
         return "nohup {$this->testRunnerSettings["rscript_exec"]} --no-save --no-restore --quiet '$servicePath' >> '$logPath' 2>&1 & echo $!";
     }
 
-    protected function execute(InputInterface $input, OutputInterface $output)
+    protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $output->writeln("starting service...");
 
         $cmd = $this->getCommand();
-        $process = new Process($cmd);
-        $process->inheritEnvironmentVariables(true);
+        $process = Process::fromShellCommandline($cmd);
 
         $serviceFifoPath = $this->sessionRunnerService->getServiceFifoDir();
         $r_environ_path = $this->testRunnerSettings["r_environ_service_path"];

@@ -62,7 +62,7 @@ abstract class ConcertoScheduledTaskCommand extends Command
     {
     }
 
-    protected function execute(InputInterface $input, OutputInterface $output)
+    protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $output->writeln("checking...");
         if (!$this->check($error, $code, $input)) {

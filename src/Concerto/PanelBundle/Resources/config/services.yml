@@ -88,71 +88,71 @@ services:
 
 #repositories
     Concerto\PanelBundle\Repository\AdministrationSettingRepository:
-        factory: doctrine.orm.entity_manager:getRepository
+        factory: ['@doctrine.orm.entity_manager', 'getRepository']
         arguments: [ Concerto\PanelBundle\Entity\AdministrationSetting]
 
     Concerto\PanelBundle\Repository\DataTableRepository:
-        factory: doctrine.orm.entity_manager:getRepository
+        factory: ['@doctrine.orm.entity_manager', 'getRepository']
         arguments: [ Concerto\PanelBundle\Entity\DataTable]
 
     Concerto\PanelBundle\Repository\MessageRepository:
-        factory: doctrine.orm.entity_manager:getRepository
+        factory: ['@doctrine.orm.entity_manager', 'getRepository']
         arguments: [ Concerto\PanelBundle\Entity\Message]
 
     Concerto\PanelBundle\Repository\RoleRepository:
-        factory: doctrine.orm.entity_manager:getRepository
+        factory: ['@doctrine.orm.entity_manager', 'getRepository']
         arguments: [ Concerto\PanelBundle\Entity\Role]
 
     Concerto\PanelBundle\Repository\ScheduledTaskRepository:
-        factory: doctrine.orm.entity_manager:getRepository
+        factory: ['@doctrine.orm.entity_manager', 'getRepository']
         arguments: [ Concerto\PanelBundle\Entity\ScheduledTask]
 
     Concerto\PanelBundle\Repository\TestRepository:
-        factory: doctrine.orm.entity_manager:getRepository
+        factory: ['@doctrine.orm.entity_manager', 'getRepository']
         arguments: [ Concerto\PanelBundle\Entity\Test]
 
     Concerto\PanelBundle\Repository\TestNodeRepository:
-        factory: doctrine.orm.entity_manager:getRepository
+        factory: ['@doctrine.orm.entity_manager', 'getRepository']
         arguments: [ Concerto\PanelBundle\Entity\TestNode]
 
     Concerto\PanelBundle\Repository\TestNodeConnectionRepository:
-        factory: doctrine.orm.entity_manager:getRepository
+        factory: ['@doctrine.orm.entity_manager', 'getRepository']
         arguments: [ Concerto\PanelBundle\Entity\TestNodeConnection]
 
     Concerto\PanelBundle\Repository\TestNodePortRepository:
-        factory: doctrine.orm.entity_manager:getRepository
+        factory: ['@doctrine.orm.entity_manager', 'getRepository']
         arguments: [ Concerto\PanelBundle\Entity\TestNodePort]
 
     Concerto\PanelBundle\Repository\TestWizardRepository:
-        factory: doctrine.orm.entity_manager:getRepository
+        factory: ['@doctrine.orm.entity_manager', 'getRepository']
         arguments: [ Concerto\PanelBundle\Entity\TestWizard]
 
     Concerto\PanelBundle\Repository\TestWizardParamRepository:
-        factory: doctrine.orm.entity_manager:getRepository
+        factory: ['@doctrine.orm.entity_manager', 'getRepository']
         arguments: [ Concerto\PanelBundle\Entity\TestWizardParam]
 
     Concerto\PanelBundle\Repository\TestWizardStepRepository:
-        factory: doctrine.orm.entity_manager:getRepository
+        factory: ['@doctrine.orm.entity_manager', 'getRepository']
         arguments: [ Concerto\PanelBundle\Entity\TestWizardStep]
 
     Concerto\PanelBundle\Repository\TestSessionLogRepository:
-        factory: doctrine.orm.entity_manager:getRepository
+        factory: ['@doctrine.orm.entity_manager', 'getRepository']
         arguments: [ Concerto\PanelBundle\Entity\TestSessionLog]
 
     Concerto\PanelBundle\Repository\TestVariableRepository:
-        factory: doctrine.orm.entity_manager:getRepository
+        factory: ['@doctrine.orm.entity_manager', 'getRepository']
         arguments: [ Concerto\PanelBundle\Entity\TestVariable]
 
     Concerto\PanelBundle\Repository\TestSessionRepository:
-        factory: doctrine.orm.entity_manager:getRepository
+        factory: ['@doctrine.orm.entity_manager', 'getRepository']
         arguments: [ Concerto\PanelBundle\Entity\TestSession]
 
     Concerto\PanelBundle\Repository\UserRepository:
-        factory: doctrine.orm.entity_manager:getRepository
+        factory: ['@doctrine.orm.entity_manager', 'getRepository']
         arguments: [ Concerto\PanelBundle\Entity\User]
 
     Concerto\PanelBundle\Repository\ViewTemplateRepository:
-        factory: doctrine.orm.entity_manager:getRepository
+        factory: ['@doctrine.orm.entity_manager', 'getRepository']
         arguments: [ Concerto\PanelBundle\Entity\ViewTemplate]
 
 #services
@@ -161,7 +161,7 @@ services:
         arguments:
             $configSettings: "%administration%"
             $version: "%version%"
-            $rootDir: "%kernel.root_dir%"
+            $rootDir: "%kernel.project_dir%/app"
             $testRunnerSettings: "%test_runner_settings%"
 
     Concerto\PanelBundle\Service\ExportService:
@@ -202,7 +202,7 @@ services:
 
     Concerto\PanelBundle\Controller\DialogController:
         arguments:
-            $rootDir: "%kernel.root_dir%"
+            $rootDir: "%kernel.project_dir%/app"
         public: true
 
     Concerto\PanelBundle\Controller\TestController:
@@ -221,6 +221,8 @@ services:
         public: true
     
 #security
+    Concerto\PanelBundle\Security\UserChecker: ~
+
     Concerto\PanelBundle\Security\ObjectVoter:
         tags:
             - { name: security.voter }

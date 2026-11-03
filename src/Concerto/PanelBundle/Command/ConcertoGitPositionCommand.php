@@ -42,7 +42,7 @@ class ConcertoGitPositionCommand extends Command
     private function position()
     {
         $command = $this->getPositionCommand();
-        $process = new Process($command);
+        $process = Process::fromShellCommandline($command);
         $process->setTimeout(null);
         $process->start();
         $process->wait();
@@ -52,7 +52,7 @@ class ConcertoGitPositionCommand extends Command
         return $process->getExitCode() === 0;
     }
 
-    protected function execute(InputInterface $input, OutputInterface $output)
+    protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $this->output = $output;
         $this->localGitRepoPath = $this->gitService->getGitRepoPath();

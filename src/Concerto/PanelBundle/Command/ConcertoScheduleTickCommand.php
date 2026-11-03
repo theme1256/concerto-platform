@@ -59,7 +59,7 @@ class ConcertoScheduleTickCommand extends Command
         $this->setName("concerto:schedule:tick")->setDescription("Administrative tasks tick.");
     }
 
-    protected function execute(InputInterface $input, OutputInterface $output)
+    protected function execute(InputInterface $input, OutputInterface $output): int
     {
         foreach ($this->scheduledTasksRepository->findAllPending() as $task) {
             $this->executeTask($task, $output);

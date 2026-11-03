@@ -24,7 +24,7 @@ class ObjectVoter extends Voter
 
     const ATTR_ACCESS = 'access';
 
-    protected function supports($attribute, $object)
+    protected function supports($attribute, $object): bool
     {
         return ($object instanceof DataTable ||
                 $object instanceof Test ||
@@ -39,7 +39,7 @@ class ObjectVoter extends Voter
                 $object instanceof ViewTemplate) && in_array($attribute, array(self::ATTR_ACCESS));
     }
 
-    protected function voteOnAttribute($attribute, $object, TokenInterface $token)
+    protected function voteOnAttribute($attribute, $object, TokenInterface $token): bool
     {
         if (!$token->getUser() instanceof UserInterface || !$token->getUser() instanceof User) {
             return false;

@@ -25,7 +25,7 @@ class OtpInit extends Command
         $this->addArgument("username", InputArgument::REQUIRED);
     }
 
-    protected function execute(InputInterface $input, OutputInterface $output)
+    protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $username = $input->getArgument("username");
         $secret = $this->googleAuthenticator->generateSecret();

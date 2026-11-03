@@ -11,14 +11,14 @@ class DataTableControllerTest extends AFunctionalTest
     private static $repository;
     private static $driver_class;
 
-    public static function setUpBeforeClass()
+    public static function setUpBeforeClass(): void
     {
         parent::setUpBeforeClass();
         self::$repository = static::$entityManager->getRepository("ConcertoPanelBundle:DataTable");
         self::$driver_class = get_class(static::$entityManager->getConnection()->getDatabasePlatform());
     }
 
-    protected function setUp()
+    protected function setUp(): void
     {
         parent::setUp();
 

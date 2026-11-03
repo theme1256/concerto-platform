@@ -265,6 +265,9 @@ class TestNodeConnection extends AEntity implements \JsonSerializable
         return sha1($json);
     }
 
+    /**
+     * @return mixed
+     */
     #[\ReturnTypeWillChange]
     public function jsonSerialize(&$dependencies = array(), &$normalizedIdsMap = null)
     {

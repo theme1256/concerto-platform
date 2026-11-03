@@ -4,7 +4,7 @@ namespace Concerto\TestBundle\Command;
 
 use Concerto\PanelBundle\Service\AdministrationService;
 use Concerto\TestBundle\Service\ASessionRunnerService;
-use Symfony\Bridge\Doctrine\RegistryInterface;
+use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -19,7 +19,7 @@ class StartForkerCommand extends Command
     private $projectDir;
     private $administrationService;
 
-    public function __construct($testRunnerSettings, RegistryInterface $doctrine, ASessionRunnerService $sessionRunnerService, $projectDir, AdministrationService $administrationService)
+    public function __construct($testRunnerSettings, ManagerRegistry $doctrine, ASessionRunnerService $sessionRunnerService, $projectDir, AdministrationService $administrationService)
     {
         parent::__construct();
 
@@ -43,7 +43,7 @@ class StartForkerCommand extends Command
         return "nohup {$this->testRunnerSettings["rscript_exec"]} --no-save --no-restore --quiet '$forkerPath' >> '$logPath' 2>&1 & echo $!";
     }
 
-    protected function execute(InputInterface $input, OutputInterface $output)
+    protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $output->writeln("starting forker...");
 
@@ -63,8 +63,7 @@ class StartForkerCommand extends Command
         $forcedGcInterval = $this->testRunnerSettings["r_forced_gc_interval"];
 
         $cmd = $this->getCommand();
-        $process = new Process($cmd);
-        $process->inheritEnvironmentVariables(true);
+        $process = Process::fromShellCommandline($cmd);
 
         $r_environ_path = $this->testRunnerSettings["r_environ_session_path"];
         $r_profile_path = $this->testRunnerSettings['r_profile_session_path'];

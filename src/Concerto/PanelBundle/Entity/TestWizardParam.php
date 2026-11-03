@@ -500,6 +500,9 @@ class TestWizardParam extends AEntity implements \JsonSerializable
         return $this->getWizard();
     }
 
+    /**
+     * @return mixed
+     */
     #[\ReturnTypeWillChange]
     public function jsonSerialize(&$dependencies = array(), &$normalizedIdsMap = null)
     {

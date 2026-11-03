@@ -7,7 +7,7 @@ use Symfony\Component\HttpFoundation\Response;
 use Twig\Environment;
 use Concerto\PanelBundle\Service\TestSessionLogService;
 use Symfony\Component\Routing\Annotation\Route;
-use Symfony\Component\Translation\TranslatorInterface;
+use Symfony\Contracts\Translation\TranslatorInterface;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 
 /**

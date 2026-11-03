@@ -5,7 +5,7 @@ namespace Concerto\PanelBundle\Controller;
 use Twig\Environment;
 use Concerto\PanelBundle\Service\UserService;
 use Symfony\Component\Routing\Annotation\Route;
-use Symfony\Component\Translation\TranslatorInterface;
+use Symfony\Contracts\Translation\TranslatorInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 use Symfony\Component\HttpFoundation\Response;

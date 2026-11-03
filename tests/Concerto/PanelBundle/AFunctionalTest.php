@@ -3,29 +3,27 @@
 namespace Tests\Concerto\PanelBundle;
 
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
-use Symfony\Component\BrowserKit\Cookie;
-use Symfony\Component\Security\Core\Authentication\Token\UsernamePasswordToken;
 use Concerto\PanelBundle\Entity\User;
 use Concerto\PanelBundle\Entity\Role;
-use Symfony\Bundle\FrameworkBundle\Client;
+use Symfony\Bundle\FrameworkBundle\KernelBrowser;
 use Doctrine\DBAL\Platforms\MySqlPlatform;
 use Doctrine\DBAL\Platforms\PostgreSqlPlatform;
 
 abstract class AFunctionalTest extends WebTestCase {
 
-    protected static $encoderFactory;
+    protected static $passwordHasher;
     protected static $entityManager;
 
     /**
      * Symfony 4.4 deprecates (and 5.0 forbids) creating a client while a kernel is booted.
      */
-    protected static function createClient(array $options = [], array $server = [])
+    protected static function createClient(array $options = [], array $server = []): KernelBrowser
     {
         static::ensureKernelShutdown();
         return parent::createClient($options, $server);
     }
 
-    protected function setUp() {
+    protected function setUp(): void {
         parent::setUp();
 
         static::truncateClass("ConcertoPanelBundle:DataTable");
@@ -42,10 +40,10 @@ abstract class AFunctionalTest extends WebTestCase {
         static::truncateClass("ConcertoPanelBundle:ViewTemplate");
     }
 
-    public static function setUpBeforeClass() {
+    public static function setUpBeforeClass(): void {
 
         $client = static::createClient();
-        self::$encoderFactory = $client->getContainer()->get("test.security.encoder_factory");
+        self::$passwordHasher = $client->getContainer()->get("test.security.user_password_hasher");
         self::$entityManager = $client->getContainer()->get("doctrine")->getManager();
 
         $repo = self::$entityManager->getRepository("ConcertoPanelBundle:User");
@@ -77,9 +75,8 @@ abstract class AFunctionalTest extends WebTestCase {
         $user->setEmail("username@domain.com");
         $user->setUsername("admin");
         $user->addRole($role);
-        $encoder = self::$encoderFactory->getEncoder($user);
-        $password = $encoder->encodePassword("admin", $user->getSalt());
-        $passwordConfirmation = $encoder->encodePassword("admin", $user->getSalt());
+        $password = self::$passwordHasher->hashPassword($user, "admin");
+        $passwordConfirmation = self::$passwordHasher->hashPassword($user, "admin");
         $user->setPassword($password);
         $user->setPasswordConfirmation($passwordConfirmation);
         self::$entityManager->persist($user);
@@ -117,21 +114,14 @@ abstract class AFunctionalTest extends WebTestCase {
 
     /**
      *
-     * @return Client
+     * @return KernelBrowser
      */
     public static function createLoggedClient() {
         $client = static::createClient();
         $client->followRedirects();
-        $session = $client->getContainer()->get('session');
         $repo = $client->getContainer()->get("doctrine")->getRepository("ConcertoPanelBundle:User");
         $user = $repo->findOneBy(array("username" => "admin"));
-        $firewall = 'admin_area';
-        $token = new UsernamePasswordToken($user, null, $firewall, $user->getRoles());
-        $session->set('_security_' . $firewall, serialize($token));
-        $session->save();
-
-        $cookie = new Cookie($session->getName(), $session->getId());
-        $client->getCookieJar()->set($cookie);
+        $client->loginUser($user, 'admin_area');
         return $client;
     }
 

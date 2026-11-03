@@ -11,7 +11,7 @@ services:
     public: false
 
   Concerto\APIBundle\:
-    resource: '../../{Command,Service}'
+    resource: '../../{Command,EventSubscriber,Service}'
 
     # controllers are imported separately to make sure they're public
     # and have a tag that allows actions to type-hint services
@@ -20,22 +20,20 @@ services:
     public: true
     tags: ['controller.service_arguments']
 
-  # Injected into FOSOAuthServerBundle's AuthorizeController by FosOAuthTemplatingPass.
-  # Remove together with FOSOAuthServerBundle.
-  Concerto\APIBundle\Templating\FosOAuthTwigEngine:
-    autowire: false
-    arguments: ['@twig']
-
   #repositories
   Concerto\APIBundle\Repository\ClientRepository:
-    factory: doctrine.orm.entity_manager:getRepository
+    factory: ['@doctrine.orm.entity_manager', 'getRepository']
     arguments: [ Concerto\APIBundle\Entity\Client]
 
   Concerto\APIBundle\Repository\SamlTokenRepository:
-    factory: doctrine.orm.entity_manager:getRepository
+    factory: ['@doctrine.orm.entity_manager', 'getRepository']
     arguments: [ Concerto\APIBundle\Entity\SamlToken]
 
   #services
+  Concerto\APIBundle\Service\OAuthKeyService:
+    arguments:
+      $keyDir: "%oauth_key_dir%"
+
   Concerto\APIBundle\Service\SamlService:
     arguments:
       $settings: "%saml%"
@@ -46,6 +44,3 @@ services:
      arguments:
        $testRunnerSettings: "%test_runner_settings%"
      public: true
-
-  #aliases
-  FOS\OAuthServerBundle\Model\ClientManagerInterface: '@fos_oauth_server.client_manager.default'

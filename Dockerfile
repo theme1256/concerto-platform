@@ -66,6 +66,7 @@ ENV CONCERTO_R_SERVICES_NUM=0
 ENV CONCERTO_SESSION_FORKING=true
 ENV CONCERTO_R_FORCED_GC_INTERVAL=30
 ENV CONCERTO_JWT_SECRET=changeme
+ENV CONCERTO_OAUTH_KEY_DIR=/data/oauth
 ENV CONCERTO_PHP_SESSION_SAVE_PATH=/app/concerto/var/sessions
 ENV CONCERTO_R_CONTENT_CACHE=1
 ENV REDIS_HOST=redis
@@ -167,8 +168,10 @@ CMD if [ "$CONCERTO_COOKIES_SECURE" = "true" ]; \
  && chown $WEB_USER /data/sessions \
  && chown $WEB_USER /data/import \
  && chown $WEB_USER /data/php/sessions \
+ && mkdir -p $CONCERTO_OAUTH_KEY_DIR \
  && /wait-for-it.sh $DB_HOST:$DB_PORT -t 300 \
  && php bin/console concerto:setup --env=prod --admin-pass=$CONCERTO_PASSWORD \
+ && chown -R $WEB_USER $CONCERTO_OAUTH_KEY_DIR \
  && if [ "$CONCERTO_CONTENT_IMPORT_AT_START" = "true" ]; \
     then php bin/console concerto:content:import --env=prod --sc; \
     fi \

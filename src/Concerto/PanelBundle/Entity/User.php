@@ -6,7 +6,7 @@ use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Security\Core\User\EquatableInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Validator\Constraints as Assert;
-use Symfony\Component\Security\Core\User\AdvancedUserInterface;
+use Symfony\Component\Security\Core\User\LegacyPasswordAuthenticatedUserInterface;
 use Doctrine\Common\Collections\ArrayCollection;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Scheb\TwoFactorBundle\Model\Google\TwoFactorInterface;
@@ -17,7 +17,7 @@ use Scheb\TwoFactorBundle\Model\Google\TwoFactorInterface;
  * @UniqueEntity(fields="username", message="validate.user.username.unique")
  * @UniqueEntity(fields="email", message="validate.user.email.unique")
  */
-class User extends ATopEntity implements AdvancedUserInterface, \Serializable, \JsonSerializable, EquatableInterface, TwoFactorInterface
+class User extends ATopEntity implements UserInterface, LegacyPasswordAuthenticatedUserInterface, \Serializable, \JsonSerializable, EquatableInterface, TwoFactorInterface
 {
     const ROLE_SUPER_ADMIN = "ROLE_SUPER_ADMIN";
     const ROLE_TEST = "ROLE_TEST";
@@ -119,7 +119,7 @@ class User extends ATopEntity implements AdvancedUserInterface, \Serializable, \
     /**
      * @inheritDoc
      */
-    public function getPassword()
+    public function getPassword(): ?string
     {
         return $this->password;
     }
@@ -127,7 +127,7 @@ class User extends ATopEntity implements AdvancedUserInterface, \Serializable, \
     /**
      * @inheritDoc
      */
-    public function getRoles()
+    public function getRoles(): array
     {
         return array_map(function (Role $role) {
             return $role->getRole();
@@ -137,7 +137,7 @@ class User extends ATopEntity implements AdvancedUserInterface, \Serializable, \
     /**
      * @inheritDoc
      */
-    public function getSalt()
+    public function getSalt(): ?string
     {
         return $this->salt;
     }
@@ -145,9 +145,17 @@ class User extends ATopEntity implements AdvancedUserInterface, \Serializable, \
     /**
      * @inheritDoc
      */
+    /**
+     * @return string
+     */
     public function getUsername()
     {
         return $this->username;
+    }
+
+    public function getUserIdentifier(): string
+    {
+        return (string)$this->username;
     }
 
     /**
@@ -331,6 +339,10 @@ class User extends ATopEntity implements AdvancedUserInterface, \Serializable, \
         return $this->password === $this->passwordConfirmation;
     }
 
+    /*
+     * Account status checks below are enforced by Concerto\PanelBundle\Security\UserChecker
+     * (AdvancedUserInterface was removed in Symfony 5).
+     */
     public function isAccountNonExpired()
     {
         return true;
@@ -423,7 +435,7 @@ class User extends ATopEntity implements AdvancedUserInterface, \Serializable, \
         return $this;
     }
 
-    public function isEqualTo(UserInterface $user)
+    public function isEqualTo(UserInterface $user): bool
     {
         if ($this->password !== $user->getPassword()) {
             return false;
@@ -445,6 +457,9 @@ class User extends ATopEntity implements AdvancedUserInterface, \Serializable, \
         return null;
     }
 
+    /**
+     * @return mixed
+     */
     #[\ReturnTypeWillChange]
     public function jsonSerialize(&$dependencies = array())
     {

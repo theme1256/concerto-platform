@@ -13,7 +13,7 @@ use Concerto\PanelBundle\Repository\TestRepository;
 use Concerto\PanelBundle\Repository\TestSessionRepository;
 use Concerto\PanelBundle\Repository\TestWizardRepository;
 use Concerto\PanelBundle\Repository\ViewTemplateRepository;
-use Symfony\Bridge\Doctrine\RegistryInterface;
+use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Component\Filesystem\Exception\IOException;
 use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\HttpKernel\KernelInterface;
@@ -62,7 +62,7 @@ class AdministrationService
                                         $rootDir,
         Environment                     $templating,
         TestSessionLogRepository        $testSessionLogRepository,
-        RegistryInterface               $doctrine,
+        ManagerRegistry                 $doctrine,
         ScheduledTaskRepository         $scheduledTaskRepository,
         KernelInterface                 $kernel,
         ClientRepository                $clientRepository,
@@ -450,7 +450,7 @@ class AdministrationService
         $app->setAutoExit(false);
         $in = new ArrayInput(array(
             "command" => "oauth-server:client:create",
-            "--grant-type" => array("token", "client_credentials")
+            "--grant-type" => array("client_credentials")
         ));
         $out = new BufferedOutput();
         $return_code = $app->run($in, $out);
@@ -471,7 +471,7 @@ class AdministrationService
 
         $cmd = "$rscript_path -e \"installed.packages($lib_loc_arg)\"";
 
-        $proc = new Process($cmd);
+        $proc = Process::fromShellCommandline($cmd);
         $return_var = $proc->run();
         $output = $proc->getOutput();
         return $return_var === 0;

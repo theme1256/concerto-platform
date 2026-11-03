@@ -27,7 +27,7 @@ class OtpAuthorize extends Command
         $this->addArgument("code", InputArgument::REQUIRED);
     }
 
-    protected function execute(InputInterface $input, OutputInterface $output)
+    protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $username = $input->getArgument("username");
         $secret = $input->getArgument("secret");

@@ -29,7 +29,7 @@ class ConcertoRCacheCommand extends Command
         $this->setName("concerto:r:cache")->setDescription("Caches R functions documentation.");
     }
 
-    protected function execute(InputInterface $input, OutputInterface $output)
+    protected function execute(InputInterface $input, OutputInterface $output): int
     {
         gc_enable();
         $output->writeln("Generating R documentation cache. This might take several minutes...");
@@ -37,7 +37,7 @@ class ConcertoRCacheCommand extends Command
 
         $script_path = "{$this->projectDir}/src/Concerto/PanelBundle/Resources/R/function_documentation.R";
         $p = "\"" . $this->testRunnerSettings['rscript_exec'] . "\" --no-save --no-restore --quiet \"" . $script_path . "\"";
-        $process = new Process($p);
+        $process = Process::fromShellCommandline($p);
 
         $r_environ_path = $this->testRunnerSettings['r_environ_session_path'];
         $r_profile_path = $this->testRunnerSettings['r_profile_session_path'];

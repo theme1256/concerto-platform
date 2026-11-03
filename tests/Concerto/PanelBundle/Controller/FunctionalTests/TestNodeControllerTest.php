@@ -12,14 +12,14 @@ class TestNodeControllerTest extends AFunctionalTest
     private static $repository;
     private static $portRepository;
 
-    public static function setUpBeforeClass()
+    public static function setUpBeforeClass(): void
     {
         parent::setUpBeforeClass();
         self::$repository = static::$entityManager->getRepository("ConcertoPanelBundle:TestNode");
         self::$portRepository = static::$entityManager->getRepository("ConcertoPanelBundle:TestNodePort");
     }
 
-    protected function setUp()
+    protected function setUp(): void
     {
         parent::setUp();
 

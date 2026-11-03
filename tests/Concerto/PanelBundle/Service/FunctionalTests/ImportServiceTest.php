@@ -34,7 +34,7 @@ class ImportServiceTest extends AFunctionalTest
         }
     }
 
-    public static function setUpBeforeClass()
+    public static function setUpBeforeClass(): void
     {
         parent::setUpBeforeClass();
         self::$testRepository = static::$entityManager->getRepository("ConcertoPanelBundle:Test");
@@ -50,7 +50,7 @@ class ImportServiceTest extends AFunctionalTest
         self::$dataTableRepository = static::$entityManager->getRepository("ConcertoPanelBundle:DataTable");
     }
 
-    protected function setUp()
+    protected function setUp(): void
     {
         self::truncateClass("ConcertoPanelBundle:Test");
         self::truncateClass("ConcertoPanelBundle:TestSession");

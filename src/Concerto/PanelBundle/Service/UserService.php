@@ -9,7 +9,7 @@ use Psr\Log\LoggerInterface;
 use Scheb\TwoFactorBundle\Security\TwoFactor\Provider\Google\GoogleAuthenticatorInterface;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
-use Symfony\Component\Security\Core\Encoder\EncoderFactoryInterface;
+use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 class UserService extends ASectionService
@@ -21,7 +21,7 @@ class UserService extends ASectionService
         "TestWizard",
         "ViewTemplate"
     );
-    private $encoderFactory;
+    private $passwordHasher;
     private $roleRepository;
     private $uio;
     private $importService;
@@ -32,7 +32,7 @@ class UserService extends ASectionService
         UserRepository $repository,
         RoleRepository $roleRepository,
         ValidatorInterface $validator,
-        EncoderFactoryInterface $encoderFactory,
+        UserPasswordHasherInterface $passwordHasher,
         AuthorizationCheckerInterface $securityAuthorizationChecker,
         $uio,
         ImportService $importService,
@@ -46,7 +46,7 @@ class UserService extends ASectionService
 
         $this->roleRepository = $roleRepository;
         $this->validator = $validator;
-        $this->encoderFactory = $encoderFactory;
+        $this->passwordHasher = $passwordHasher;
         $this->uio = $uio;
         $this->importService = $importService;
         $this->googleAuthenticatorService = $googleAuthenticatorService;
@@ -148,11 +148,10 @@ class UserService extends ASectionService
         }
 
         $object->setArchived($archived);
-        $encoder = $this->encoderFactory->getEncoder($object);
         if ($password != null) {
-            $password = $encoder->encodePassword($password, $object->getSalt());
+            $password = $this->passwordHasher->hashPassword($object, $password);
             $object->setPassword($password);
-            $passwordConfirmation = $encoder->encodePassword($passwordConfirmation, $object->getSalt());
+            $passwordConfirmation = $this->passwordHasher->hashPassword($object, $passwordConfirmation);
             $object->setPasswordConfirmation($passwordConfirmation);
         } else {
             $object->setPasswordConfirmation($object->getPassword());

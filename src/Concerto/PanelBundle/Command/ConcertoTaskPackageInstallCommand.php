@@ -90,7 +90,7 @@ class ConcertoTaskPackageInstallCommand extends ConcertoScheduledTaskCommand
     protected function executeTask(ScheduledTask $task, OutputInterface $output)
     {
         $cmd = $this->getCommand($task);
-        $proc = new Process($cmd);
+        $proc = Process::fromShellCommandline($cmd);
         $proc->setTimeout(null);
         $result = $proc->run();
         $output->writeln($proc->getOutput());

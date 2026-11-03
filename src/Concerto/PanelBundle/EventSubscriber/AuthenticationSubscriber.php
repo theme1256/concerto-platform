@@ -4,10 +4,10 @@ namespace Concerto\PanelBundle\EventSubscriber;
 
 use Concerto\PanelBundle\Repository\UserRepository;
 use Concerto\PanelBundle\Service\AdministrationService;
-use Symfony\Component\Security\Core\AuthenticationEvents;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
-use Symfony\Component\Security\Core\Event\AuthenticationEvent;
-use Symfony\Component\Security\Core\Event\AuthenticationFailureEvent;
+use Symfony\Component\Security\Http\Authenticator\Passport\Badge\UserBadge;
+use Symfony\Component\Security\Http\Event\LoginFailureEvent;
+use Symfony\Component\Security\Http\Event\LoginSuccessEvent;
 use Concerto\PanelBundle\Entity\User;
 
 class AuthenticationSubscriber implements EventSubscriberInterface
@@ -21,18 +21,30 @@ class AuthenticationSubscriber implements EventSubscriberInterface
         $this->adminService = $adminService;
     }
 
-    public static function getSubscribedEvents()
+    public static function getSubscribedEvents(): array
     {
         return array(
-            AuthenticationEvents::AUTHENTICATION_FAILURE => 'onAuthenticationFailure',
-            AuthenticationEvents::AUTHENTICATION_SUCCESS => 'onAuthenticationSuccess'
+            LoginFailureEvent::class => 'onAuthenticationFailure',
+            LoginSuccessEvent::class => 'onAuthenticationSuccess'
         );
     }
 
-    public function onAuthenticationFailure(AuthenticationFailureEvent $event)
+    private static function getAttemptedUsername(LoginFailureEvent $event)
+    {
+        $passport = $event->getPassport();
+        if ($passport !== null && $passport->hasBadge(UserBadge::class)) {
+            return $passport->getBadge(UserBadge::class)->getUserIdentifier();
+        }
+        return $event->getRequest()->request->get('_username');
+    }
+
+    public function onAuthenticationFailure(LoginFailureEvent $event)
     {
         if ($this->adminService->isFailedAuthLockEnabled()) {
-            $username = $event->getAuthenticationToken()->getUsername();
+            $username = self::getAttemptedUsername($event);
+            if ($username === null || $username === '') {
+                return;
+            }
             $maxStreak = (int)$this->adminService->getFailedAuthLockStreak();
             $duration = (int)$this->adminService->getFailedAuthLockTime();
 
@@ -51,10 +63,10 @@ class AuthenticationSubscriber implements EventSubscriberInterface
         }
     }
 
-    public function onAuthenticationSuccess(AuthenticationEvent $event)
+    public function onAuthenticationSuccess(LoginSuccessEvent $event)
     {
         /** @var User $user */
-        $user = $event->getAuthenticationToken()->getUser();
+        $user = $event->getUser();
         if (is_a($user, User::class) && $user->getFailedAuthenticationStreak() > 0) {
             $user->setFailedAuthenticationStreak(0);
             $this->userRepository->save($user);

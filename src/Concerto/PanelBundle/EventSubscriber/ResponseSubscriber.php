@@ -2,7 +2,7 @@
 
 namespace Concerto\PanelBundle\EventSubscriber;
 
-use Symfony\Component\HttpKernel\Event\FilterResponseEvent;
+use Symfony\Component\HttpKernel\Event\ResponseEvent;
 
 class ResponseSubscriber
 {
@@ -14,7 +14,7 @@ class ResponseSubscriber
     ];
     const CACHE_MAX_AGE = 60 * 60 * 24;
 
-    public function onKernelResponse(FilterResponseEvent $event)
+    public function onKernelResponse(ResponseEvent $event)
     {
         $response = $event->getResponse();
         $controller = $event->getRequest()->attributes->get('_controller');

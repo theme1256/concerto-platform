@@ -7,12 +7,12 @@ use Concerto\PanelBundle\Repository\TestSessionRepository;
 use Concerto\PanelBundle\Service\AdministrationService;
 use Concerto\PanelBundle\Service\TestSessionService;
 use Psr\Log\LoggerInterface;
-use Symfony\Bridge\Doctrine\RegistryInterface;
+use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Component\Process\Process;
 
 class PersistantSessionRunnerService extends ASessionRunnerService
 {
-    public function __construct($environment, LoggerInterface $logger, TestSessionRepository $testSessionRepository, AdministrationService $administrationService, TestSessionCountService $testSessionCountService, RegistryInterface $doctrine, $testRunnerSettings, $projectDir)
+    public function __construct($environment, LoggerInterface $logger, TestSessionRepository $testSessionRepository, AdministrationService $administrationService, TestSessionCountService $testSessionCountService, ManagerRegistry $doctrine, $testRunnerSettings, $projectDir)
     {
         $this->runnerType = 0;
 
