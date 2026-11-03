@@ -1,12 +1,12 @@
-{% extends "::base_include.html.twig" %}
+{% extends "base_include.html.twig" %}
 {% trans_default_domain "panel" %}
 
 {% block content %}
     <div class="moduleList" ng-if="tabSection == 'list'">
-        {{ include("ConcertoPanelBundle::list.html.twig", {'class_name':class_name}) }}
+        {{ include("@ConcertoPanel/list.html.twig", {'class_name':class_name}) }}
     </div>
 
     <div class="moduleForm" ng-if="tabSection == 'form'">
-        {{ render(controller("ConcertoPanelBundle:"~ class_name ~":form")) }}
+        {{ render(controller("Concerto\\PanelBundle\\Controller\\" ~ class_name ~ "Controller::formAction")) }}
     </div>
 {% endblock %}

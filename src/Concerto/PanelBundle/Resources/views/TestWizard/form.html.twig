@@ -1,16 +1,16 @@
-{% extends "ConcertoPanelBundle::form_h.html.twig" %}
+{% extends "@ConcertoPanel/form_h.html.twig" %}
 {% set class_name = "TestWizard" %}
 {% trans_default_domain "TestWizard" %}
 {% set exportable = true %}
 
 {% block top %}
-    {{ include("ConcertoPanelBundle::lock_info.html.twig") }}
+    {{ include("@ConcertoPanel/lock_info.html.twig") }}
 {% endblock %}
 {% block legend %} 
     <span ng-bind-html="formTitle"></span>
 {% endblock %}
 {% block elements %}
-    {% embed "ConcertoPanelBundle::form_h_element.html.twig" %}
+    {% embed "@ConcertoPanel/form_h_element.html.twig" %}
         {% trans_default_domain "TestWizard" %}
         {% block label %}{{ 'form.field.name'|trans }}{% endblock %}
         {% block tooltip %}{{'form.field.name.tooltip'|trans}}{% endblock %}
@@ -19,7 +19,7 @@
         {% endblock %}
     {% endembed %}
 
-    {% embed "ConcertoPanelBundle::form_h_element.html.twig" %}
+    {% embed "@ConcertoPanel/form_h_element.html.twig" %}
         {% trans_default_domain "TestWizard" %}
         {% block label %}{{ 'form.field.archived'|trans }}{% endblock %}
         {% block tooltip %}{{'form.field.archived.tooltip'|trans}}{% endblock %}
@@ -28,7 +28,7 @@
         {% endblock %}
     {% endembed %}
 
-    {% embed "ConcertoPanelBundle::form_h_element.html.twig" %}
+    {% embed "@ConcertoPanel/form_h_element.html.twig" %}
         {% trans_default_domain "TestWizard" %}
         {% block label %}{{ 'form.field.test'|trans }}{% endblock %}
         {% block tooltip %}{{'form.field.test.tooltip'|trans}}{% endblock %}
@@ -46,7 +46,7 @@
     {% endembed %}
 
     {% if app.user and is_granted('ROLE_SUPER_ADMIN') %}
-        {% embed "ConcertoPanelBundle::form_h_element.html.twig" %}
+        {% embed "@ConcertoPanel/form_h_element.html.twig" %}
             {% trans_default_domain "TestWizard" %}
             {% block label %}{{ 'form.field.accessibility'|trans }}{% endblock %}
             {% block tooltip %}{{'form.field.accessibility.tooltip'|trans}}{% endblock %}
@@ -56,7 +56,7 @@
             {% endblock %}
         {% endembed %}
 
-        {% embed "ConcertoPanelBundle::form_h_element.html.twig" %}
+        {% embed "@ConcertoPanel/form_h_element.html.twig" %}
             {% trans_default_domain "TestWizard" %}
             {% block label %}{{ 'form.field.owner'|trans }}{% endblock %}
             {% block tooltip %}{{'form.field.owner.tooltip'|trans}}{% endblock %}
@@ -67,7 +67,7 @@
             {% endblock %}
         {% endembed %}
 
-        {% embed "ConcertoPanelBundle::form_h_element.html.twig" %}
+        {% embed "@ConcertoPanel/form_h_element.html.twig" %}
             {% trans_default_domain "TestWizard" %}
             {% block label %}{{ 'form.field.groups'|trans }}{% endblock %}
             {% block tooltip %}{{'form.field.groups.tooltip'|trans}}{% endblock %}
@@ -86,7 +86,7 @@
             {{ 'step.fieldset.legend'|trans }}
             <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': tabAccordion.step.open, 'glyphicon-chevron-right': !tabAccordion.step.open}"></i>
         </uib-accordion-heading>
-        {{ include("ConcertoPanelBundle:TestWizard:step_section.html.twig", {'class_name':"TestWizard"}) }}
+        {{ include("@ConcertoPanel/TestWizard/step_section.html.twig", {'class_name':"TestWizard"}) }}
     </uib-accordion-group>
 
     <uib-accordion-group is-open="tabAccordion.param.open">
@@ -95,7 +95,7 @@
             {{ 'param.fieldset.legend'|trans }}
             <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': tabAccordion.param.open, 'glyphicon-chevron-right': !tabAccordion.param.open}"></i>
         </uib-accordion-heading>
-        {{ include("ConcertoPanelBundle:TestWizard:param_section.html.twig", {'class_name':"TestWizard"}) }}
+        {{ include("@ConcertoPanel/TestWizard/param_section.html.twig", {'class_name':"TestWizard"}) }}
     </uib-accordion-group>
 
     <uib-accordion-group is-open="tabAccordion.preview.open">
@@ -104,6 +104,6 @@
             {{ 'preview.fieldset.legend'|trans }}
             <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': tabAccordion.preview.open, 'glyphicon-chevron-right': !tabAccordion.preview.open}"></i>
         </uib-accordion-heading>
-        {{ include("ConcertoPanelBundle:TestWizard:preview_section.html.twig", {'class_name':"TestWizard"}) }}
+        {{ include("@ConcertoPanel/TestWizard/preview_section.html.twig", {'class_name':"TestWizard"}) }}
     </uib-accordion-group>
 {% endblock %}

@@ -5,14 +5,14 @@ namespace Concerto\PanelBundle\Command;
 use Concerto\PanelBundle\Repository\ScheduledTaskRepository;
 use Concerto\PanelBundle\Service\AdministrationService;
 use Concerto\PanelBundle\Service\GitService;
-use Doctrine\Common\Persistence\ManagerRegistry;
+use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Component\Console\Input\InputInterface;
 use Concerto\PanelBundle\Entity\ScheduledTask;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\Process\Process;
-use Symfony\Component\Templating\EngineInterface;
+use Twig\Environment;
 
 class ConcertoTaskGitEnableCommand extends ConcertoScheduledTaskCommand
 {
@@ -23,7 +23,7 @@ class ConcertoTaskGitEnableCommand extends ConcertoScheduledTaskCommand
     /** @var OutputInterface */
     private $output;
 
-    public function __construct(AdministrationService $administrationService, $administration, ManagerRegistry $doctrine, EngineInterface $templating, GitService $gitService, ScheduledTaskRepository $scheduledTaskRepository)
+    public function __construct(AdministrationService $administrationService, $administration, ManagerRegistry $doctrine, Environment $templating, GitService $gitService, ScheduledTaskRepository $scheduledTaskRepository)
     {
         $this->templating = $templating;
         $this->gitService = $gitService;

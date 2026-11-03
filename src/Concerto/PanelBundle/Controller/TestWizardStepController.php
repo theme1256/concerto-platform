@@ -3,7 +3,7 @@
 namespace Concerto\PanelBundle\Controller;
 
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Bundle\FrameworkBundle\Templating\EngineInterface;
+use Twig\Environment;
 use Concerto\PanelBundle\Service\TestWizardService;
 use Concerto\PanelBundle\Service\TestWizardStepService;
 use Symfony\Component\HttpFoundation\Request;
@@ -13,7 +13,7 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 
 /**
  * @Route("/admin")
- * @Security("has_role('ROLE_WIZARD') or has_role('ROLE_SUPER_ADMIN')")
+ * @Security("is_granted('ROLE_WIZARD') or is_granted('ROLE_SUPER_ADMIN')")
  */
 class TestWizardStepController extends ASectionController
 {
@@ -22,7 +22,7 @@ class TestWizardStepController extends ASectionController
 
     private $testWizardService;
 
-    public function __construct(EngineInterface $templating, TestWizardStepService $service, TranslatorInterface $translator, TestWizardService $testWizardService)
+    public function __construct(Environment $templating, TestWizardStepService $service, TranslatorInterface $translator, TestWizardService $testWizardService)
     {
         parent::__construct($templating, $service, $translator);
 
@@ -49,9 +49,9 @@ class TestWizardStepController extends ASectionController
      */
     public function collectionByWizardAction($wizard_id, $format = "json")
     {
-        return $this->templating->renderResponse('ConcertoPanelBundle::collection.' . $format . '.twig', array(
+        return new Response($this->templating->render('@ConcertoPanel/collection.' . $format . '.twig', array(
             'collection' => $this->service->getByTestWizard($wizard_id)
-        ));
+        )));
     }
 
     /**

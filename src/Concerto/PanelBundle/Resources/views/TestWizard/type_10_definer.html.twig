@@ -1,14 +1,14 @@
 <script type="text/ng-template" id="type_10_definer.html">
     <div ng-controller="WizardParamDefiner10Controller">
-    {% embed "ConcertoPanelBundle:TestWizard:type_base_definer.html.twig" %}
+    {% embed "@ConcertoPanel/TestWizard/type_base_definer.html.twig" %}
         {% trans_default_domain "TestWizard" %}
         {% block definition %}
-            {% embed "ConcertoPanelBundle::form_v_panel.html.twig" %}
+            {% embed "@ConcertoPanel/form_v_panel.html.twig" %}
                 {% trans_default_domain "TestWizard" %}
                 {% block legend %}{%verbatim%}{{testWizardParamService.getDefinerTitle(param)}}{%endverbatim%}{% endblock %}
                 {% block legend_tooltip %}{{ 'param.definer.titles.list.tooltip'|trans }}{% endblock %}
                 {% block elements %}
-                    {% embed "ConcertoPanelBundle::form_v_element.html.twig" %}
+                    {% embed "@ConcertoPanel/form_v_element.html.twig" %}
                         {% trans_default_domain "TestWizard" %}
                         {% block label %}{{ 'param.form.field.type'|trans }}{% endblock%}
                         {% block tooltip %}{{ 'param.form.field.type.tooltip'|trans }}{% endblock%}
@@ -18,7 +18,7 @@
                         {% endblock %}
                     {% endembed %}
 
-                    {% embed "ConcertoPanelBundle::form_v_element.html.twig" %}
+                    {% embed "@ConcertoPanel/form_v_element.html.twig" %}
                         {% trans_default_domain "TestWizard" %}
                         {% block row %}<tr ng-if="typesCollection[param.definition.element.type].definer">{% endblock %}
                             {% block label %}{{ 'param.form.field.definition'|trans }}{% endblock%}

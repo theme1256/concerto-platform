@@ -1,4 +1,4 @@
-{% extends "ConcertoPanelBundle::base_panel.html.twig" %}
+{% extends "@ConcertoPanel/base_panel.html.twig" %}
 {% trans_default_domain "panel" %}
 
 {% block javascripts %}
@@ -21,13 +21,13 @@
     {{ parent() }}
     <div class="headerElement mainLayoutElement">
         {% block header %}
-            {{ include("ConcertoPanelBundle::header.html.twig") }}
+            {{ include("@ConcertoPanel/header.html.twig") }}
         {% endblock %}
     </div>
 
     <div ng-controller="ContentController" class="mainLayoutElement mainContentContainer">
         {% block content %}
-            {{ include("ConcertoPanelBundle::content.html.twig") }}
+            {{ include("@ConcertoPanel/content.html.twig") }}
         {% endblock %}
     </div>
 

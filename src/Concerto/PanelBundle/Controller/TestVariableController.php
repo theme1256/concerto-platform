@@ -3,7 +3,7 @@
 namespace Concerto\PanelBundle\Controller;
 
 use Doctrine\Common\Collections\ArrayCollection;
-use Symfony\Bundle\FrameworkBundle\Templating\EngineInterface;
+use Twig\Environment;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Translation\TranslatorInterface;
 use Concerto\PanelBundle\Service\TestVariableService;
@@ -14,7 +14,7 @@ use Symfony\Component\HttpFoundation\Response;
 
 /**
  * @Route("/admin")
- * @Security("has_role('ROLE_TEST') or has_role('ROLE_SUPER_ADMIN')")
+ * @Security("is_granted('ROLE_TEST') or is_granted('ROLE_SUPER_ADMIN')")
  */
 class TestVariableController extends ASectionController
 {
@@ -23,7 +23,7 @@ class TestVariableController extends ASectionController
 
     private $testService;
 
-    public function __construct(EngineInterface $templating, TestVariableService $service, TranslatorInterface $translator, TestService $testService)
+    public function __construct(Environment $templating, TestVariableService $service, TranslatorInterface $translator, TestService $testService)
     {
         parent::__construct($templating, $service, $translator);
 
@@ -50,7 +50,7 @@ class TestVariableController extends ASectionController
     public function collectionByTestAction($test_id)
     {
         $collection = $this->service->getAllVariables($test_id);
-        return $this->templating->renderResponse("ConcertoPanelBundle::collection.json.twig", array("collection" => $collection));
+        return new Response($this->templating->render("@ConcertoPanel/collection.json.twig", array("collection" => $collection)));
     }
 
     /**
@@ -61,7 +61,7 @@ class TestVariableController extends ASectionController
     public function parametersCollectionAction($test_id)
     {
         $collection = $this->service->getParameters($test_id);
-        return $this->templating->renderResponse("ConcertoPanelBundle::collection.json.twig", array("collection" => $collection));
+        return new Response($this->templating->render("@ConcertoPanel/collection.json.twig", array("collection" => $collection)));
     }
 
     /**
@@ -72,7 +72,7 @@ class TestVariableController extends ASectionController
     public function returnsCollectionAction($test_id)
     {
         $collection = $this->service->getReturns($test_id);
-        return $this->templating->renderResponse("ConcertoPanelBundle::collection.json.twig", array("collection" => $collection));
+        return new Response($this->templating->render("@ConcertoPanel/collection.json.twig", array("collection" => $collection)));
     }
 
     /**
@@ -83,7 +83,7 @@ class TestVariableController extends ASectionController
     public function branchesCollectionAction($test_id)
     {
         $collection = $this->service->getBranches($test_id);
-        return $this->templating->renderResponse("ConcertoPanelBundle::collection.json.twig", array("collection" => $collection));
+        return new Response($this->templating->render("@ConcertoPanel/collection.json.twig", array("collection" => $collection)));
     }
 
     /**

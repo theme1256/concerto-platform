@@ -1,6 +1,6 @@
 <script type="text/ng-template" id="type_8_setter.html">
     <div ng-controller="WizardParamSetter8Controller">
-        {% embed "ConcertoPanelBundle:TestWizard:type_base_setter.html.twig" %}
+        {% embed "@ConcertoPanel/TestWizard/type_base_setter.html.twig" %}
             {% trans_default_domain "TestWizard" %}
             {% block setter %}
                 <select ng-model="output" ng-change="onPrimitiveValueChange(output)"

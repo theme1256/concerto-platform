@@ -1,4 +1,4 @@
-{% extends "::base_include.html.twig" %}
+{% extends "base_include.html.twig" %}
 {% trans_default_domain "panel" %}
 
 {% block content %}
@@ -19,7 +19,7 @@ endif %}'" style="height: 100%;">
                         <div ng-if="tab.activeIndex == 0" ng-controller="TestController" id="test-tab">
                             <div class="breadcrumb c-breadcrumb" ncy-breadcrumb style="text-align: left;"></div>
                             <div ui-view="tabViewTest" class="center"></div>
-                            {{ include("ConcertoPanelBundle::tab.html.twig", {'class_name':"Test"}) }}
+                            {{ include("@ConcertoPanel/tab.html.twig", {'class_name':"Test"}) }}
                         </div>
                     </uib-tab>
                 {% endif %}
@@ -30,7 +30,7 @@ endif %}'" style="height: 100%;">
                         <div ng-if="tab.activeIndex == 5" ng-controller="TestWizardController">
                             <div class="breadcrumb c-breadcrumb" ncy-breadcrumb style="text-align: left;"></div>
                             <div ui-view="tabViewTestWizard" class="center"></div>
-                            {{ include("ConcertoPanelBundle::tab.html.twig", {'class_name':"TestWizard"}) }}
+                            {{ include("@ConcertoPanel/tab.html.twig", {'class_name':"TestWizard"}) }}
                         </div>
                     </uib-tab>
                 {% endif %}
@@ -41,7 +41,7 @@ endif %}'" style="height: 100%;">
                         <div ng-if="tab.activeIndex == 1" ng-controller="ViewTemplateController">
                             <div class="breadcrumb c-breadcrumb" ncy-breadcrumb style="text-align: left;"></div>
                             <div ui-view="tabViewViewTemplate" class="center"></div>
-                            {{ include("ConcertoPanelBundle::tab.html.twig", {'class_name':"ViewTemplate"}) }}
+                            {{ include("@ConcertoPanel/tab.html.twig", {'class_name':"ViewTemplate"}) }}
                         </div>
                     </uib-tab>
                 {% endif %}
@@ -52,7 +52,7 @@ endif %}'" style="height: 100%;">
                         <div ng-if="tab.activeIndex == 2" ng-controller="DataTableController">
                             <div class="breadcrumb c-breadcrumb" ncy-breadcrumb style="text-align: left;"></div>
                             <div ui-view="tabViewDataTable" class="center"></div>
-                            {{ include("ConcertoPanelBundle::tab.html.twig", {'class_name':"DataTable"}) }}
+                            {{ include("@ConcertoPanel/tab.html.twig", {'class_name':"DataTable"}) }}
                         </div>
                     </uib-tab>
                 {% endif %}
@@ -63,7 +63,7 @@ endif %}'" style="height: 100%;">
                         <div ng-if="tab.activeIndex == 3" ng-controller="FileBrowserController">
                             <div class="breadcrumb c-breadcrumb" ncy-breadcrumb style="text-align: left;"></div>
                             <div ui-view="tabViewFile" class="center"></div>
-                            {{ include("ConcertoPanelBundle:FileBrowser:file_browser_content.html.twig") }}
+                            {{ include("@ConcertoPanel/FileBrowser/file_browser_content.html.twig") }}
                         </div>
                     </uib-tab>
                 {% endif %}
@@ -74,7 +74,7 @@ endif %}'" style="height: 100%;">
                         <div ng-if="tab.activeIndex == 4" ng-controller="UserController">
                             <div class="breadcrumb c-breadcrumb" ncy-breadcrumb style="text-align: left;"></div>
                             <div ui-view="tabViewUser" class="center"></div>
-                            {{ include("ConcertoPanelBundle::tab.html.twig", {'class_name':"User"}) }}
+                            {{ include("@ConcertoPanel/tab.html.twig", {'class_name':"User"}) }}
                         </div>
                     </uib-tab>
                 {% endif %}
@@ -85,7 +85,7 @@ endif %}'" style="height: 100%;">
                         <div ng-if="tab.activeIndex == 6" ng-controller="AdministrationController" id="administration-tab">
                             <div class="breadcrumb c-breadcrumb" ncy-breadcrumb style="text-align: left;"></div>
                             <div ui-view="tabViewAdministration" class="center"></div>
-                            {{ include("ConcertoPanelBundle:Administration:form.html.twig") }}
+                            {{ include("@ConcertoPanel/Administration/form.html.twig") }}
                         </div>
                     </uib-tab>
                 {% endif %}
@@ -97,8 +97,8 @@ endif %}'" style="height: 100%;">
 
             <!-- wizard param setters -->
             {% for i in 0..13 %}
-                {{ include("ConcertoPanelBundle:TestWizard:type_" ~ i ~ "_setter.html.twig") }}
-                {{ include("ConcertoPanelBundle:TestWizard:type_" ~ i ~ "_definer.html.twig") }}
+                {{ include("@ConcertoPanel/TestWizard/type_" ~ i ~ "_setter.html.twig") }}
+                {{ include("@ConcertoPanel/TestWizard/type_" ~ i ~ "_definer.html.twig") }}
             {% endfor %}
 
         </div>

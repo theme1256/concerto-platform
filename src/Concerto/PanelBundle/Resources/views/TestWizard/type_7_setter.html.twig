@@ -1,15 +1,15 @@
 <script type="text/ng-template" id="type_7_setter.html">
     <div ng-controller="WizardParamSetter7Controller">
-        {% embed "ConcertoPanelBundle:TestWizard:type_base_setter.html.twig" %}
+        {% embed "@ConcertoPanel/TestWizard/type_base_setter.html.twig" %}
             {% trans_default_domain "TestWizard" %}
             {% block setter %}
 
-                {% embed "ConcertoPanelBundle::form_v_panel.html.twig" %}
+                {% embed "@ConcertoPanel/form_v_panel.html.twig" %}
                     {% trans_default_domain "TestWizard" %}
                     {% block legend %}{% verbatim %}{{ title }}{% endverbatim %}{% endblock %}
                     {% block legend_tooltip %}{{ 'param.setter.titles.column.tooltip'|trans }}{% endblock %}
                     {% block elements %}
-                        {% embed "ConcertoPanelBundle::form_v_element.html.twig" %}
+                        {% embed "@ConcertoPanel/form_v_element.html.twig" %}
                             {% trans_default_domain "TestWizard" %}
                             {% block label %}{{ 'param.setter.column.table'|trans }}{% endblock %}
                             {% block tooltip %}{{ 'param.setter.column.table.tooltip'|trans }}{% endblock %}
@@ -23,7 +23,7 @@
                             {% endblock %}
                         {% endembed %}
 
-                        {% embed "ConcertoPanelBundle::form_v_element.html.twig" %}
+                        {% embed "@ConcertoPanel/form_v_element.html.twig" %}
                             {% trans_default_domain "TestWizard" %}
                             {% block label %}{{ 'param.setter.column'|trans }}{% endblock %}
                             {% block tooltip %}{{ 'param.setter.column.tooltip'|trans }}{% endblock %}

@@ -52,6 +52,8 @@ EOT
                 'Added a new client with public id <info>%s</info>, secret <info>%s</info>', $client->getPublicId(), $client->getSecret()
             )
         );
+
+        return 0;
     }
 
 }

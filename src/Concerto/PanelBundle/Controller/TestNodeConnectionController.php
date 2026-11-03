@@ -2,7 +2,7 @@
 
 namespace Concerto\PanelBundle\Controller;
 
-use Symfony\Bundle\FrameworkBundle\Templating\EngineInterface;
+use Twig\Environment;
 use Concerto\PanelBundle\Service\TestService;
 use Concerto\PanelBundle\Service\TestNodeConnectionService;
 use Concerto\PanelBundle\Service\TestNodeService;
@@ -15,7 +15,7 @@ use Symfony\Component\HttpFoundation\Request;
 
 /**
  * @Route("/admin")
- * @Security("has_role('ROLE_TEST') or has_role('ROLE_SUPER_ADMIN')")
+ * @Security("is_granted('ROLE_TEST') or is_granted('ROLE_SUPER_ADMIN')")
  */
 class TestNodeConnectionController extends ASectionController
 {
@@ -26,7 +26,7 @@ class TestNodeConnectionController extends ASectionController
     private $testNodeService;
     private $testPortService;
 
-    public function __construct(EngineInterface $templating, TestService $testService, TestNodeConnectionService $connectionService, TestNodeService $nodeService, TestNodePortService $portService, TranslatorInterface $translator)
+    public function __construct(Environment $templating, TestService $testService, TestNodeConnectionService $connectionService, TestNodeService $nodeService, TestNodePortService $portService, TranslatorInterface $translator)
     {
         parent::__construct($templating, $connectionService, $translator);
 
@@ -65,9 +65,9 @@ class TestNodeConnectionController extends ASectionController
      */
     public function collectionByFlowTestAction($test_id)
     {
-        return $this->templating->renderResponse('ConcertoPanelBundle::collection.json.twig', array(
+        return new Response($this->templating->render('@ConcertoPanel/collection.json.twig', array(
             'collection' => $this->service->getByFlowTest($test_id)
-        ));
+        )));
     }
 
     /**

@@ -24,19 +24,18 @@
     "php": ">=7.2",
     "cocur/slugify": "~1.0",
     "doctrine/doctrine-bundle": "^1.12",
-    "doctrine/orm": "2.7.*",
     "doctrine/inflector": "1.3.*",
+    "doctrine/orm": "2.7.*",
     "friendsofsymfony/oauth-server-bundle": "^1.6",
     "incenteev/composer-parameter-handler": "^2.0",
+    "lexik/jwt-authentication-bundle": "2.10.*",
     "onelogin/php-saml": "^3.3",
-    "sensio/distribution-bundle": "^5.0.19",
-    "sensio/framework-extra-bundle": "5.1.*",
+    "scheb/two-factor-bundle": "4.*",
+    "sensio/framework-extra-bundle": "^5.5",
     "symfony/monolog-bundle": "3.4.*",
     "symfony/polyfill-apcu": "^1.0",
-    "symfony/symfony": "3.4.*",
-    "twig/twig": "2.16.*",
-    "lexik/jwt-authentication-bundle": "2.10.*",
-    "scheb/two-factor-bundle": "4.*"
+    "symfony/symfony": "4.4.*",
+    "twig/twig": "2.16.*"
   },
   "require-dev": {
     "symfony/phpunit-bridge": "^3.0"
@@ -44,11 +43,8 @@
   "scripts": {
     "symfony-scripts": [
       "Incenteev\\ParameterHandler\\ScriptHandler::buildParameters",
-      "Sensio\\Bundle\\DistributionBundle\\Composer\\ScriptHandler::buildBootstrap",
-      "Sensio\\Bundle\\DistributionBundle\\Composer\\ScriptHandler::clearCache",
-      "Sensio\\Bundle\\DistributionBundle\\Composer\\ScriptHandler::installAssets",
-      "Sensio\\Bundle\\DistributionBundle\\Composer\\ScriptHandler::installRequirementsFile",
-      "Sensio\\Bundle\\DistributionBundle\\Composer\\ScriptHandler::prepareDeploymentTarget"
+      "@php bin/console cache:clear --no-warmup",
+      "@php bin/console assets:install web --symlink --relative"
     ],
     "post-install-cmd": [
       "@symfony-scripts"
@@ -61,15 +57,12 @@
     "sort-packages": true,
     "allow-plugins": {
       "composer/package-versions-deprecated": true
+    },
+    "platform": {
+      "php": "7.4.33"
     }
   },
   "extra": {
-    "symfony-app-dir": "app",
-    "symfony-bin-dir": "bin",
-    "symfony-var-dir": "var",
-    "symfony-web-dir": "web",
-    "symfony-tests-dir": "tests",
-    "symfony-assets-install": "relative",
     "incenteev-parameters": [
       {
         "file": "app/config/parameters_test_runner.yml"

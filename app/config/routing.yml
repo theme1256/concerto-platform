@@ -15,7 +15,7 @@ routing_custom:
 
 remove_trailing_slash:
     path: /{url}
-    defaults: { _controller: ConcertoPanelBundle:Redirect:removeTrailingSlash }
+    defaults: { _controller: Concerto\PanelBundle\Controller\RedirectController::removeTrailingSlashAction }
     requirements:
         url: .*/$
     methods: [GET]

@@ -5,7 +5,7 @@ namespace Concerto\PanelBundle\Command;
 use Concerto\PanelBundle\Service\AdministrationService;
 use Concerto\PanelBundle\Service\ExportService;
 use Concerto\PanelBundle\Service\ImportService;
-use Doctrine\Common\Persistence\ManagerRegistry;
+use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;

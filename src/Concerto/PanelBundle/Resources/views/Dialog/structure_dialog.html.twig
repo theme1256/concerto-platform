@@ -1,12 +1,12 @@
 {% trans_default_domain "DataTable" %}
 <div type="text/ng-template" id="structure_dialog.html">
 <div class="modal-body">
-    {% embed "ConcertoPanelBundle::form_v_panel.html.twig" %}
+    {% embed "@ConcertoPanel/form_v_panel.html.twig" %}
         {% trans_default_domain "DataTable" %}
         {% block legend %}{%verbatim%}{{dialogTitle}}{%endverbatim%}{% endblock %}
         {% block legend_tooltip %}{{ 'structure.fieldset.legend.tooltip'|trans }}{% endblock %}
         {% block elements %}
-            {% embed "ConcertoPanelBundle::form_v_element.html.twig" %}
+            {% embed "@ConcertoPanel/form_v_element.html.twig" %}
                 {% trans_default_domain "DataTable" %}
                 {% block label %}{{ 'structure.form.field.name'|trans }}{% endblock%}
                 {% block tooltip %}{{ 'structure.form.field.name.tooltip'|trans }}{% endblock%}
@@ -15,7 +15,7 @@
                 {% endblock %}
             {% endembed %}
 
-            {% embed "ConcertoPanelBundle::form_v_element.html.twig" %}
+            {% embed "@ConcertoPanel/form_v_element.html.twig" %}
                 {% trans_default_domain "DataTable" %}
                 {% block label %}{{ 'structure.form.field.type'|trans }}{% endblock%}
                 {% block tooltip %}{{ 'structure.form.field.type.tooltip'|trans }}{% endblock%}
@@ -25,7 +25,7 @@
                 {% endblock %}
             {% endembed %}
 
-            {% embed "ConcertoPanelBundle::form_v_element.html.twig" %}
+            {% embed "@ConcertoPanel/form_v_element.html.twig" %}
                 {% trans_default_domain "DataTable" %}
                 {% block label %}{{ 'structure.form.field.length'|trans }}{% endblock%}
                 {% block tooltip %}{{ 'structure.form.field.length.tooltip'|trans }}{% endblock%}
@@ -34,7 +34,7 @@
                 {% endblock %}
             {% endembed %}
 
-            {% embed "ConcertoPanelBundle::form_v_element.html.twig" %}
+            {% embed "@ConcertoPanel/form_v_element.html.twig" %}
                 {% trans_default_domain "DataTable" %}
                 {% block label %}{{ 'structure.form.field.nullable'|trans }}{% endblock%}
                 {% block tooltip %}{{ 'structure.form.field.nullable.tooltip'|trans }}{% endblock%}

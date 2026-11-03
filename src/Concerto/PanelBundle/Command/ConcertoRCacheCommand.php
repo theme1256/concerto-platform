@@ -100,6 +100,8 @@ class ConcertoRCacheCommand extends Command
             $output->writeln("Saved: $successful/" . ($failed + $successful) . " | 0%");
         }
         $output->writeln("R documentation cache generated.");
+
+        return 0;
     }
 
     private function isDocumentationValid($name, $doc)

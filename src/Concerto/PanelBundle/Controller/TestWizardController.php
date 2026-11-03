@@ -4,7 +4,7 @@ namespace Concerto\PanelBundle\Controller;
 
 use Concerto\PanelBundle\Service\FileService;
 use Concerto\PanelBundle\Service\TestService;
-use Symfony\Bundle\FrameworkBundle\Templating\EngineInterface;
+use Twig\Environment;
 use Concerto\PanelBundle\Service\TestWizardService;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
@@ -17,7 +17,7 @@ use Symfony\Component\HttpFoundation\Response;
 
 /**
  * @Route("/admin")
- * @Security("has_role('ROLE_WIZARD') or has_role('ROLE_SUPER_ADMIN')")
+ * @Security("is_granted('ROLE_WIZARD') or is_granted('ROLE_SUPER_ADMIN')")
  */
 class TestWizardController extends AExportableTabController
 {
@@ -28,7 +28,7 @@ class TestWizardController extends AExportableTabController
     private $testService;
     private $userService;
 
-    public function __construct($environment, EngineInterface $templating, TestWizardService $service, TranslatorInterface $translator, TestService $testService, ImportService $importService, ExportService $exportService, UserService $userService, FileService $fileService)
+    public function __construct($environment, Environment $templating, TestWizardService $service, TranslatorInterface $translator, TestService $testService, ImportService $importService, ExportService $exportService, UserService $userService, FileService $fileService)
     {
         parent::__construct($environment, $templating, $service, $translator, $importService, $exportService, $fileService);
 

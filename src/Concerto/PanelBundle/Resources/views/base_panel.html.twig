@@ -1,4 +1,4 @@
-{% extends "::base.html.twig" %}
+{% extends "base.html.twig" %}
 
 {% block stylesheetsInclude %}
     <link rel="stylesheet" href="{{ asset('bundles/concertopanel/angularjs/bower_components/bootstrap/dist/css/bootstrap.min.css?v=' ~ version) }}"/>
@@ -62,7 +62,7 @@
     <script type="text/javascript" src="{{ asset('bundles/concertopanel/angularjs/bower_components/qrcode/lib/qrcode.min.js?v=' ~ version) }}"></script>
     <script type="text/javascript" src="{{ asset('bundles/concertopanel/angularjs/bower_components/angular-qr/angular-qr.min.js?v=' ~ version) }}"></script>
     <script src="{{ asset('bundles/concertopanel/js/angular-filemanager/angular-filemanager.min.js?v=' ~ version) }}"></script>
-    {{ include("ConcertoPanelBundle::translation_injector.html.twig") }}
+    {{ include("@ConcertoPanel/translation_injector.html.twig") }}
     <script type="text/javascript" src="{{ asset('bundles/concertopanel/angularjs/app/concerto_panel/js/misc/defaults.js?v=' ~ version) }}"></script>
     <script type="text/javascript" src="{{ asset('bundles/concertopanel/angularjs/app/concerto_panel/js/app.js?v=' ~ version) }}"></script>
     <script type="text/javascript" src="{{ asset('bundles/concertopanel/angularjs/app/concerto_panel/js/controllers/main_controller.js?v=' ~ version) }}"></script>

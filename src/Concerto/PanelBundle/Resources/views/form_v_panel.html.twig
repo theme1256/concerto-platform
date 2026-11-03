@@ -1,8 +1,8 @@
-{% extends "::base_include.html.twig" %}
+{% extends "base_include.html.twig" %}
 {% trans_default_domain "panel" %}
 
 {% block content %}
-    {{ include("ConcertoPanelBundle::form_validation.html.twig") }}
+    {{ include("@ConcertoPanel/form_validation.html.twig") }}
     {% if panel_class is not defined %}{% set panel_class = "default" %}{% endif %}
     <div class="panel panel-{{ panel_class }}">
         <div class="panel-heading">

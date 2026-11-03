@@ -16,6 +16,15 @@ abstract class AFunctionalTest extends WebTestCase {
     protected static $encoderFactory;
     protected static $entityManager;
 
+    /**
+     * Symfony 4.4 deprecates (and 5.0 forbids) creating a client while a kernel is booted.
+     */
+    protected static function createClient(array $options = [], array $server = [])
+    {
+        static::ensureKernelShutdown();
+        return parent::createClient($options, $server);
+    }
+
     protected function setUp() {
         parent::setUp();
 

@@ -3,7 +3,7 @@
 namespace Concerto\PanelBundle\Controller;
 
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Bundle\FrameworkBundle\Templating\EngineInterface;
+use Twig\Environment;
 use Concerto\PanelBundle\Service\TestWizardService;
 use Concerto\PanelBundle\Service\TestVariableService;
 use Concerto\PanelBundle\Service\TestWizardParamService;
@@ -15,7 +15,7 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 
 /**
  * @Route("/admin")
- * @Security("has_role('ROLE_WIZARD') or has_role('ROLE_SUPER_ADMIN')")
+ * @Security("is_granted('ROLE_WIZARD') or is_granted('ROLE_SUPER_ADMIN')")
  */
 class TestWizardParamController extends ASectionController
 {
@@ -26,7 +26,7 @@ class TestWizardParamController extends ASectionController
     private $testWizardStepService;
     private $testVariableService;
 
-    public function __construct(EngineInterface $templating, TestWizardParamService $service, TranslatorInterface $translator, TestVariableService $testVariableServce, TestWizardStepService $testWizardStepService, TestWizardService $testWizardService)
+    public function __construct(Environment $templating, TestWizardParamService $service, TranslatorInterface $translator, TestVariableService $testVariableServce, TestWizardStepService $testWizardStepService, TestWizardService $testWizardService)
     {
         parent::__construct($templating, $service, $translator);
 
@@ -64,9 +64,9 @@ class TestWizardParamController extends ASectionController
      */
     public function collectionByWizardAction($wizard_id)
     {
-        return $this->templating->renderResponse('ConcertoPanelBundle::collection.json.twig', array(
+        return new Response($this->templating->render('@ConcertoPanel/collection.json.twig', array(
             'collection' => $this->service->getByTestWizard($wizard_id)
-        ));
+        )));
     }
 
     /**
@@ -77,9 +77,9 @@ class TestWizardParamController extends ASectionController
      */
     public function collectionByWizardAndTypeAction($wizard_id, $type)
     {
-        return $this->templating->renderResponse('ConcertoPanelBundle::collection.json.twig', array(
+        return new Response($this->templating->render('@ConcertoPanel/collection.json.twig', array(
             'collection' => $this->service->getByTestWizardAndType($wizard_id, $type)
-        ));
+        )));
     }
 
     /**

@@ -1,7 +1,7 @@
 {% trans_default_domain "panel" %}
 <div type="text/ng-template" id="import_dialog.html">
     <div class="modal-body" nv-file-drop="" uploader="uploader">
-        {% embed "ConcertoPanelBundle::form_v_panel.html.twig" %}
+        {% embed "@ConcertoPanel/form_v_panel.html.twig" %}
             {% trans_default_domain "panel" %}
             {% block legend %}{{ 'import.dialog.title'|trans }}{% endblock %}
             {% block legend_tooltip %}{{ 'import.fieldset.legend.tooltip'|trans }}{% endblock %}
@@ -10,7 +10,7 @@
                 {% endblock %}
                 {% block elements %}
 
-                {% embed "ConcertoPanelBundle::form_v_element.html.twig" %}
+                {% embed "@ConcertoPanel/form_v_element.html.twig" %}
                     {% trans_default_domain "panel" %}
                     {% block label %}{{ 'import.form.field.file'|trans }}{% endblock%}
                     {% block tooltip %}{{ 'import.form.field.file.tooltip'|trans }}{% endblock%}
@@ -21,7 +21,7 @@
                     {% endblock %}
                 {% endembed %}
 
-                {% embed "ConcertoPanelBundle::form_v_element.html.twig" %}
+                {% embed "@ConcertoPanel/form_v_element.html.twig" %}
                     {% trans_default_domain "panel" %}
                     {% block row %}<tr class="formRowV" ng-show="preImportStatus.length > 0">{% endblock %}
                         {% block label %}{{ 'import.form.field.instructions'|trans }}{% endblock%}

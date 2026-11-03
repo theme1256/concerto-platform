@@ -38,5 +38,7 @@ class OtpInit extends Command
         ];
 
         $output->write(json_encode($response));
+
+        return 0;
     }
 }

@@ -1,7 +1,7 @@
 {% trans_default_domain "panel" %}
 <div type="text/ng-template" id="mfa_enabled_dialog.html">
     <div class="modal-body">
-        {% embed "ConcertoPanelBundle::form_v_single.html.twig" %}
+        {% embed "@ConcertoPanel/form_v_single.html.twig" %}
             {% trans_default_domain "panel" %}
             {% block legend %}{{ "mfa.enable_dialog.title"|trans }}{% endblock %}
             {% block legend_tooltip %}{{ "mfa.enable_dialog.tooltip"|trans }}{% endblock %}

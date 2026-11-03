@@ -36,5 +36,7 @@ class OtpAuthorize extends Command
         $success = $this->googleAuthenticator->checkCode($user, $code);
 
         $output->write(json_encode(["success" => $success]));
+
+        return 0;
     }
 }

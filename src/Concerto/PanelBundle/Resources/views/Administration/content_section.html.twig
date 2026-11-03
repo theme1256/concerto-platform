@@ -45,11 +45,11 @@
             </div>
 
             <div>
-                {% embed "ConcertoPanelBundle::form_v.html.twig" with {'no_header': true} %}
+                {% embed "@ConcertoPanel/form_v.html.twig" with {'no_header': true} %}
                     {% trans_default_domain "Administration" %}
                     {% block elements %}
 
-                        {% embed "ConcertoPanelBundle::form_v_element.html.twig" %}
+                        {% embed "@ConcertoPanel/form_v_element.html.twig" %}
                             {% trans_default_domain "Administration" %}
                             {% block label %}{{ 'content.url'|trans }}{% endblock %}
                             {% block tooltip %}{{ 'content.url.tooltip'|trans }}{% endblock %}
@@ -58,7 +58,7 @@
                             {% endblock %}
                         {% endembed %}
 
-                        {% embed "ConcertoPanelBundle::form_v_element.html.twig" %}
+                        {% embed "@ConcertoPanel/form_v_element.html.twig" %}
                             {% trans_default_domain "Administration" %}
                             {% block label %}{{ 'content.file'|trans }}{% endblock %}
                             {% block tooltip %}{{ 'content.file.tooltip'|trans }}{% endblock %}
@@ -71,7 +71,7 @@
                             {% endblock %}
                         {% endembed %}
 
-                        {% embed "ConcertoPanelBundle::form_v_element.html.twig" %}
+                        {% embed "@ConcertoPanel/form_v_element.html.twig" %}
                             {% trans_default_domain "Administration" %}
                             {% block label %}{{ "content.transfer_options"|trans }}{% endblock %}
                             {% block tooltip %}{{ "content.transfer_options.tooltip"|trans }}{% endblock %}

@@ -95,6 +95,8 @@ class StartForkerCommand extends Command
         } else {
             $output->writeln("something went wrong: non zero exit code");
         }
+
+        return 0;
     }
 
 }

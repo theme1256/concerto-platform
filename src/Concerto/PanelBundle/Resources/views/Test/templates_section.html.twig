@@ -1,9 +1,9 @@
-{% extends "::base_include.html.twig" %}
+{% extends "base_include.html.twig" %}
 {% set class_name = "Test" %}
 {% trans_default_domain "Test" %}
 
 {% block content %}
-    {% embed "ConcertoPanelBundle::form_h_element.html.twig" %}
+    {% embed "@ConcertoPanel/form_h_element.html.twig" %}
         {% trans_default_domain "Test" %}
         {% block label %}{{ 'templates.fields.base_template'|trans }}{% endblock %}
         {% block tooltip %}{{ 'templates.fields.base_template.tooltip'|trans }}{% endblock %}

@@ -4,7 +4,7 @@ namespace Concerto\PanelBundle\Controller;
 
 use Concerto\PanelBundle\Service\FileService;
 use Concerto\PanelBundle\Service\ViewTemplateService;
-use Symfony\Bundle\FrameworkBundle\Templating\EngineInterface;
+use Twig\Environment;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Translation\TranslatorInterface;
@@ -22,7 +22,7 @@ class ViewTemplateController extends AExportableTabController
 
     private $userService;
 
-    public function __construct($environment, EngineInterface $templating, ViewTemplateService $service, TranslatorInterface $translator, ImportService $importService, ExportService $exportService, UserService $userService, FileService $fileService)
+    public function __construct($environment, Environment $templating, ViewTemplateService $service, TranslatorInterface $translator, ImportService $importService, ExportService $exportService, UserService $userService, FileService $fileService)
     {
         parent::__construct($environment, $templating, $service, $translator, $importService, $exportService, $fileService);
 
@@ -34,7 +34,7 @@ class ViewTemplateController extends AExportableTabController
 
     /**
      * @Route("/admin/ViewTemplate/fetch/{object_id}/{format}", name="ViewTemplate_object", defaults={"format":"json"})
-     * @Security("has_role('ROLE_TEMPLATE') or has_role('ROLE_SUPER_ADMIN')")
+     * @Security("is_granted('ROLE_TEMPLATE') or is_granted('ROLE_SUPER_ADMIN')")
      * @param $object_id
      * @param string $format
      * @return Response
@@ -46,7 +46,7 @@ class ViewTemplateController extends AExportableTabController
 
     /**
      * @Route("/admin/ViewTemplate/collection/{format}", name="ViewTemplate_collection", defaults={"format":"json"})
-     * @Security("has_role('ROLE_TEMPLATE') or has_role('ROLE_SUPER_ADMIN')")
+     * @Security("is_granted('ROLE_TEMPLATE') or is_granted('ROLE_SUPER_ADMIN')")
      * @param string $format
      * @return Response
      */
@@ -57,7 +57,7 @@ class ViewTemplateController extends AExportableTabController
 
     /**
      * @Route("/admin/ViewTemplate/{object_id}/toggleLock", name="ViewTemplate_toggleLock")
-     * @Security("has_role('ROLE_TEMPLATE') or has_role('ROLE_SUPER_ADMIN')")
+     * @Security("is_granted('ROLE_TEMPLATE') or is_granted('ROLE_SUPER_ADMIN')")
      * @param Request $request
      * @param $object_id
      * @return Response
@@ -69,7 +69,7 @@ class ViewTemplateController extends AExportableTabController
 
     /**
      * @Route("/admin/ViewTemplate/form/{action}", name="ViewTemplate_form", defaults={"action":"edit"})
-     * @Security("has_role('ROLE_TEMPLATE') or has_role('ROLE_SUPER_ADMIN')")
+     * @Security("is_granted('ROLE_TEMPLATE') or is_granted('ROLE_SUPER_ADMIN')")
      * @param string $action
      * @param array $params
      * @return Response
@@ -81,7 +81,7 @@ class ViewTemplateController extends AExportableTabController
 
     /**
      * @Route("/admin/ViewTemplate/{object_id}/save", name="ViewTemplate_save", methods={"POST"})
-     * @Security("has_role('ROLE_TEMPLATE') or has_role('ROLE_SUPER_ADMIN')")
+     * @Security("is_granted('ROLE_TEMPLATE') or is_granted('ROLE_SUPER_ADMIN')")
      * @param Request $request
      * @param $object_id
      * @return Response
@@ -111,7 +111,7 @@ class ViewTemplateController extends AExportableTabController
 
     /**
      * @Route("/admin/ViewTemplate/{object_id}/copy", name="ViewTemplate_copy")
-     * @Security("has_role('ROLE_TEMPLATE') or has_role('ROLE_SUPER_ADMIN')")
+     * @Security("is_granted('ROLE_TEMPLATE') or is_granted('ROLE_SUPER_ADMIN')")
      * @param Request $request
      * @param $object_id
      * @return Response
@@ -123,7 +123,7 @@ class ViewTemplateController extends AExportableTabController
 
     /**
      * @Route("/admin/ViewTemplate/{object_ids}/delete", name="ViewTemplate_delete", methods={"POST"})
-     * @Security("has_role('ROLE_TEMPLATE') or has_role('ROLE_SUPER_ADMIN')")
+     * @Security("is_granted('ROLE_TEMPLATE') or is_granted('ROLE_SUPER_ADMIN')")
      * @param Request $request
      * @param string $object_ids
      * @return Response
@@ -135,7 +135,7 @@ class ViewTemplateController extends AExportableTabController
 
     /**
      * @Route("/admin/ViewTemplate/{instructions}/export/{format}", name="ViewTemplate_export", defaults={"format":"yml"})
-     * @Security("has_role('ROLE_TEMPLATE') or has_role('ROLE_SUPER_ADMIN')")
+     * @Security("is_granted('ROLE_TEMPLATE') or is_granted('ROLE_SUPER_ADMIN')")
      * @param string $instructions
      * @param string $format
      * @return Response
@@ -147,7 +147,7 @@ class ViewTemplateController extends AExportableTabController
 
     /**
      * @Route("/admin/ViewTemplate/{object_ids}/instructions/export", name="ViewTemplate_export_instructions")
-     * @Security("has_role('ROLE_TEMPLATE') or has_role('ROLE_SUPER_ADMIN')")
+     * @Security("is_granted('ROLE_TEMPLATE') or is_granted('ROLE_SUPER_ADMIN')")
      * @param $object_ids
      * @return Response
      */
@@ -158,7 +158,7 @@ class ViewTemplateController extends AExportableTabController
 
     /**
      * @Route("/admin/ViewTemplate/import", name="ViewTemplate_import", methods={"POST"})
-     * @Security("has_role('ROLE_TEMPLATE') or has_role('ROLE_SUPER_ADMIN')")
+     * @Security("is_granted('ROLE_TEMPLATE') or is_granted('ROLE_SUPER_ADMIN')")
      * @param Request $request
      * @return Response
      */
@@ -169,7 +169,7 @@ class ViewTemplateController extends AExportableTabController
 
     /**
      * @Route("/admin/ViewTemplate/import/status", name="ViewTemplate_pre_import_status")
-     * @Security("has_role('ROLE_TEMPLATE') or has_role('ROLE_SUPER_ADMIN')")
+     * @Security("is_granted('ROLE_TEMPLATE') or is_granted('ROLE_SUPER_ADMIN')")
      * @param Request $request
      * @return Response
      */

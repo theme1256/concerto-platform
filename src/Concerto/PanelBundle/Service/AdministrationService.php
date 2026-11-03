@@ -18,7 +18,7 @@ use Symfony\Component\Filesystem\Exception\IOException;
 use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\HttpKernel\KernelInterface;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
-use Symfony\Component\Templating\EngineInterface;
+use Twig\Environment;
 use Concerto\PanelBundle\Entity\TestSession;
 use Concerto\PanelBundle\Repository\TestSessionLogRepository;
 use Concerto\PanelBundle\Entity\TestSessionLog;
@@ -60,7 +60,7 @@ class AdministrationService
                                         $configSettings,
                                         $version,
                                         $rootDir,
-        EngineInterface                 $templating,
+        Environment                     $templating,
         TestSessionLogRepository        $testSessionLogRepository,
         RegistryInterface               $doctrine,
         ScheduledTaskRepository         $scheduledTaskRepository,
@@ -107,7 +107,7 @@ class AdministrationService
         $msg = new Message();
         $msg->setCagegory(Message::CATEGORY_SYSTEM);
         $msg->setSubject("Session limit reached.");
-        $content = $this->templating->render("ConcertoPanelBundle:Administration:msg_session_limit.html.twig", array(
+        $content = $this->templating->render("@ConcertoPanel/Administration/msg_session_limit.html.twig", array(
             "limit" => $this->getSessionLimit()
         ));
         $msg->setMessage($content);
@@ -134,7 +134,7 @@ class AdministrationService
                     break;
             }
             $msg->setSubject("Test #" . $log->getTest()->getId() . ", $error_source error.");
-            $content = $this->templating->render("ConcertoPanelBundle:Administration:msg_test_error.html.twig", array(
+            $content = $this->templating->render("@ConcertoPanel/Administration/msg_test_error.html.twig", array(
                 "test_id" => $log->getTest()->getId(),
                 "error_source" => $error_source,
                 "error_message" => $log->getMessage()
@@ -161,7 +161,7 @@ class AdministrationService
             $msg->setTime($dt);
             $msg->setCagegory(Message::CATEGORY_GLOBAL);
             $msg->setSubject($entry["subject"]);
-            $content = $this->templating->render("ConcertoPanelBundle:Administration:msg_feed.html.twig", array(
+            $content = $this->templating->render("@ConcertoPanel/Administration/msg_feed.html.twig", array(
                 "message" => $entry["message"]
             ));
             $msg->setMessage($content);

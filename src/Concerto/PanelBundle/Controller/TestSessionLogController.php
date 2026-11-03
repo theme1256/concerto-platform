@@ -4,7 +4,7 @@ namespace Concerto\PanelBundle\Controller;
 
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Bundle\FrameworkBundle\Templating\EngineInterface;
+use Twig\Environment;
 use Concerto\PanelBundle\Service\TestSessionLogService;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Translation\TranslatorInterface;
@@ -12,14 +12,14 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 
 /**
  * @Route("/admin")
- * @Security("has_role('ROLE_TEST') or has_role('ROLE_SUPER_ADMIN')")
+ * @Security("is_granted('ROLE_TEST') or is_granted('ROLE_SUPER_ADMIN')")
  */
 class TestSessionLogController extends ASectionController
 {
 
     const ENTITY_NAME = "TestSessionLog";
 
-    public function __construct(EngineInterface $templating, TestSessionLogService $service, TranslatorInterface $translator)
+    public function __construct(Environment $templating, TestSessionLogService $service, TranslatorInterface $translator)
     {
         parent::__construct($templating, $service, $translator);
 
@@ -43,10 +43,10 @@ class TestSessionLogController extends ASectionController
      */
     public function collectionByTestAction($test_id)
     {
-        return $this->templating->renderResponse('ConcertoPanelBundle::collection.json.twig', array(
+        return new Response($this->templating->render('@ConcertoPanel/collection.json.twig', array(
                 'collection' => $this->service->getLatestByTest($test_id)
             )
-        );
+        ));
     }
 
     /**

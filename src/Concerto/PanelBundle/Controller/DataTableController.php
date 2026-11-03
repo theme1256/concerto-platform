@@ -7,7 +7,7 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\ResponseHeaderBag;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 use Concerto\PanelBundle\DAO\DAOUnsupportedOperationException;
-use Symfony\Bundle\FrameworkBundle\Templating\EngineInterface;
+use Twig\Environment;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Translation\TranslatorInterface;
@@ -19,7 +19,7 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 
 /**
  * @Route("/admin")
- * @Security("has_role('ROLE_TABLE') or has_role('ROLE_SUPER_ADMIN')")
+ * @Security("is_granted('ROLE_TABLE') or is_granted('ROLE_SUPER_ADMIN')")
  */
 class DataTableController extends AExportableTabController
 {
@@ -29,7 +29,7 @@ class DataTableController extends AExportableTabController
 
     private $userService;
 
-    public function __construct($environment, EngineInterface $templating, DataTableService $service, TranslatorInterface $translator, ImportService $importService, ExportService $exportService, UserService $userService, FileService $fileService)
+    public function __construct($environment, Environment $templating, DataTableService $service, TranslatorInterface $translator, ImportService $importService, ExportService $exportService, UserService $userService, FileService $fileService)
     {
         parent::__construct($environment, $templating, $service, $translator, $importService, $exportService, $fileService);
 
@@ -221,10 +221,10 @@ class DataTableController extends AExportableTabController
      */
     public function dataSectionAction($table_id)
     {
-        return $this->templating->renderResponse("ConcertoPanelBundle:DataTable:data_section.html.twig", array(
+        return new Response($this->templating->render("@ConcertoPanel/DataTable/data_section.html.twig", array(
             "table" => $this->service->get($table_id),
             "columns" => $this->service->getColumns($table_id)
-        ));
+        )));
     }
 
     /**

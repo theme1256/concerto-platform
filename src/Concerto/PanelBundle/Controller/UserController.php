@@ -2,7 +2,7 @@
 
 namespace Concerto\PanelBundle\Controller;
 
-use Symfony\Bundle\FrameworkBundle\Templating\EngineInterface;
+use Twig\Environment;
 use Concerto\PanelBundle\Service\UserService;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Translation\TranslatorInterface;
@@ -12,14 +12,14 @@ use Symfony\Component\HttpFoundation\Response;
 
 /**
  * @Route("/admin")
- * @Security("has_role('ROLE_SUPER_ADMIN')")
+ * @Security("is_granted('ROLE_SUPER_ADMIN')")
  */
 class UserController extends ASectionController
 {
 
     const ENTITY_NAME = "User";
 
-    public function __construct(EngineInterface $templating, UserService $service, TranslatorInterface $translator)
+    public function __construct(Environment $templating, UserService $service, TranslatorInterface $translator)
     {
         parent::__construct($templating, $service, $translator);
 

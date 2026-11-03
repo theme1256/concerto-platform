@@ -26,9 +26,6 @@ framework:
     csrf_protection: ~
     validation: { enable_annotations: true }
     #serializer: { enable_annotations: true }
-    templating:
-        engines: ['twig']
-        #assets_version: SomeVersionScheme
     default_locale:  "%locale%"
     trusted_hosts: ~
     session:
@@ -44,8 +41,14 @@ framework:
     translator: 
         fallback: en_GB
 
+sensio_framework_extra:
+    router:
+        annotations: false
+
 # Twig Configuration
 twig:
+    default_path:     "%kernel.project_dir%/app/Resources/views"
+    exception_controller: null
     debug:            "%kernel.debug%"
     strict_variables: "%kernel.debug%"
     globals:
@@ -97,4 +100,4 @@ scheb_two_factor:
         window: 1
         #server_name: Server Name
         #issuer: Issuer Name
-        template: ConcertoPanelBundle:Panel:login_mfa.html.twig
+        template: "@ConcertoPanel/Panel/login_mfa.html.twig"

@@ -10,7 +10,7 @@ use Doctrine\Common\Collections\Collection;
  * @ORM\Table
  * @ORM\Entity(repositoryClass="Concerto\PanelBundle\Repository\RoleRepository")
  */
-class Role extends \Symfony\Component\Security\Core\Role\Role
+class Role
 {
 
     /**
@@ -51,12 +51,14 @@ class Role extends \Symfony\Component\Security\Core\Role\Role
         return $this->id;
     }
 
-    /**
-     * @see RoleInterface
-     */
     public function getRole()
     {
         return $this->role;
+    }
+
+    public function __toString()
+    {
+        return (string)$this->role;
     }
 
     /**

@@ -4,7 +4,7 @@ namespace Concerto\PanelBundle\Controller;
 
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Bundle\FrameworkBundle\Templating\EngineInterface;
+use Twig\Environment;
 use Concerto\PanelBundle\Service\ASectionService;
 use Symfony\Component\Translation\TranslatorInterface;
 
@@ -16,7 +16,7 @@ abstract class ASectionController
     protected $templating;
     protected $translator;
 
-    public function __construct(EngineInterface $templating, ASectionService $service, TranslatorInterface $translator)
+    public function __construct(Environment $templating, ASectionService $service, TranslatorInterface $translator)
     {
         $this->templating = $templating;
         $this->service = $service;
@@ -64,17 +64,17 @@ abstract class ASectionController
 
     public function objectAction($object_id, $format)
     {
-        return $this->templating->renderResponse("ConcertoPanelBundle::collection.$format.twig", array(
+        return new Response($this->templating->render("@ConcertoPanel/collection.$format.twig", array(
             'collection' => $this->service->get($object_id)
-        ));
+        )));
     }
 
     public function collectionAction($format)
     {
         $collection = $this->service->getAll();
-        return $this->templating->renderResponse("ConcertoPanelBundle::collection.$format.twig", array(
+        return new Response($this->templating->render("@ConcertoPanel/collection.$format.twig", array(
             'collection' => $collection
-        ));
+        )));
     }
 
     public function formAction($action = "edit", $params = array())
@@ -85,7 +85,7 @@ abstract class ASectionController
         foreach ($params as $k => $v) {
             $p[$k] = $v;
         }
-        return $this->templating->renderResponse("ConcertoPanelBundle:" . $this->entityName . ":form.html.twig", $p);
+        return new Response($this->templating->render("@ConcertoPanel/" . $this->entityName . "/form.html.twig", $p));
     }
 
     protected function trans($messages, $domain = null)

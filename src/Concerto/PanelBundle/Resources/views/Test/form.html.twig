@@ -1,16 +1,16 @@
-{% extends "ConcertoPanelBundle::form_h.html.twig" %}
+{% extends "@ConcertoPanel/form_h.html.twig" %}
 {% set class_name = "Test" %}
 {% trans_default_domain "Test" %}
 {% set exportable = true %}
 
 {% block top %}
-    {{ include("ConcertoPanelBundle::lock_info.html.twig") }}
+    {{ include("@ConcertoPanel/lock_info.html.twig") }}
 {% endblock %}
 {% block legend %} 
     {% verbatim %}{{formTitle}}{% endverbatim %}
 {% endblock %}
 {% block elements %}
-    {% embed "ConcertoPanelBundle::form_h_element.html.twig" %}
+    {% embed "@ConcertoPanel/form_h_element.html.twig" %}
         {% trans_default_domain "Test" %}
         {% block label %}{{ 'form.field.name'|trans }}{% endblock %}
         {% block tooltip %}{{'form.field.name.tooltip'|trans}}{% endblock %}
@@ -19,7 +19,7 @@
         {% endblock %}
     {% endembed %}
 
-    {% embed "ConcertoPanelBundle::form_h_element.html.twig" %}
+    {% embed "@ConcertoPanel/form_h_element.html.twig" %}
         {% trans_default_domain "Test" %}
         {% block label %}{{ 'form.field.archived'|trans }}{% endblock %}
         {% block tooltip %}{{'form.field.archived.tooltip'|trans}}{% endblock %}
@@ -28,7 +28,7 @@
         {% endblock %}
     {% endembed %}
 
-    {% embed "ConcertoPanelBundle::form_h_element.html.twig" %}
+    {% embed "@ConcertoPanel/form_h_element.html.twig" %}
         {% trans_default_domain "Test" %}
         {% block label %}{{ 'form.field.slug'|trans }}{% endblock %}
         {% block tooltip %}{{'form.field.slug.tooltip'|trans}}{% endblock %}
@@ -37,7 +37,7 @@
         {% endblock %}
     {% endembed %}
 
-    {% embed "ConcertoPanelBundle::form_h_element.html.twig" %}
+    {% embed "@ConcertoPanel/form_h_element.html.twig" %}
         {% trans_default_domain "Test" %}
         {% block label %}{{ 'form.field.visibility'|trans }}{% endblock %}
         {% block tooltip %}{{'form.field.visibility.tooltip'|trans}}{% endblock %}
@@ -47,7 +47,7 @@
         {% endblock %}
     {% endembed %}
 
-    {% embed "ConcertoPanelBundle::form_h_element.html.twig" %}
+    {% embed "@ConcertoPanel/form_h_element.html.twig" %}
         {% trans_default_domain "Test" %}
         {% block label %}{{ 'form.field.type'|trans }}{% endblock %}
         {% block tooltip %}{{'form.field.type.tooltip'|trans}}{% endblock %}
@@ -58,7 +58,7 @@
         {% endblock %}
     {% endembed %}
 
-    {% embed "ConcertoPanelBundle::form_h_element.html.twig" %}
+    {% embed "@ConcertoPanel/form_h_element.html.twig" %}
         {% trans_default_domain "Test" %}
         {% block div %}<div class="horizontalElement center" ng-show="object.type == 1">{% endblock %}
             {% block label %}{{ 'form.field.wizard'|trans }}{% endblock %}
@@ -76,7 +76,7 @@
             {% endblock %}
         {% endembed %}
 
-        {% embed "ConcertoPanelBundle::form_h_element.html.twig" %}
+        {% embed "@ConcertoPanel/form_h_element.html.twig" %}
             {% trans_default_domain "Test" %}
             {% block label %}{{ 'form.field.protected'|trans }}{% endblock %}
             {% block tooltip %}{{'form.field.protected.tooltip'|trans}}{% endblock %}
@@ -86,7 +86,7 @@
         {% endembed %}
 
         {% if app.user and is_granted('ROLE_SUPER_ADMIN') %}
-            {% embed "ConcertoPanelBundle::form_h_element.html.twig" %}
+            {% embed "@ConcertoPanel/form_h_element.html.twig" %}
                 {% trans_default_domain "Test" %}
                 {% block label %}{{ 'form.field.accessibility'|trans }}{% endblock %}
                 {% block tooltip %}{{'form.field.accessibility.tooltip'|trans}}{% endblock %}
@@ -96,7 +96,7 @@
                 {% endblock %}
             {% endembed %}
 
-            {% embed "ConcertoPanelBundle::form_h_element.html.twig" %}
+            {% embed "@ConcertoPanel/form_h_element.html.twig" %}
                 {% trans_default_domain "Test" %}
                 {% block label %}{{ 'form.field.owner'|trans }}{% endblock %}
                 {% block tooltip %}{{'form.field.owner.tooltip'|trans}}{% endblock %}
@@ -107,7 +107,7 @@
                 {% endblock %}
             {% endembed %}
 
-            {% embed "ConcertoPanelBundle::form_h_element.html.twig" %}
+            {% embed "@ConcertoPanel/form_h_element.html.twig" %}
                 {% trans_default_domain "Test" %}
                 {% block label %}{{ 'form.field.groups'|trans }}{% endblock %}
                 {% block tooltip %}{{'form.field.groups.tooltip'|trans}}{% endblock %}
@@ -126,7 +126,7 @@
                 {{ 'templates.fieldset.legend'|trans }}
                 <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': tabAccordion.templates.open, 'glyphicon-chevron-right': !tabAccordion.templates.open}"></i>
             </uib-accordion-heading>
-            {{ include("ConcertoPanelBundle:Test:templates_section.html.twig") }}
+            {{ include("@ConcertoPanel/Test/templates_section.html.twig") }}
         </uib-accordion-group>
 
         <uib-accordion-group is-open="tabAccordion.input.open" ng-show="object.type != 1">
@@ -135,7 +135,7 @@
                 {{ 'variables.input.fieldset.legend'|trans }}
                 <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': tabAccordion.input.open, 'glyphicon-chevron-right': !tabAccordion.input.open}"></i>
             </uib-accordion-heading>
-            {{ include("ConcertoPanelBundle:Test:input_section.html.twig") }}
+            {{ include("@ConcertoPanel/Test/input_section.html.twig") }}
         </uib-accordion-group>
 
         <uib-accordion-group is-open="tabAccordion.logic.open" ng-show="object.type == 0">
@@ -144,7 +144,7 @@
                 {{ 'logic.code.fieldset.legend'|trans }}
                 <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': tabAccordion.logic.open, 'glyphicon-chevron-right': !tabAccordion.logic.open}"></i>
             </uib-accordion-heading>
-            {{ include("ConcertoPanelBundle:Test:logic_section.html.twig") }}
+            {{ include("@ConcertoPanel/Test/logic_section.html.twig") }}
         </uib-accordion-group>
 
         <uib-accordion-group is-open="tabAccordion.logic.open" ng-show="object.type == 1">
@@ -153,7 +153,7 @@
                 {{ 'logic.code.fieldset.legend'|trans }}
                 <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': tabAccordion.logic.open, 'glyphicon-chevron-right': !tabAccordion.logic.open}"></i>
             </uib-accordion-heading>
-            {{ include("ConcertoPanelBundle:Test:wizard_section.html.twig") }}
+            {{ include("@ConcertoPanel/Test/wizard_section.html.twig") }}
         </uib-accordion-group>
 
         <uib-accordion-group is-open="tabAccordion.logic.open" ng-show="object.type == 2" id="accordion-group-test-flow">
@@ -162,7 +162,7 @@
                 {{ 'flow.fieldset.legend'|trans }}
                 <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': tabAccordion.logic.open, 'glyphicon-chevron-right': !tabAccordion.logic.open}"></i>
             </uib-accordion-heading>
-            {{ include("ConcertoPanelBundle:Test:flow_section.html.twig") }}
+            {{ include("@ConcertoPanel/Test/flow_section.html.twig") }}
         </uib-accordion-group>
 
         <uib-accordion-group is-open="tabAccordion.output.open" ng-show="object.type != 1">
@@ -171,7 +171,7 @@
                 {{ 'variables.output.fieldset.legend'|trans }}
                 <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': tabAccordion.output.open, 'glyphicon-chevron-right': !tabAccordion.output.open}"></i>
             </uib-accordion-heading>
-            {{ include("ConcertoPanelBundle:Test:output_section.html.twig") }}
+            {{ include("@ConcertoPanel/Test/output_section.html.twig") }}
         </uib-accordion-group>
 
         <uib-accordion-group is-open="tabAccordion.log.open">
@@ -180,7 +180,7 @@
                 {{ 'log.fieldset.legend'|trans }}
                 <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': tabAccordion.log.open, 'glyphicon-chevron-right': !tabAccordion.log.open}"></i>
             </uib-accordion-heading>
-            {{ include("ConcertoPanelBundle:Test:log_section.html.twig") }}
+            {{ include("@ConcertoPanel/Test/log_section.html.twig") }}
         </uib-accordion-group>
     {% endblock %}
 

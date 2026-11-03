@@ -1,16 +1,16 @@
-{% extends "ConcertoPanelBundle::form_h.html.twig" %}
+{% extends "@ConcertoPanel/form_h.html.twig" %}
 {% set class_name = "DataTable" %}
 {% trans_default_domain "DataTable" %}
 {% set exportable = true %}
 
 {% block top %}
-    {{ include("ConcertoPanelBundle::lock_info.html.twig") }}
+    {{ include("@ConcertoPanel/lock_info.html.twig") }}
 {% endblock %}
 {% block legend %}
     {% verbatim %}{{formTitle}}{% endverbatim %}
 {% endblock %}
 {% block elements %}
-    {% embed "ConcertoPanelBundle::form_h_element.html.twig" %}
+    {% embed "@ConcertoPanel/form_h_element.html.twig" %}
         {% trans_default_domain "DataTable" %}
         {% block label %}{{ 'form.field.name'|trans }}{% endblock %}
         {% block tooltip %}{{'form.field.name.tooltip'|trans}}{% endblock %}
@@ -19,7 +19,7 @@
         {% endblock %}
     {% endembed %}
 
-    {% embed "ConcertoPanelBundle::form_h_element.html.twig" %}
+    {% embed "@ConcertoPanel/form_h_element.html.twig" %}
         {% trans_default_domain "DataTable" %}
         {% block label %}{{ 'form.field.archived'|trans }}{% endblock %}
         {% block tooltip %}{{'form.field.archived.tooltip'|trans}}{% endblock %}
@@ -29,7 +29,7 @@
     {% endembed %}
     
     {% if app.user and is_granted('ROLE_SUPER_ADMIN') %}
-        {% embed "ConcertoPanelBundle::form_h_element.html.twig" %}
+        {% embed "@ConcertoPanel/form_h_element.html.twig" %}
             {% trans_default_domain "DataTable" %}
             {% block label %}{{ 'form.field.accessibility'|trans }}{% endblock %}
             {% block tooltip %}{{'form.field.accessibility.tooltip'|trans}}{% endblock %}
@@ -39,7 +39,7 @@
             {% endblock %}
         {% endembed %}
 
-        {% embed "ConcertoPanelBundle::form_h_element.html.twig" %}
+        {% embed "@ConcertoPanel/form_h_element.html.twig" %}
             {% trans_default_domain "DataTable" %}
             {% block label %}{{ 'form.field.owner'|trans }}{% endblock %}
             {% block tooltip %}{{'form.field.owner.tooltip'|trans}}{% endblock %}
@@ -50,7 +50,7 @@
             {% endblock %}
         {% endembed %}
 
-        {% embed "ConcertoPanelBundle::form_h_element.html.twig" %}
+        {% embed "@ConcertoPanel/form_h_element.html.twig" %}
             {% trans_default_domain "DataTable" %}
             {% block label %}{{ 'form.field.groups'|trans }}{% endblock %}
             {% block tooltip %}{{'form.field.groups.tooltip'|trans}}{% endblock %}
@@ -69,7 +69,7 @@
             {{ 'structure.fieldset.legend'|trans }}
             <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': tabAccordion.structure.open, 'glyphicon-chevron-right': !tabAccordion.structure.open}"></i>
         </uib-accordion-heading>
-        {{ include("ConcertoPanelBundle:DataTable:structure_section.html.twig", {'class_name':"DataTable"}) }}
+        {{ include("@ConcertoPanel/DataTable/structure_section.html.twig", {'class_name':"DataTable"}) }}
     </uib-accordion-group>
 
     <uib-accordion-group is-open="tabAccordion.data.open">
@@ -78,7 +78,7 @@
             {{ 'data.fieldset.legend'|trans }}
             <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': tabAccordion.data.open, 'glyphicon-chevron-right': !tabAccordion.data.open}"></i>
         </uib-accordion-heading>
-        {{ include("ConcertoPanelBundle:DataTable:data_section.html.twig") }}
+        {{ include("@ConcertoPanel/DataTable/data_section.html.twig") }}
     </uib-accordion-group>
 {% endblock %}
 

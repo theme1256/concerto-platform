@@ -1,4 +1,4 @@
-{% extends "ConcertoPanelBundle::form_h.html.twig" %}
+{% extends "@ConcertoPanel/form_h.html.twig" %}
 {% set class_name = "Administration" %}
 {% trans_default_domain "Administration" %}
 {% set exportable = false %}
@@ -9,7 +9,7 @@
     {{ "form.title"|trans }}
 {% endblock %}
 {% block elements %}
-    {% embed "ConcertoPanelBundle::form_h_element.html.twig" %}
+    {% embed "@ConcertoPanel/form_h_element.html.twig" %}
         {% trans_default_domain "Administration" %}
         {% block label %}{{ 'form.settings.home_test'|trans }}{% endblock %}
         {% block tooltip %}{{'form.settings.home_test.tooltip'|trans}}{% endblock %}
@@ -21,7 +21,7 @@
         {% endblock %}
     {% endembed %}
 
-    {% embed "ConcertoPanelBundle::form_h_element.html.twig" %}
+    {% embed "@ConcertoPanel/form_h_element.html.twig" %}
         {% trans_default_domain "Administration" %}
         {% block label %}{{ 'form.settings.api_enabled'|trans }}{% endblock %}
         {% block tooltip %}{{ 'form.settings.api_enabled.tooltip'|trans }}{% endblock %}
@@ -30,7 +30,7 @@
         {% endblock %}
     {% endembed %}
 
-    {% embed "ConcertoPanelBundle::form_h_element.html.twig" %}
+    {% embed "@ConcertoPanel/form_h_element.html.twig" %}
         {% trans_default_domain "Administration" %}
         {% block label %}{{ 'form.settings.session_limit'|trans }}{% endblock %}
         {% block tooltip %}{{'form.settings.session_limit.tooltip'|trans}}{% endblock %}
@@ -39,7 +39,7 @@
         {% endblock %}
     {% endembed %}
 
-    {% embed "ConcertoPanelBundle::form_h_element.html.twig" %}
+    {% embed "@ConcertoPanel/form_h_element.html.twig" %}
         {% trans_default_domain "Administration" %}
         {% block label %}{{ 'form.settings.session_runner_service'|trans }}{% endblock %}
         {% block tooltip %}{{'form.settings.session_runner_service.tooltip'|trans}}{% endblock %}
@@ -60,7 +60,7 @@
             {{ 'content.fieldset.legend'|trans }}
             <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': tabAccordion.content.open, 'glyphicon-chevron-right': !tabAccordion.content.open}"></i>
         </uib-accordion-heading>
-        {{ include("ConcertoPanelBundle:Administration:content_section.html.twig", {'class_name':"Administration"}) }}
+        {{ include("@ConcertoPanel/Administration/content_section.html.twig", {'class_name':"Administration"}) }}
     </uib-accordion-group>
     <uib-accordion-group is-open="tabAccordion.messages.open">
         <uib-accordion-heading>
@@ -68,7 +68,7 @@
             {{ 'messages.fieldset.legend'|trans }}
             <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': tabAccordion.messages.open, 'glyphicon-chevron-right': !tabAccordion.messages.open}"></i>
         </uib-accordion-heading>
-        {{ include("ConcertoPanelBundle:Administration:messages_section.html.twig", {'class_name':"Administration"}) }}
+        {{ include("@ConcertoPanel/Administration/messages_section.html.twig", {'class_name':"Administration"}) }}
     </uib-accordion-group>
     <uib-accordion-group is-open="tabAccordion.usageCharts.open">
         <uib-accordion-heading>
@@ -76,7 +76,7 @@
             {{ 'usage_charts.fieldset.legend'|trans }}
             <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': tabAccordion.usageCharts.open, 'glyphicon-chevron-right': !tabAccordion.usageCharts.open}"></i>
         </uib-accordion-heading>
-        {{ include("ConcertoPanelBundle:Administration:usage_charts_section.html.twig", {'class_name':"Administration"}) }}
+        {{ include("@ConcertoPanel/Administration/usage_charts_section.html.twig", {'class_name':"Administration"}) }}
     </uib-accordion-group>
     <uib-accordion-group is-open="tabAccordion.packages.open">
         <uib-accordion-heading>
@@ -84,7 +84,7 @@
             {{ 'packages.fieldset.legend'|trans }}
             <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': tabAccordion.packages.open, 'glyphicon-chevron-right': !tabAccordion.packages.open}"></i>
         </uib-accordion-heading>
-        {{ include("ConcertoPanelBundle:Administration:packages_section.html.twig", {'class_name':"Administration"}) }}
+        {{ include("@ConcertoPanel/Administration/packages_section.html.twig", {'class_name':"Administration"}) }}
     </uib-accordion-group>
     <uib-accordion-group is-open="tabAccordion.apiClients.open">
         <uib-accordion-heading>
@@ -92,7 +92,7 @@
             {{ 'api_clients.fieldset.legend'|trans }}
             <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': tabAccordion.apiClients.open, 'glyphicon-chevron-right': !tabAccordion.apiClients.open}"></i>
         </uib-accordion-heading>
-        {{ include("ConcertoPanelBundle:Administration:api_clients_section.html.twig", {'class_name':"Administration"}) }}
+        {{ include("@ConcertoPanel/Administration/api_clients_section.html.twig", {'class_name':"Administration"}) }}
     </uib-accordion-group>
 {% endblock %}
 

@@ -4,7 +4,7 @@ namespace Concerto\PanelBundle\Controller;
 
 use Concerto\PanelBundle\Service\FileService;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
-use Symfony\Bundle\FrameworkBundle\Templating\EngineInterface;
+use Twig\Environment;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
@@ -12,7 +12,7 @@ use Symfony\Component\Translation\TranslatorInterface;
 
 /**
  * @Route("/admin")
- * @Security("has_role('ROLE_FILE') or has_role('ROLE_SUPER_ADMIN')")
+ * @Security("is_granted('ROLE_FILE') or is_granted('ROLE_SUPER_ADMIN')")
  */
 class FileBrowserController
 {
@@ -21,7 +21,7 @@ class FileBrowserController
     private $fileService;
     private $translator;
 
-    public function __construct(EngineInterface $templating, FileService $fileService, TranslatorInterface $translator)
+    public function __construct(Environment $templating, FileService $fileService, TranslatorInterface $translator)
     {
         $this->templating = $templating;
         $this->fileService = $fileService;
@@ -254,7 +254,7 @@ class FileBrowserController
      */
     public function fileBrowserAction(Request $request)
     {
-        return $this->templating->renderResponse('ConcertoPanelBundle:FileBrowser:file_browser.html.twig');
+        return new Response($this->templating->render('@ConcertoPanel/FileBrowser/file_browser.html.twig'));
     }
 
     private function errorResponse($errorMessage, $status = 500)

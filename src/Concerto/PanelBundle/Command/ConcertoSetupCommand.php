@@ -2,7 +2,7 @@
 
 namespace Concerto\PanelBundle\Command;
 
-use Doctrine\Common\Persistence\ManagerRegistry;
+use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -100,6 +100,8 @@ class ConcertoSetupCommand extends Command
     {
         $this->updateSchema($input, $output);
         $this->initializeUsers($input, $output);
+
+        return 0;
     }
 
 }

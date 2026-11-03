@@ -5,7 +5,7 @@ namespace Concerto\PanelBundle\Command;
 use Concerto\PanelBundle\Service\AdministrationService;
 use Concerto\PanelBundle\Service\GitService;
 use Concerto\PanelBundle\Service\ImportService;
-use Doctrine\Common\Persistence\ManagerRegistry;
+use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -298,6 +298,8 @@ class ContentImportCommand extends Command
             $this->cleanTempDir($topTempDir);
         }
         $this->adminService->updateLastImportTime();
+
+        return 0;
     }
 
 }

@@ -40,6 +40,8 @@ class RunTestCommand extends Command
         } else {
             $output->writeln(json_encode($result));
         }
+
+        return 0;
     }
 
 }

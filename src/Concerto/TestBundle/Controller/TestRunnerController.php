@@ -14,10 +14,9 @@ use Symfony\Component\HttpFoundation\Request;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\HttpFoundation\Session\SessionInterface;
 use Symfony\Component\Routing\Annotation\Route;
-use Symfony\Component\Templating\EngineInterface;
+use Twig\Environment;
 use Concerto\PanelBundle\Entity\TestSessionLog;
 use Symfony\Component\HttpFoundation\RedirectResponse;
-use Twig\Environment;
 use Twig\Extension\EscaperExtension;
 use Twig\Loader\ArrayLoader;
 
@@ -32,7 +31,7 @@ class TestRunnerController
     private $sessionRunnerService;
     private $jwtEncoder;
 
-    public function __construct($environment, $projectDir, EngineInterface $templating, TestRunnerService $testRunnerService, LoggerInterface $logger, $testRunnerSettings, ASessionRunnerService $sessionRunnerService, JWTEncoderInterface $encoder)
+    public function __construct($environment, $projectDir, Environment $templating, TestRunnerService $testRunnerService, LoggerInterface $logger, $testRunnerSettings, ASessionRunnerService $sessionRunnerService, JWTEncoderInterface $encoder)
     {
         $this->templating = $templating;
         $this->testRunnerService = $testRunnerService;
@@ -117,7 +116,7 @@ class TestRunnerController
             "existing_session_hash" => $existing_session_hash
         );
 
-        $template = "ConcertoTestBundle::index.html.twig";
+        $template = "@ConcertoTest/index.html.twig";
         if ($baseTemplate) {
             $loader = new ArrayLoader([
                 "baseTemplate.html.twig" => $baseTemplate
@@ -132,7 +131,7 @@ class TestRunnerController
             $template = str_replace(["<src>", "</src>"], "", trim($template));
             return new Response($template);
         }
-        return $this->templating->renderResponse($template, $responseParams);
+        return new Response($this->templating->render($template, $responseParams));
     }
 
     /**

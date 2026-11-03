@@ -2,7 +2,7 @@
 
 namespace Concerto\PanelBundle\Controller;
 
-use Symfony\Bundle\FrameworkBundle\Templating\EngineInterface;
+use Twig\Environment;
 use Concerto\PanelBundle\Service\TestNodeService;
 use Concerto\PanelBundle\Service\TestNodePortService;
 use Concerto\PanelBundle\Service\TestVariableService;
@@ -14,7 +14,7 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 
 /**
  * @Route("/admin")
- * @Security("has_role('ROLE_TEST') or has_role('ROLE_SUPER_ADMIN')")
+ * @Security("is_granted('ROLE_TEST') or is_granted('ROLE_SUPER_ADMIN')")
  */
 class TestNodePortController extends ASectionController
 {
@@ -24,7 +24,7 @@ class TestNodePortController extends ASectionController
     private $testNodeService;
     private $testVariableService;
 
-    public function __construct(EngineInterface $templating, TestNodePortService $portService, TestNodeService $nodeService, TestVariableService $variableService, TranslatorInterface $translator)
+    public function __construct(Environment $templating, TestNodePortService $portService, TestNodeService $nodeService, TestVariableService $variableService, TranslatorInterface $translator)
     {
         parent::__construct($templating, $portService, $translator);
 

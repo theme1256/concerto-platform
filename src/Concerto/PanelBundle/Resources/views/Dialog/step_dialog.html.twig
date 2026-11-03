@@ -1,12 +1,12 @@
 {% trans_default_domain "TestWizard" %}
 <div type="text/ng-template" id="step_dialog.html">
 <div class="modal-body">
-    {% embed "ConcertoPanelBundle::form_v_panel.html.twig" %}
+    {% embed "@ConcertoPanel/form_v_panel.html.twig" %}
         {% trans_default_domain "TestWizard" %}
         {% block legend %}{%verbatim%}{{dialogTitle}}{%endverbatim%}{% endblock %}
         {% block legend_tooltip %}{{ 'step.form.fieldset.legend.tooltip'|trans }}{% endblock %}
         {% block elements %}
-            {% embed "ConcertoPanelBundle::form_v_element.html.twig" %}
+            {% embed "@ConcertoPanel/form_v_element.html.twig" %}
                 {% trans_default_domain "TestWizard" %}
                 {% block label %}{{ 'step.form.field.title'|trans }}{% endblock%}
                 {% block tooltip %}{{ 'step.form.field.title.tooltip'|trans }}{% endblock%}
@@ -15,7 +15,7 @@
                 {% endblock %}
             {% endembed %}
 
-            {% embed "ConcertoPanelBundle::form_v_element.html.twig" %}
+            {% embed "@ConcertoPanel/form_v_element.html.twig" %}
                 {% trans_default_domain "TestWizard" %}
                 {% block label %}{{ 'step.form.field.description'|trans }}{% endblock%}
                 {% block tooltip %}{{ 'step.form.field.description.tooltip'|trans }}{% endblock%}
@@ -24,7 +24,7 @@
                 {% endblock %}
             {% endembed %}
             
-            {% embed "ConcertoPanelBundle::form_v_element.html.twig" %}
+            {% embed "@ConcertoPanel/form_v_element.html.twig" %}
                 {% trans_default_domain "TestWizard" %}
                 {% block label %}{{ 'step.form.field.order'|trans }}{% endblock%}
                 {% block tooltip %}{{ 'step.form.field.order.tooltip'|trans }}{% endblock%}

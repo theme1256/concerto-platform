@@ -4,7 +4,7 @@ namespace Concerto\PanelBundle\Command;
 
 use Concerto\PanelBundle\Repository\ScheduledTaskRepository;
 use Concerto\PanelBundle\Service\AdministrationService;
-use Doctrine\Common\Persistence\ManagerRegistry;
+use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Bundle\FrameworkBundle\Console\Application;
 use Symfony\Component\Console\Input\ArrayInput;
 use Symfony\Component\Console\Input\InputArgument;
@@ -14,14 +14,14 @@ use Concerto\PanelBundle\Entity\ScheduledTask;
 use Symfony\Component\Console\Output\BufferedOutput;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\HttpKernel\KernelInterface;
-use Symfony\Component\Templating\EngineInterface;
+use Twig\Environment;
 
 class ConcertoTaskContentImportCommand extends ConcertoScheduledTaskCommand
 {
     private $templating;
     private $kernel;
 
-    public function __construct(AdministrationService $administrationService, $administration, ManagerRegistry $doctrine, EngineInterface $templating, KernelInterface $kernel, ScheduledTaskRepository $scheduledTaskRepository)
+    public function __construct(AdministrationService $administrationService, $administration, ManagerRegistry $doctrine, Environment $templating, KernelInterface $kernel, ScheduledTaskRepository $scheduledTaskRepository)
     {
         $this->templating = $templating;
         $this->kernel = $kernel;

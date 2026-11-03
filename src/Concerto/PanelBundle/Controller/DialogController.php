@@ -3,7 +3,7 @@
 namespace Concerto\PanelBundle\Controller;
 
 use Concerto\PanelBundle\Service\AdministrationService;
-use Symfony\Bundle\FrameworkBundle\Templating\EngineInterface;
+use Twig\Environment;
 use Concerto\PanelBundle\Service\PanelService;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
@@ -18,7 +18,7 @@ class DialogController
     private $service;
     private $rootDir;
 
-    public function __construct(EngineInterface $templating, PanelService $service, $rootDir)
+    public function __construct(Environment $templating, PanelService $service, $rootDir)
     {
         $this->templating = $templating;
         $this->service = $service;
@@ -54,11 +54,11 @@ class DialogController
     {
         $filtered_template_name = filter_var(basename($template_name), FILTER_SANITIZE_SPECIAL_CHARS, FILTER_FLAG_STRIP_LOW | FILTER_FLAG_STRIP_HIGH);
 
-        $template = "ConcertoPanelBundle:Dialog:$filtered_template_name.twig";
+        $template = "@ConcertoPanel/Dialog/$filtered_template_name.twig";
 
         try {
-            return $this->templating->renderResponse($template, $params);
-        } catch (\InvalidArgumentException $exc) {
+            return new Response($this->templating->render($template, $params));
+        } catch (\InvalidArgumentException | \Twig\Error\LoaderError $exc) {
             throw new NotFoundHttpException("404 - Not found: $filtered_template_name.");
         }
     }

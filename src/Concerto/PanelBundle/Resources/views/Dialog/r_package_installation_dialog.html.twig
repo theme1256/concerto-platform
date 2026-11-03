@@ -1,13 +1,13 @@
 {% trans_default_domain "Administration" %}
 <div type="text/ng-template" id="r_package_installation_dialog.html">
     <div class="modal-body">
-        {% embed "ConcertoPanelBundle::form_v_panel.html.twig" %}
+        {% embed "@ConcertoPanel/form_v_panel.html.twig" %}
             {% trans_default_domain "Administration" %}
             {% block legend %}{{ 'packages.dialog.title.installation'|trans }}{% endblock %}
             {% block legend_tooltip %}{{ 'packages.dialog.title.installation.tooltip'|trans }}{% endblock %}
             {% block elements %}
 
-                {% embed "ConcertoPanelBundle::form_v_element.html.twig" %}
+                {% embed "@ConcertoPanel/form_v_element.html.twig" %}
                     {% trans_default_domain "Administration" %}
                     {% block label %}{{ 'packages.dialog.fields.method'|trans }}{% endblock%}
                     {% block tooltip %}{{ 'packages.dialog.fields.method.tooltip'|trans }}{% endblock%}
@@ -17,7 +17,7 @@
                     {% endblock %}
                 {% endembed %}
 
-                {% embed "ConcertoPanelBundle::form_v_element.html.twig" %}
+                {% embed "@ConcertoPanel/form_v_element.html.twig" %}
                     {% trans_default_domain "Administration" %}
                     {% block row %}<tr class="formRowV" ng-show="method == 0">{% endblock %}
                         {% block label %}{{ 'packages.dialog.fields.name'|trans }}{% endblock%}
@@ -27,7 +27,7 @@
                     {% endblock %}
                 {% endembed %}
 
-                {% embed "ConcertoPanelBundle::form_v_element.html.twig" %}
+                {% embed "@ConcertoPanel/form_v_element.html.twig" %}
                     {% trans_default_domain "Administration" %}
                     {% block row %}<tr class="formRowV" ng-show="method == 0">{% endblock %}
                         {% block label %}{{ 'packages.dialog.fields.mirror'|trans }}{% endblock%}
@@ -37,7 +37,7 @@
                     {% endblock %}
                 {% endembed %}
 
-                {% embed "ConcertoPanelBundle::form_v_element.html.twig" %}
+                {% embed "@ConcertoPanel/form_v_element.html.twig" %}
                     {% trans_default_domain "Administration" %}
                     {% block row %}<tr class="formRowV" ng-show="method == 1">{% endblock %}
                         {% block label %}{{ 'packages.dialog.fields.url'|trans }}{% endblock%}

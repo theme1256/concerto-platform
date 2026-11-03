@@ -1,6 +1,6 @@
 <script type="text/ng-template" id="type_4_setter.html">
     <div ng-controller="WizardParamSetter4Controller">
-        {% embed "ConcertoPanelBundle:TestWizard:type_base_setter.html.twig" %}
+        {% embed "@ConcertoPanel/TestWizard/type_base_setter.html.twig" %}
             {% trans_default_domain "TestWizard" %}
             {% block setter %}
                 <input type="checkbox" ng-model="output" ng-change="onPrimitiveValueChange(output)" ng-true-value="'1'"

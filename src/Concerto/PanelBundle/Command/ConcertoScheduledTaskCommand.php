@@ -4,7 +4,7 @@ namespace Concerto\PanelBundle\Command;
 
 use Concerto\PanelBundle\Repository\ScheduledTaskRepository;
 use Concerto\PanelBundle\Service\AdministrationService;
-use Doctrine\Common\Persistence\ManagerRegistry;
+use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
@@ -127,6 +127,8 @@ abstract class ConcertoScheduledTaskCommand extends Command
             $this->onTaskFinished($task, $output);
             return 0;
         }
+
+        return 0;
     }
 
     protected function onTaskFinished(ScheduledTask $task, OutputInterface $output)

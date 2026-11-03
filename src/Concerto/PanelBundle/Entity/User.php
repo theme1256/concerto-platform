@@ -129,7 +129,9 @@ class User extends ATopEntity implements AdvancedUserInterface, \Serializable, \
      */
     public function getRoles()
     {
-        return $this->roles->toArray();
+        return array_map(function (Role $role) {
+            return $role->getRole();
+        }, $this->roles->toArray());
     }
 
     /**

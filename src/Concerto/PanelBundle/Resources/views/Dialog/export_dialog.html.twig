@@ -2,13 +2,13 @@
 <div type="text/ng-template" id="export_dialog.html">
     <div class="modal-body">
 
-        {% embed "ConcertoPanelBundle::form_v_panel.html.twig" %}
+        {% embed "@ConcertoPanel/form_v_panel.html.twig" %}
             {% trans_default_domain "panel" %}
             {% block legend %}{{ 'export.dialog.title'|trans }}{% endblock %}
             {% block legend_tooltip %}{{ 'export.fieldset.legend.tooltip'|trans }}{% endblock %}
             {% block elements %}
 
-                {% embed "ConcertoPanelBundle::form_v_element.html.twig" %}
+                {% embed "@ConcertoPanel/form_v_element.html.twig" %}
                     {% trans_default_domain "panel" %}
                     {% block label %}{{ 'export.form.field.format'|trans }}{% endblock%}
                     {% block tooltip %}{{ 'export.form.field.format.tooltip'|trans }}{% endblock%}
@@ -21,7 +21,7 @@
                     {% endblock %}
                 {% endembed %}
 
-                {% embed "ConcertoPanelBundle::form_v_element.html.twig" %}
+                {% embed "@ConcertoPanel/form_v_element.html.twig" %}
                     {% trans_default_domain "panel" %}
                     {% block row %}<tr class="formRowV" ng-show="exportInstructions.length > 0">{% endblock %}
                         {% block label %}{{ 'import.form.field.instructions'|trans }}{% endblock%}

@@ -1,7 +1,7 @@
 {% trans_default_domain "panel" %}
 <div type="text/ng-template" id="upload_list_dialog.html">
     <div class="modal-body" nv-file-drop="" uploader="uploader">
-    {% embed "ConcertoPanelBundle::form_v_panel.html.twig" %}
+    {% embed "@ConcertoPanel/form_v_panel.html.twig" %}
     {% trans_default_domain "panel" %}
     {% block legend %}{{ 'upload_list.dialog.title'|trans }}{% endblock %}
     {% block legend_tooltip %}{{ 'upload_list.dialog.tooltip'|trans }}{% endblock %}
@@ -9,7 +9,7 @@
         <uib-alert type="info">{{ "upload_list.dialog.description"|trans|raw }}</uib-alert>
     {% endblock %}
     {% block elements %}
-        {% embed "ConcertoPanelBundle::form_v_element.html.twig" %}
+        {% embed "@ConcertoPanel/form_v_element.html.twig" %}
             {% trans_default_domain "panel" %}
             {% block label %}{{ 'upload_list.dialog.fields.file'|trans }}{% endblock%}
             {% block tooltip %}{{ 'upload_list.dialog.fields.file.tooltip'|trans }}{% endblock%}

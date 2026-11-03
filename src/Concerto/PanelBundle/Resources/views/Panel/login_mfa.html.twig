@@ -1,10 +1,10 @@
-{% extends "ConcertoPanelBundle::base_panel.html.twig" %}
+{% extends "@ConcertoPanel/base_panel.html.twig" %}
 {% trans_default_domain "login" %}
 {% block body %}
     {{ parent() }}
     <div class="loginContainer">
         <form action="{{ checkPathUrl ? checkPathUrl: path(checkPathRoute) }}" method="post">
-            {% embed "ConcertoPanelBundle::form_v_panel.html.twig" %}
+            {% embed "@ConcertoPanel/form_v_panel.html.twig" %}
                 {% trans_default_domain "login" %}
                 {% block legend %}{{ 'mfa.form.legend'|trans }}{% endblock %}
                 {% block legend_tooltip %}{{ 'mfa.form.legend.tooltip'|trans }}{% endblock %}
@@ -14,7 +14,7 @@
                     </div>
                 {% endblock %}
                 {% block elements %}
-                    {% embed "ConcertoPanelBundle::form_v_element.html.twig" %}
+                    {% embed "@ConcertoPanel/form_v_element.html.twig" %}
                         {% trans_default_domain "login" %}
                         {% block label %}{{ 'mfa.form.field.code'|trans }}{% endblock %}
                         {% block tooltip %}{{ 'mfa.form.field.code.tooltip'|trans }}{% endblock %}

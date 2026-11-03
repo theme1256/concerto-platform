@@ -1,12 +1,12 @@
 {% trans_default_domain "Test" %}
 <div type="text/ng-template" id="connection_return_function_dialog.html">
     <div class="modal-body">
-    {% embed "ConcertoPanelBundle::form_v_single.html.twig" %}
+    {% embed "@ConcertoPanel/form_v_single.html.twig" %}
         {% trans_default_domain "panel" %}
         {% block legend %}{%verbatim%}{{title}}{%endverbatim%}{% endblock %}
         {% block legend_tooltip %}{{ "flow.fieldset.return_function.tooltip"|trans({},"Test") }}{% endblock %}
         {% block control %}
-            {{ include("ConcertoPanelBundle::code_mirror_header.html.twig", {mode: 'R'} ) }}
+            {{ include("@ConcertoPanel/code_mirror_header.html.twig", {mode: 'R'} ) }}
             <ui-codemirror ng-model="object.returnFunction" ui-codemirror-opts="codeOptions" ui-refresh='codemirrorForceRefresh'></ui-codemirror>
         {% endblock %}
     {% endembed %}

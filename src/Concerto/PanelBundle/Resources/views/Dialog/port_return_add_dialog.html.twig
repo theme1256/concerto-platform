@@ -1,13 +1,13 @@
 {% trans_default_domain "Test" %}
 <div type="text/ng-template" id="port_return_add_dialog.html">
     <div class="modal-body">
-        {% embed "ConcertoPanelBundle::form_v_panel.html.twig" %}
+        {% embed "@ConcertoPanel/form_v_panel.html.twig" %}
             {% trans_default_domain "Test" %}
             {% block legend %}{{ "flow.ports.dialog.titles.return.add"|trans }}{% endblock %}
             {% block legend_tooltip %}{{ "flow.ports.dialog.titles.return.add.tooltip"|trans }}{% endblock %}
             {% block description %}{% endblock %}
             {% block elements %}
-                {% embed "ConcertoPanelBundle::form_v_element.html.twig" %}
+                {% embed "@ConcertoPanel/form_v_element.html.twig" %}
                     {% trans_default_domain "Test" %}
                     {% block label %}{{ 'flow.ports.dialog.fields.exposed.returns'|trans }}{% endblock%}
                     {% block tooltip %}{{ 'flow.ports.dialog.fields.exposed.returns.tooltip'|trans }}{% endblock%}
@@ -25,7 +25,7 @@
                     {% endblock %}
                 {% endembed %}
                 
-                {% embed "ConcertoPanelBundle::form_v_element.html.twig" %}
+                {% embed "@ConcertoPanel/form_v_element.html.twig" %}
                     {% trans_default_domain "Test" %}
                     {% block label %}{{ 'flow.ports.dialog.fields.dynamic.return'|trans }}{% endblock%}
                     {% block tooltip %}{{ 'flow.ports.dialog.fields.dynamic.return.tooltip'|trans }}{% endblock%}

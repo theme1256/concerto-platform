@@ -8,7 +8,7 @@ use Concerto\PanelBundle\Service\TestService;
 use Concerto\PanelBundle\Service\ViewTemplateService;
 use Symfony\Component\HttpFoundation\Response;
 use Concerto\PanelBundle\Service\TestWizardService;
-use Symfony\Bundle\FrameworkBundle\Templating\EngineInterface;
+use Twig\Environment;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Translation\TranslatorInterface;
@@ -19,7 +19,7 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 
 /**
  * @Route("/admin")
- * @Security("has_role('ROLE_TEST') or has_role('ROLE_SUPER_ADMIN')")
+ * @Security("is_granted('ROLE_TEST') or is_granted('ROLE_SUPER_ADMIN')")
  */
 class TestController extends AExportableTabController
 {
@@ -31,7 +31,7 @@ class TestController extends AExportableTabController
     private $userService;
     private $viewTemplateService;
 
-    public function __construct($environment, EngineInterface $templating, TestService $service, TranslatorInterface $translator, TestWizardService $testWizardService, ImportService $importService, ExportService $exportService, UserService $userService, FileService $fileService, ViewTemplateService $viewTemplateService)
+    public function __construct($environment, Environment $templating, TestService $service, TranslatorInterface $translator, TestWizardService $testWizardService, ImportService $importService, ExportService $exportService, UserService $userService, FileService $fileService, ViewTemplateService $viewTemplateService)
     {
         parent::__construct($environment, $templating, $service, $translator, $importService, $exportService, $fileService);
 
@@ -69,9 +69,9 @@ class TestController extends AExportableTabController
             $test->clearNodes();
             $test->clearNodesConnections();
         }
-        return $this->templating->renderResponse("ConcertoPanelBundle::collection.$format.twig", array(
+        return new Response($this->templating->render("@ConcertoPanel/collection.$format.twig", array(
             'collection' => $collection
-        ));
+        )));
     }
 
     /**

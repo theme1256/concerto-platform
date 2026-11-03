@@ -20,6 +20,12 @@ services:
     public: true
     tags: ['controller.service_arguments']
 
+  # Injected into FOSOAuthServerBundle's AuthorizeController by FosOAuthTemplatingPass.
+  # Remove together with FOSOAuthServerBundle.
+  Concerto\APIBundle\Templating\FosOAuthTwigEngine:
+    autowire: false
+    arguments: ['@twig']
+
   #repositories
   Concerto\APIBundle\Repository\ClientRepository:
     factory: doctrine.orm.entity_manager:getRepository

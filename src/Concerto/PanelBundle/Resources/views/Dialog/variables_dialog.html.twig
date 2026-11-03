@@ -1,12 +1,12 @@
 {% trans_default_domain "Test" %}
 <div type="text/ng-template" id="variables_dialog.html">
 <div class="modal-body">
-    {% embed "ConcertoPanelBundle::form_v_panel.html.twig" %}
+    {% embed "@ConcertoPanel/form_v_panel.html.twig" %}
         {% trans_default_domain "Test" %}
         {% block legend %}{%verbatim%}{{dialogTitle}}{%endverbatim%}{% endblock %}
         {% block legend_tooltip %}{{ 'variables.dialog.tooltip'|trans }}{% endblock %}
         {% block elements %}
-            {% embed "ConcertoPanelBundle::form_v_element.html.twig" %}
+            {% embed "@ConcertoPanel/form_v_element.html.twig" %}
                 {% trans_default_domain "Test" %}
                 {% block label %}{{ 'variables.form.field.name'|trans }}{% endblock%}
                 {% block tooltip %}{{ 'variables.form.field.name.tooltip'|trans }}{% endblock%}
@@ -15,7 +15,7 @@
                 {% endblock %}
             {% endembed %}
 
-            {% embed "ConcertoPanelBundle::form_v_element.html.twig" %}
+            {% embed "@ConcertoPanel/form_v_element.html.twig" %}
                 {% trans_default_domain "Test" %}
                 {% block label %}{{ 'variables.form.field.description'|trans }}{% endblock%}
                 {% block tooltip %}{{ 'variables.form.field.description.tooltip'|trans }}{% endblock%}
@@ -24,7 +24,7 @@
                 {% endblock %}
             {% endembed %}
                 
-            {% embed "ConcertoPanelBundle::form_v_element.html.twig" %}
+            {% embed "@ConcertoPanel/form_v_element.html.twig" %}
                 {% trans_default_domain "Test" %}
                 {% block row %}<tr ng-if="object.type==0" class="formRowV">{% endblock %}
                 {% block label %}{{ 'variables.form.field.url'|trans }}{% endblock%}
@@ -34,7 +34,7 @@
                 {% endblock %}
             {% endembed %}
                 
-            {% embed "ConcertoPanelBundle::form_v_element.html.twig" %}
+            {% embed "@ConcertoPanel/form_v_element.html.twig" %}
                 {% trans_default_domain "Test" %}
                 {% block label %}{{ 'variables.form.field.value'|trans }}{% endblock%}
                 {% block tooltip %}{{ 'variables.form.field.value.tooltip'|trans }}{% endblock%}

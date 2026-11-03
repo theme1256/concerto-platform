@@ -4,20 +4,20 @@ namespace Concerto\PanelBundle\Command;
 
 use Concerto\PanelBundle\Repository\ScheduledTaskRepository;
 use Concerto\PanelBundle\Service\AdministrationService;
-use Doctrine\Common\Persistence\ManagerRegistry;
+use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Concerto\PanelBundle\Entity\ScheduledTask;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Process\Process;
-use Symfony\Component\Templating\EngineInterface;
+use Twig\Environment;
 
 class ConcertoTaskPackageInstallCommand extends ConcertoScheduledTaskCommand
 {
     private $testRunnerSettings;
     private $templating;
 
-    public function __construct(AdministrationService $administrationService, $administration, ManagerRegistry $doctrine, $testRunnerSettings, EngineInterface $templating, ScheduledTaskRepository $scheduledTaskRepository)
+    public function __construct(AdministrationService $administrationService, $administration, ManagerRegistry $doctrine, $testRunnerSettings, Environment $templating, ScheduledTaskRepository $scheduledTaskRepository)
     {
         $this->testRunnerSettings = $testRunnerSettings;
         $this->templating = $templating;
@@ -67,7 +67,7 @@ class ConcertoTaskPackageInstallCommand extends ConcertoScheduledTaskCommand
         $name = $info["name"];
         $url = $info["url"];
 
-        return $this->templating->render("ConcertoPanelBundle:Administration:task_package_install.html.twig", array(
+        return $this->templating->render("@ConcertoPanel/Administration/task_package_install.html.twig", array(
             "name" => $method == 0 ? $name : $url
         ));
     }

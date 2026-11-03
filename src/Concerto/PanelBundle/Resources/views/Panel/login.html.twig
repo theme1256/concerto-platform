@@ -1,10 +1,10 @@
-{% extends "ConcertoPanelBundle::base_panel.html.twig" %} 
+{% extends "@ConcertoPanel/base_panel.html.twig" %} 
 {% trans_default_domain "login" %} 
 {% block body %}
     {{ parent() }}
     <div class="loginContainer">
         <form action="{{ path('login_check') }}" method="POST">
-            {% embed "ConcertoPanelBundle::form_v_panel.html.twig" %}
+            {% embed "@ConcertoPanel/form_v_panel.html.twig" %}
                 {% trans_default_domain "login" %}
                 {% block legend %}{{ 'form.legend'|trans }}{% endblock %}
                 {% block legend_tooltip %}{{ 'form.legend.tooltip'|trans }}{% endblock %}
@@ -14,7 +14,7 @@
                     </div>
                 {% endblock %}
                 {% block elements %}
-                    {% embed "ConcertoPanelBundle::form_v_element.html.twig" %}
+                    {% embed "@ConcertoPanel/form_v_element.html.twig" %}
                         {% trans_default_domain "login" %}
                         {% block label %}{{ 'form.field.login'|trans }}{% endblock %}
                         {% block tooltip %}{{ 'form.field.login.tooltip'|trans }}{% endblock %}
@@ -22,7 +22,7 @@
                             <input id="username" type="text" name="_username" value="" style="width:100%;" class='form-control'/>
                         {% endblock %}
                     {% endembed %}
-                    {% embed "ConcertoPanelBundle::form_v_element.html.twig" %}
+                    {% embed "@ConcertoPanel/form_v_element.html.twig" %}
                         {% trans_default_domain "login" %}
                         {% block label %}{{ 'form.field.password'|trans }}{% endblock %}
                         {% block tooltip %}{{ 'form.field.password.tooltip'|trans }}{% endblock %}
