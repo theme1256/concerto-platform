@@ -212,6 +212,7 @@ class DataTableService extends AExportableSectionService
             // sorting is a list of {name, dir}; validate the names, not the list indexes
             foreach ($decodedFilters["sorting"] as $sortingElem) {
                 if (!is_array($sortingElem) || empty($this->dbStructureService->getColumn($tableName, $sortingElem["name"] ?? null))) return false;
+                if (!in_array(strtolower((string)($sortingElem["dir"] ?? "")), array("asc", "desc"), true)) return false;
             }
         }
         return true;

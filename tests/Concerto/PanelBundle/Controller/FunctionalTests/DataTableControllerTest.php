@@ -509,8 +509,13 @@ class DataTableControllerTest extends AFunctionalTest
             "count" => 1
         ), json_decode($client->getResponse()->getContent(), true));
 
-        // unknown filter and sort columns are rejected
-        foreach (array($grid(array("nope" => "x"), array()), $grid(array(), array(array("name" => "nope", "dir" => "asc")))) as $params) {
+        // unknown filter and sort columns and invalid sort directions are rejected
+        foreach (array(
+                     $grid(array("nope" => "x"), array()),
+                     $grid(array(), array(array("name" => "nope", "dir" => "asc"))),
+                     $grid(array(), array(array("name" => "id", "dir" => ""))),
+                     $grid(array(), array(array("name" => "id", "dir" => "asc; DROP TABLE x")))
+                 ) as $params) {
             $client->request("POST", "/admin/DataTable/1/data/collection", $params);
             $this->assertSame(array(), json_decode($client->getResponse()->getContent(), true)["content"]);
         }

@@ -17,7 +17,8 @@ class DBStructureDAO
 {
     /**
      * MySQL table options DBAL 2 applied by default; DBAL 3+ leaves them to the server defaults.
-     * Kept explicit so data tables keep their charset and row size limits.
+     * Data tables use the connection's default_table_options (config.yml, shared with the ORM
+     * tables); these are the fallback when none are configured.
      */
     const MYSQL_TABLE_OPTIONS = ['charset' => 'utf8', 'collation' => 'utf8_unicode_ci', 'engine' => 'InnoDB'];
 
@@ -170,7 +171,7 @@ class DBStructureDAO
             ->setPrimaryKeyConstraint($primaryKey->create());
         $this->quotesNames() ? $editor->setQuotedName($table_name) : $editor->setUnquotedName($table_name);
         if ($this->quotesNames()) {
-            $editor->setOptions(self::MYSQL_TABLE_OPTIONS);
+            $editor->setOptions($this->connection->getParams()['defaultTableOptions'] ?? self::MYSQL_TABLE_OPTIONS);
         }
         $this->schemaManager()->createTable($editor->create());
 

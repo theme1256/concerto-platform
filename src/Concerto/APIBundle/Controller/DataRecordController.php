@@ -31,7 +31,7 @@ class DataRecordController
     public function dataCollectionAction(Request $request, $table_id)
     {
         if (!$this->administrationService->isApiEnabled() || !$this->administrationService->isDataApiEnabled())
-            return new Response("API disabled", Response::HTTP_FORBIDDEN);
+            return self::textResponse("API disabled", Response::HTTP_FORBIDDEN);
 
         switch ($request->getMethod()) {
             case "GET":
@@ -52,7 +52,7 @@ class DataRecordController
     public function dataObjectAction(Request $request, $table_id, $id)
     {
         if (!$this->administrationService->isApiEnabled() || !$this->administrationService->isDataApiEnabled())
-            return new Response("API disabled", Response::HTTP_FORBIDDEN);
+            return self::textResponse("API disabled", Response::HTTP_FORBIDDEN);
 
         switch ($request->getMethod()) {
             case "GET":
@@ -65,6 +65,15 @@ class DataRecordController
         }
     }
 
+    /**
+     * Error messages are plain text: they can repeat client input (e.g. unknown field names),
+     * which must not be rendered as HTML.
+     */
+    private static function textResponse($message, $status)
+    {
+        return new Response($message, $status, array('Content-Type' => 'text/plain; charset=UTF-8'));
+    }
+
     private function getDataObject(Request $request, $table_id, $id)
     {
         $format = RequestParameters::get($request, "format") ? RequestParameters::get($request, "format") : "json";
@@ -72,7 +81,7 @@ class DataRecordController
 
         switch ($data["response"]) {
             case Response::HTTP_NOT_FOUND:
-                return new Response("Data not found", $data["response"]);
+                return self::textResponse("Data not found", $data["response"]);
             default:
                 $response = new Response($data["result"], $data["response"]);
                 $response->headers->set('Content-Type', 'application/' . $format);
@@ -88,9 +97,9 @@ class DataRecordController
 
         switch ($data["response"]) {
             case Response::HTTP_NOT_FOUND:
-                return new Response("Data not found", $data["response"]);
+                return self::textResponse("Data not found", $data["response"]);
             case Response::HTTP_BAD_REQUEST:
-                return new Response("Incorrect filter params", $data["response"]);
+                return self::textResponse("Incorrect filter params", $data["response"]);
             default:
                 $response = new Response($data["result"], $data["response"]);
                 $response->headers->set('Content-Type', 'application/' . $format);
@@ -101,7 +110,7 @@ class DataRecordController
     private function updateDataObject(Request $request, $table_id, $id)
     {
         if (strpos((string)$request->getContentTypeFormat(), "json") === false) {
-            return new Response("Content-Type: application/json expected", Response::HTTP_BAD_REQUEST);
+            return self::textResponse("Content-Type: application/json expected", Response::HTTP_BAD_REQUEST);
         }
         $format = RequestParameters::get($request, "format") ? RequestParameters::get($request, "format") : "json";
         $newSerializedData = $request->getContent();
@@ -109,9 +118,9 @@ class DataRecordController
 
         switch ($data["response"]) {
             case Response::HTTP_NOT_FOUND:
-                return new Response("Data not found", $data["response"]);
+                return self::textResponse("Data not found", $data["response"]);
             case Response::HTTP_BAD_REQUEST:
-                return new Response($data["result"] ?? "Incorrect fields", $data["response"]);
+                return self::textResponse($data["result"] ?? "Incorrect fields", $data["response"]);
             default:
                 $response = new Response($data["result"], $data["response"]);
                 $response->headers->set('Content-Type', 'application/' . $format);
@@ -122,7 +131,7 @@ class DataRecordController
     private function insertDataObject(Request $request, $table_id)
     {
         if (strpos((string)$request->getContentTypeFormat(), "json") === false) {
-            return new Response("Content-Type: application/json expected", Response::HTTP_BAD_REQUEST);
+            return self::textResponse("Content-Type: application/json expected", Response::HTTP_BAD_REQUEST);
         }
         $format = RequestParameters::get($request, "format") ? RequestParameters::get($request, "format") : "json";
         $serializedData = $request->getContent();
@@ -130,9 +139,9 @@ class DataRecordController
 
         switch ($data["response"]) {
             case Response::HTTP_NOT_FOUND:
-                return new Response("Data not found", $data["response"]);
+                return self::textResponse("Data not found", $data["response"]);
             case Response::HTTP_BAD_REQUEST:
-                return new Response($data["result"] ?? "Incorrect fields", $data["response"]);
+                return self::textResponse($data["result"] ?? "Incorrect fields", $data["response"]);
             default:
                 $response = new Response($data["result"], $data["response"]);
                 $response->headers->set('Content-Type', 'application/' . $format);
@@ -146,7 +155,7 @@ class DataRecordController
 
         switch ($data["response"]) {
             case Response::HTTP_NOT_FOUND:
-                return new Response("Data not found", $data["response"]);
+                return self::textResponse("Data not found", $data["response"]);
             default:
                 return new Response($data["result"], $data["response"]);
         }

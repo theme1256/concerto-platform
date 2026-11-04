@@ -89,6 +89,8 @@ class DataRecordApiTest extends AFunctionalTest
     {
         $response = $this->sendJson('POST', '/api/data/1', array('temp' => 'x', 'tmep' => 'y', 'score' => 1));
         $this->assertSame(400, $response->getStatusCode());
+        // the message repeats client input, so it must not be served as HTML
+        $this->assertSame('text/plain; charset=UTF-8', $response->headers->get('Content-Type'));
         $this->assertSame('Incorrect fields: unknown fields "tmep", "score". Expected fields: id, temp', $response->getContent());
         $this->assertSame(0, (int)static::$entityManager->getConnection()->fetchOne('SELECT COUNT(*) FROM ' . self::TABLE));
     }

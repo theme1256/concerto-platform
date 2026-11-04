@@ -54,7 +54,7 @@ class OAuthClientMigrator
 
         $migrated = 0;
         $rows = $connection->fetchAllAssociative(
-            'SELECT id, random_id, secret, redirect_uris, allowed_grant_types FROM ' . $connection->quoteSingleIdentifier(self::LEGACY_CLIENT_TABLE)
+            'SELECT id, random_id, secret, redirect_uris, allowed_grant_types FROM ' . DBStructureDAO::quoteName($connection, self::LEGACY_CLIENT_TABLE)
         );
         foreach ($rows as $row) {
             $identifier = $row['id'] . '_' . $row['random_id'];
@@ -74,7 +74,7 @@ class OAuthClientMigrator
         DBStructureDAO::withAllTables($connection, function (AbstractSchemaManager $schemaManager) use ($connection) {
             foreach (self::LEGACY_TABLES as $table) {
                 if ($schemaManager->tableExists($table)) {
-                    $schemaManager->dropTable($connection->quoteSingleIdentifier($table));
+                    $schemaManager->dropTable(DBStructureDAO::quoteName($connection, $table));
                 }
             }
         });
@@ -87,16 +87,15 @@ class OAuthClientMigrator
      */
     private function hasLegacyClientTable(Connection $connection)
     {
-        $schemaManager = $connection->createSchemaManager();
-        if (!DBStructureDAO::withAllTables($connection, function (AbstractSchemaManager $schemaManager) {
-            return $schemaManager->tableExists(self::LEGACY_CLIENT_TABLE);
-        })) {
-            return false;
-        }
-        $columns = array_map(function ($column) {
-            return strtolower(DBStructureDAO::columnName($column));
-        }, $schemaManager->introspectTableColumnsByUnquotedName(self::LEGACY_CLIENT_TABLE));
-        return count(array_diff(self::LEGACY_CLIENT_COLUMNS, $columns)) === 0;
+        return DBStructureDAO::withAllTables($connection, function (AbstractSchemaManager $schemaManager) {
+            if (!$schemaManager->tableExists(self::LEGACY_CLIENT_TABLE)) {
+                return false;
+            }
+            $columns = array_map(function ($column) {
+                return strtolower(DBStructureDAO::columnName($column));
+            }, $schemaManager->introspectTableColumnsByUnquotedName(self::LEGACY_CLIENT_TABLE));
+            return count(array_diff(self::LEGACY_CLIENT_COLUMNS, $columns)) === 0;
+        });
     }
 
     /**
