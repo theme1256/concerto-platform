@@ -5,6 +5,7 @@ namespace Concerto\PanelBundle\Entity;
 use DateTime;
 use Doctrine\ORM\Mapping as ORM;
 
+#[ORM\MappedSuperclass]
 abstract class ATopEntity extends AEntity
 {
 
@@ -15,62 +16,60 @@ abstract class ATopEntity extends AEntity
     /**
      *
      * @var DateTime
-     * @ORM\Column(type="datetime")
      */
+    #[ORM\Column(type: 'datetime')]
     protected $updated;
 
     /**
      * @var string
-     * @ORM\Column(type="string")
      */
+    #[ORM\Column(type: 'string')]
     protected $updatedBy;
 
     /**
      *
      * @var DateTime
-     * @ORM\Column(type="datetime")
      */
+    #[ORM\Column(type: 'datetime')]
     protected $created;
 
     /**
      *
      * @var integer
-     * @ORM\Column(type="integer")
      */
+    #[ORM\Column(type: 'integer')]
     protected $accessibility;
 
     /**
      *
      * @var string groups
-     * @ORM\Column(name="objectGroups", type="string")
      */
+    #[ORM\Column(name: 'objectGroups', type: 'string')]
     protected $groups;
 
     /**
      *
      * @var boolean
-     * @ORM\Column(type="boolean")
      */
+    #[ORM\Column(type: 'boolean')]
     protected $archived;
 
     /**
      *
      * @var boolean
-     * @ORM\Column(type="boolean")
      */
+    #[ORM\Column(type: 'boolean')]
     protected $starterContent;
 
     /**
      *
      * @var string
-     * @ORM\Column(type="string")
      */
+    #[ORM\Column(type: 'string')]
     protected $tags;
 
-    /**
-     * @ORM\ManyToOne(targetEntity="User")
-     * @ORM\JoinColumn(nullable=true, onDelete="SET NULL")
-     */
+    #[ORM\ManyToOne(targetEntity: User::class)]
+    #[ORM\JoinColumn(nullable: true, onDelete: 'SET NULL')]
     protected $directLockBy;
 
     public function __construct()

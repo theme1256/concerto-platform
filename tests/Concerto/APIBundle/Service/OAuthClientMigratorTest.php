@@ -2,6 +2,7 @@
 
 namespace Tests\Concerto\APIBundle\Service;
 
+use Concerto\PanelBundle\DAO\DBStructureDAO;
 use Concerto\APIBundle\Service\OAuthClientMigrator;
 use Tests\Concerto\PanelBundle\AFunctionalTest;
 
@@ -65,9 +66,14 @@ class OAuthClientMigratorTest extends AFunctionalTest
 
         $this->assertSame(1, $this->migrator()->migrate());
 
-        $schemaManager = $this->connection()->getSchemaManager();
+        $tables = DBStructureDAO::withAllTables($this->connection(), function ($schemaManager) {
+            return array_map(function ($name) {
+                return strtolower($name->getUnqualifiedName()->getValue());
+            }, $schemaManager->introspectTableNames());
+        });
+        $this->assertContains('oauth2_client', $tables);
         foreach (array('Client', 'AccessToken', 'RefreshToken', 'AuthCode') as $table) {
-            $this->assertFalse($schemaManager->tablesExist(array($table)), "$table should be dropped");
+            $this->assertNotContains(strtolower($table), $tables, "$table should be dropped");
         }
 
         $client = static::createClient();

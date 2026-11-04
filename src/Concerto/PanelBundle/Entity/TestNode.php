@@ -8,64 +8,52 @@ use Concerto\PanelBundle\Entity\TestNodePort;
 use Concerto\PanelBundle\Entity\TestNodeConnection;
 use \Doctrine\Common\Collections\ArrayCollection;
 
-/**
- * @ORM\Table
- * @ORM\Entity(repositoryClass="Concerto\PanelBundle\Repository\TestNodeRepository")
- * @ORM\HasLifecycleCallbacks
- */
+#[ORM\Table]
+#[ORM\Entity(repositoryClass: \Concerto\PanelBundle\Repository\TestNodeRepository::class)]
+#[ORM\HasLifecycleCallbacks]
 class TestNode extends AEntity implements \JsonSerializable
 {
 
     /**
      * @var string
-     * @ORM\Column(type="string")
      */
+    #[ORM\Column(type: 'string')]
     private $title;
 
     /**
      *
      * @var integer
-     * @ORM\Column(type="integer")
      */
+    #[ORM\Column(type: 'integer')]
     private $type;
 
     /**
      *
      * @var integer
-     * @ORM\Column(type="integer")
      */
+    #[ORM\Column(type: 'integer')]
     private $posX;
 
     /**
      *
      * @var integer
-     * @ORM\Column(type="integer")
      */
+    #[ORM\Column(type: 'integer')]
     private $posY;
 
-    /**
-     * @ORM\ManyToOne(targetEntity="Test", inversedBy="nodes")
-     */
+    #[ORM\ManyToOne(targetEntity: Test::class, inversedBy: 'nodes')]
     private $flowTest;
 
-    /**
-     * @ORM\ManyToOne(targetEntity="Test", inversedBy="sourceForNodes")
-     */
+    #[ORM\ManyToOne(targetEntity: Test::class, inversedBy: 'sourceForNodes')]
     private $sourceTest;
 
-    /**
-     * @ORM\OneToMany(targetEntity="TestNodeConnection", mappedBy="sourceNode", cascade={"remove"}, orphanRemoval=true)
-     */
+    #[ORM\OneToMany(targetEntity: TestNodeConnection::class, mappedBy: 'sourceNode', cascade: ['remove'], orphanRemoval: true)]
     private $sourceForConnections;
 
-    /**
-     * @ORM\OneToMany(targetEntity="TestNodeConnection", mappedBy="destinationNode", cascade={"remove"}, orphanRemoval=true)
-     */
+    #[ORM\OneToMany(targetEntity: TestNodeConnection::class, mappedBy: 'destinationNode', cascade: ['remove'], orphanRemoval: true)]
     private $destinationForConnections;
 
-    /**
-     * @ORM\OneToMany(targetEntity="TestNodePort", mappedBy="node", cascade={"remove"}, orphanRemoval=true)
-     */
+    #[ORM\OneToMany(targetEntity: TestNodePort::class, mappedBy: 'node', cascade: ['remove'], orphanRemoval: true)]
     private $ports;
 
     /**
@@ -402,14 +390,14 @@ class TestNode extends AEntity implements \JsonSerializable
         return $serialized;
     }
 
-    /** @ORM\PreRemove */
+    #[ORM\PreRemove]
     public function preRemove()
     {
         $this->getFlowTest()->removeNode($this);
         $this->getSourceTest()->removeSourceForNodes($this);
     }
 
-    /** @ORM\PrePersist */
+    #[ORM\PrePersist]
     public function prePersist()
     {
         if (!$this->getFlowTest()->hasNode($this)) $this->getFlowTest()->addNode($this);

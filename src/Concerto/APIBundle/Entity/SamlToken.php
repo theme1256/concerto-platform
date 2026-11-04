@@ -6,44 +6,33 @@ use Doctrine\ORM\Mapping as ORM;
 
 /**
  * AccessToken
- *
- * @ORM\Table(indexes={@ORM\Index(name="saml_token_hash_idx", columns={"hash"})})
- * @ORM\Entity(repositoryClass="Concerto\APIBundle\Repository\SamlTokenRepository")
  */
+#[ORM\Table]
+#[ORM\Index(name: 'saml_token_hash_idx', columns: ['hash'])]
+#[ORM\Entity(repositoryClass: \Concerto\APIBundle\Repository\SamlTokenRepository::class)]
 class SamlToken
 {
     /**
      * @var integer
-     *
-     * @ORM\Column(name="id", type="integer")
-     * @ORM\Id
-     * @ORM\GeneratedValue(strategy="AUTO")
      */
+    #[ORM\Column(name: 'id', type: 'integer')]
+    #[ORM\Id]
+    #[ORM\GeneratedValue(strategy: 'AUTO')]
     private $id;
 
-    /**
-     * @ORM\Column(type="text")
-     */
+    #[ORM\Column(type: 'text')]
     private $attributes;
 
-    /**
-     * @ORM\Column(type="string", nullable=true)
-     */
+    #[ORM\Column(type: 'string', nullable: true)]
     private $nameId;
 
-    /**
-     * @ORM\Column(type="string", length=40)
-     */
+    #[ORM\Column(type: 'string', length: 40)]
     private $hash;
 
-    /**
-     * @ORM\Column(type="integer", nullable=true)
-     */
+    #[ORM\Column(type: 'integer', nullable: true)]
     private $expiresAt;
 
-    /**
-     * @ORM\Column(type="boolean")
-     */
+    #[ORM\Column(type: 'boolean')]
     private $revoked;
 
     public function __construct()

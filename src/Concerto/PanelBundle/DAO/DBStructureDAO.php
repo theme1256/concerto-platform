@@ -3,15 +3,24 @@
 namespace Concerto\PanelBundle\DAO;
 
 use Doctrine\DBAL\Connection;
-use Doctrine\DBAL\Schema\ColumnDiff;
-use Doctrine\DBAL\Schema\Schema;
-use Doctrine\DBAL\Types\Type;
-use Doctrine\DBAL\Schema\TableDiff;
+use Doctrine\DBAL\Platforms\AbstractMySQLPlatform;
+use Doctrine\DBAL\Schema\AbstractSchemaManager;
 use Doctrine\DBAL\Schema\Column;
+use Doctrine\DBAL\Schema\ColumnDiff;
+use Doctrine\DBAL\Schema\Name\OptionallyQualifiedName;
+use Doctrine\DBAL\Schema\PrimaryKeyConstraint;
+use Doctrine\DBAL\Schema\Table;
+use Doctrine\DBAL\Schema\TableDiff;
 use Psr\Log\LoggerInterface;
 
 class DBStructureDAO
 {
+    /**
+     * MySQL table options DBAL 2 applied by default; DBAL 3+ leaves them to the server defaults.
+     * Kept explicit so data tables keep their charset and row size limits.
+     */
+    const MYSQL_TABLE_OPTIONS = ['charset' => 'utf8', 'collation' => 'utf8_unicode_ci', 'engine' => 'InnoDB'];
+
     // keys are doctrine types, rather than SQL or PHP ones
     private static $typeDefaultValues = [
         'smallint' => 0,
@@ -44,75 +53,67 @@ class DBStructureDAO
         $this->logger = $logger;
     }
 
+    private function schemaManager(): AbstractSchemaManager
+    {
+        return $this->connection->createSchemaManager();
+    }
+
+    /**
+     * Runs $callback with a schema manager that sees every table. The connection's schema assets
+     * filter hides tables the ORM does not map (UnmappedTablesSchemaFilter), data tables included.
+     */
+    public static function withAllTables(Connection $connection, callable $callback)
+    {
+        $configuration = $connection->getConfiguration();
+        $filter = $configuration->getSchemaAssetsFilter();
+        $configuration->setSchemaAssetsFilter(static function () {
+            return true;
+        });
+        try {
+            return $callback($connection->createSchemaManager());
+        } finally {
+            $configuration->setSchemaAssetsFilter($filter);
+        }
+    }
+
+    public static function columnName(Column $column): string
+    {
+        return $column->getObjectName()->getIdentifier()->getValue();
+    }
+
+    public static function columnType(Column $column): string
+    {
+        return $column->getTypeName();
+    }
+
     public function tableExists($table_name)
     {
-        return $this->connection->getSchemaManager()->tablesExist(array($table_name));
+        return self::withAllTables($this->connection, function (AbstractSchemaManager $schemaManager) use ($table_name) {
+            return $schemaManager->tableExists($table_name);
+        });
     }
 
     public function columnExists($table_name, $column_name)
     {
-        foreach ($this->connection->getSchemaManager()->listTableColumns($table_name) as $col) {
-            if ($col->getName() == $column_name) return true;
+        foreach ($this->getColumns($table_name) as $col) {
+            if (self::columnName($col) == $column_name) return true;
         }
         return false;
     }
 
-    public function createTable($table_name, $structure, $data)
+    private function buildColumn($name, $type, array $options): Column
     {
-        $schema = new Schema();
-        $table = $schema->createTable($table_name);
-        $table->addColumn("id", "bigint", array('autoincrement' => true));
-        $table->setPrimaryKey(array("id"));
-
-        foreach ($structure as $col) {
-            if ($col["name"] == "id") {
-                continue;
-            }
-            $options = [];
-            $lengthString = "";
-            if (isset($col["length"])) $lengthString = $col["length"];
-            if (isset(self::$typeDefaultLengths[$col["type"]])) $options["length"] = self::$typeDefaultLengths[$col["type"]];
-            if (isset(self::$typeDefaultPrecisions[$col["type"]])) $options["precision"] = self::$typeDefaultPrecisions[$col["type"]];
-            if (isset(self::$typeDefaultScales[$col["type"]])) $options["scale"] = self::$typeDefaultScales[$col["type"]];
-            $options["notnull"] = !$col["nullable"];
-            if ($col["nullable"]) $options["default"] = null;
-            else if (isset(self::$typeDefaultValues[$col["type"]])) $options["default"] = self::$typeDefaultValues[$col["type"]];
-            $this->applyLengthStringToColumnOptions($col["type"], $lengthString, $options);
-
-            $table->addColumn($col["name"], $col["type"], $options);
-        }
-
-        $sql = $schema->toSql($this->connection->getDatabasePlatform());
-        foreach ($sql as $query) {
-            $this->connection->executeQuery($query);
-        }
-        foreach ($data as $row) {
-            $esc_row = array();
-            foreach ($row as $k => $v) {
-                $esc_row[$k] = $v;
-            }
-            $this->connection->insert($table_name, $esc_row);
-        }
+        $editor = Column::editor()->setUnquotedName($name)->setTypeName($type);
+        if (array_key_exists("length", $options)) $editor->setLength((int)$options["length"]);
+        if (array_key_exists("precision", $options)) $editor->setPrecision((int)$options["precision"]);
+        if (array_key_exists("scale", $options)) $editor->setScale((int)$options["scale"]);
+        if (array_key_exists("notnull", $options)) $editor->setNotNull($options["notnull"]);
+        if (array_key_exists("default", $options)) $editor->setDefaultValue($options["default"]);
+        if (array_key_exists("autoincrement", $options)) $editor->setAutoincrement($options["autoincrement"]);
+        return $editor->create();
     }
 
-    public function getColumns($table_name)
-    {
-        return $this->connection->getSchemaManager()->listTableColumns($table_name);
-    }
-
-    public function deleteColumn($table_name, $column_name)
-    {
-        $tableDiff = new TableDiff($table_name);
-        foreach ($this->connection->getSchemaManager()->listTableColumns($table_name) as $col) {
-            if ($col->getName() == $column_name) {
-                $tableDiff->removedColumns = array($col);
-                break;
-            }
-        }
-        $this->connection->getSchemaManager()->alterTable($tableDiff);
-    }
-
-    public function saveColumn($table_name, $column_name, $name, $type, $lengthString = "", $nullable = false)
+    private function columnOptions($type, $lengthString, $nullable)
     {
         $options = array();
         if (isset(self::$typeDefaultLengths[$type])) $options["length"] = self::$typeDefaultLengths[$type];
@@ -122,30 +123,87 @@ class DBStructureDAO
         if ($nullable) $options["default"] = null;
         else if (isset(self::$typeDefaultValues[$type])) $options["default"] = self::$typeDefaultValues[$type];
         $this->applyLengthStringToColumnOptions($type, $lengthString, $options);
+        return $options;
+    }
 
-        $tableDiff = new TableDiff($table_name);
-        $newColumn = new Column($name, Type::getType($type), $options);
-        if ($column_name === "0") {
-            $tableDiff->addedColumns = array($newColumn);
-        } else {
-            foreach ($this->connection->getSchemaManager()->listTableColumns($table_name) as $col) {
-                if ($col->getName() == $column_name) {
-                    $columnDiff = new ColumnDiff($column_name, $newColumn);
-                    $tableDiff->changedColumns = array($columnDiff);
-                    break;
-                }
+    public function createTable($table_name, $structure, $data)
+    {
+        $columns = array($this->buildColumn("id", "bigint", array('autoincrement' => true)));
+        foreach ($structure as $col) {
+            if ($col["name"] == "id") {
+                continue;
             }
+            $columns[] = $this->buildColumn($col["name"], $col["type"], $this->columnOptions($col["type"], $col["length"] ?? "", $col["nullable"]));
         }
-        $this->connection->getSchemaManager()->alterTable($tableDiff);
+
+        $editor = Table::editor()
+            ->setUnquotedName($table_name)
+            ->setColumns(...$columns)
+            ->setPrimaryKeyConstraint(PrimaryKeyConstraint::editor()->setUnquotedColumnNames("id")->create());
+        if ($this->connection->getDatabasePlatform() instanceof AbstractMySQLPlatform) {
+            $editor->setOptions(self::MYSQL_TABLE_OPTIONS);
+        }
+        $this->schemaManager()->createTable($editor->create());
+
+        foreach ($data as $row) {
+            $esc_row = array();
+            foreach ($row as $k => $v) {
+                $esc_row[$k] = $v;
+            }
+            $this->connection->insert($table_name, $esc_row);
+        }
+    }
+
+    /**
+     * @return list<Column>
+     */
+    public function getColumns($table_name)
+    {
+        return $this->schemaManager()->introspectTableColumnsByUnquotedName($table_name);
+    }
+
+    private function findColumn($table_name, $column_name): ?Column
+    {
+        foreach ($this->getColumns($table_name) as $col) {
+            if (self::columnName($col) == $column_name) return $col;
+        }
+        return null;
+    }
+
+    public function deleteColumn($table_name, $column_name)
+    {
+        $col = $this->findColumn($table_name, $column_name);
+        if ($col === null) return;
+        $this->alterTable($table_name, array(), array(), array($col));
+    }
+
+    public function saveColumn($table_name, $column_name, $name, $type, $lengthString = "", $nullable = false)
+    {
+        $newColumn = $this->buildColumn($name, $type, $this->columnOptions($type, $lengthString, $nullable));
+        if ($column_name === "0") {
+            $this->alterTable($table_name, array($newColumn));
+            return;
+        }
+        $col = $this->findColumn($table_name, $column_name);
+        if ($col === null) return;
+        // a changed column keeps its data, also when renamed (MySQL: ALTER TABLE ... CHANGE old new)
+        $this->alterTable($table_name, array(), array(new ColumnDiff($col, $newColumn)));
+    }
+
+    private function alterTable($table_name, array $added, array $changed = array(), array $dropped = array())
+    {
+        $schemaManager = $this->schemaManager();
+        $table = $schemaManager->introspectTableByUnquotedName($table_name);
+        $schemaManager->alterTable(new TableDiff($table, $added, $changed, $dropped));
     }
 
     public function renameTable($table_old_name, $table_new_name)
     {
-        $data = $this->connection->createQueryBuilder()->select("*")->from($table_old_name, "d")->execute();
+        $data = $this->connection->createQueryBuilder()->select("*")->from($table_old_name, "d")->executeQuery()->iterateAssociative();
 
         $cols = array();
         foreach ($this->getColumns($table_old_name) as $col) {
-            array_push($cols, array("name" => $col->getName(), "type" => $col->getType()->getName(), "nullable" => !$col->getNotnull()));
+            array_push($cols, array("name" => self::columnName($col), "type" => self::columnType($col), "nullable" => !$col->getNotnull()));
         }
 
         $this->createTable($table_new_name, $cols, $data);
@@ -154,17 +212,22 @@ class DBStructureDAO
 
     public function deleteTable($table_name)
     {
-        $this->connection->getSchemaManager()->dropTable($table_name);
+        $this->schemaManager()->dropTable($table_name);
     }
 
     public function getTableNames()
     {
-        return $this->connection->getSchemaManager()->listTableNames();
+        $names = self::withAllTables($this->connection, function (AbstractSchemaManager $schemaManager) {
+            return $schemaManager->introspectTableNames();
+        });
+        return array_map(function (OptionallyQualifiedName $name) {
+            return $name->getUnqualifiedName()->getValue();
+        }, $names);
     }
 
     public function getLengthString(Column $column)
     {
-        switch ($column->getType()->getName()) {
+        switch (self::columnType($column)) {
             case "string":
                 return $column->getLength();
             case "decimal":

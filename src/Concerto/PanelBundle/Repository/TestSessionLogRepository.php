@@ -18,7 +18,7 @@ class TestSessionLogRepository extends AEntityRepository {
         $dt = new DateTime();
         $dt->setTimestamp($time);
         $builder = $this->getEntityManager()->getRepository(\Concerto\PanelBundle\Entity\TestSessionLog::class)->createQueryBuilder( 'tsl' );
-        $builder->where("tsl.created > :tslc")->orderBy("tsl.created", "DESC")->setMaxResults($limit)->setParameter("tslc", $dt);
+        $builder->where("tsl.created > :tslc")->orderBy("tsl.created", \SortDirection::Descending)->setMaxResults($limit)->setParameter("tslc", $dt);
         return $builder->getQuery()->execute();
     }
 } 

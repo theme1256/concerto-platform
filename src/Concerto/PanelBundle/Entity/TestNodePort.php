@@ -11,79 +11,69 @@ use \Doctrine\Common\Collections\ArrayCollection;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Validator\Constraints as Assert;
 
-/**
- * @ORM\Table
- * @ORM\Entity(repositoryClass="Concerto\PanelBundle\Repository\TestNodePortRepository")
- * @ORM\HasLifecycleCallbacks
- */
+#[ORM\Table]
+#[ORM\Entity(repositoryClass: \Concerto\PanelBundle\Repository\TestNodePortRepository::class)]
+#[ORM\HasLifecycleCallbacks]
 #[UniqueEntity(fields: ['node', 'type', 'name'], ignoreNull: 'node', message: 'validate.test.ports.unique')]
 class TestNodePort extends AEntity implements \JsonSerializable
 {
 
-    /**
-     * @ORM\ManyToOne(targetEntity="TestNode", inversedBy="ports")
-     */
+    #[ORM\ManyToOne(targetEntity: TestNode::class, inversedBy: 'ports')]
     private $node;
 
-    /**
-     * @ORM\ManyToOne(targetEntity="TestVariable", inversedBy="ports")
-     */
+    #[ORM\ManyToOne(targetEntity: TestVariable::class, inversedBy: 'ports')]
     private $variable;
 
-    /**
-     * @ORM\OneToMany(targetEntity="TestNodeConnection", mappedBy="sourcePort", cascade={"remove"}, orphanRemoval=true)
-     */
+    #[ORM\OneToMany(targetEntity: TestNodeConnection::class, mappedBy: 'sourcePort', cascade: ['remove'], orphanRemoval: true)]
     private $sourceForConnections;
 
-    /**
-     * @ORM\OneToMany(targetEntity="TestNodeConnection", mappedBy="destinationPort", cascade={"remove"}, orphanRemoval=true)
-     */
+    #[ORM\OneToMany(targetEntity: TestNodeConnection::class, mappedBy: 'destinationPort', cascade: ['remove'], orphanRemoval: true)]
     private $destinationForConnections;
 
     /**
      * @var string
-     * @ORM\Column(type="text", nullable=true)
      */
+    #[ORM\Column(type: 'text', nullable: true)]
     private $value;
 
     /**
      *
      * @var boolean
-     * @ORM\Column(type="boolean")
      */
+    #[ORM\Column(type: 'boolean')]
     private $string;
 
     /**
      *
      * @var boolean
-     * @ORM\Column(type="boolean")
      */
+    #[ORM\Column(type: 'boolean')]
     private $defaultValue;
 
     /**
      *
      * @var boolean
-     * @ORM\Column(type="boolean")
      */
+    #[ORM\Column(type: 'boolean')]
     private $dynamic;
 
     /**
      *
      * @var boolean
-     * @ORM\Column(type="boolean")
      */
+    #[ORM\Column(type: 'boolean')]
     private $exposed;
 
     /**
      * @var integer
-     * @ORM\Column(type="integer")
      */
+    #[ORM\Column(type: 'integer')]
     private $type;
 
     /**
      * @var string
-     * @ORM\Column(type="string", length=64)
      */
+    #[ORM\Column(type: 'string', length: 64)]
     #[Assert\Length(min: 1, max: 64, minMessage: 'validate.test.ports.name.min', maxMessage: 'validate.test.ports.name.max')]
     #[Assert\NotBlank(message: 'validate.test.ports.name.blank')]
     #[Assert\Regex('/^\\.?[a-zA-Z][a-zA-Z0-9_]*(?<!_)$/', message: 'validate.test.ports.name.incorrect')]
@@ -92,14 +82,14 @@ class TestNodePort extends AEntity implements \JsonSerializable
     /**
      *
      * @var boolean
-     * @ORM\Column(type="boolean")
      */
+    #[ORM\Column(type: 'boolean')]
     private $pointer;
 
     /**
      * @var string
-     * @ORM\Column(type="string", length=64)
      */
+    #[ORM\Column(type: 'string', length: 64)]
     private $pointerVariable;
 
     /**
@@ -525,14 +515,14 @@ class TestNodePort extends AEntity implements \JsonSerializable
         return $serialized;
     }
 
-    /** @ORM\PreRemove */
+    #[ORM\PreRemove]
     public function preRemove()
     {
         $this->getNode()->removePort($this);
         if ($this->getVariable()) $this->getVariable()->removePort($this);
     }
 
-    /** @ORM\PrePersist */
+    #[ORM\PrePersist]
     public function prePersist()
     {
         if (!$this->getNode()->hasPort($this)) $this->getNode()->addPort($this);

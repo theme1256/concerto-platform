@@ -10,18 +10,16 @@ use League\Bundle\OAuth2ServerBundle\Model\AbstractClient;
  *
  * The identifier is longer than the bundle's default (32) so that clients migrated from
  * FOSOAuthServerBundle keep their "<id>_<randomId>" public id. See OAuthClientMigrator.
- *
- * @ORM\Table(name="oauth2_client")
- * @ORM\Entity(repositoryClass="Concerto\APIBundle\Repository\ClientRepository")
  */
+#[ORM\Table(name: 'oauth2_client')]
+#[ORM\Entity(repositoryClass: \Concerto\APIBundle\Repository\ClientRepository::class)]
 class Client extends AbstractClient implements \JsonSerializable
 {
     /**
      * @var string
-     *
-     * @ORM\Id
-     * @ORM\Column(type="string", length=128)
      */
+    #[ORM\Id]
+    #[ORM\Column(type: 'string', length: 128)]
     protected string $identifier;
 
     public function getId()

@@ -6,34 +6,26 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
 use Doctrine\Common\Collections\Collection;
 
-/**
- * @ORM\Table
- * @ORM\Entity(repositoryClass="Concerto\PanelBundle\Repository\RoleRepository")
- */
+#[ORM\Table]
+#[ORM\Entity(repositoryClass: \Concerto\PanelBundle\Repository\RoleRepository::class)]
 class Role
 {
 
     /**
      * @var integer
-     * @ORM\Column(type="integer")
-     * @ORM\Id
-     * @ORM\GeneratedValue(strategy="AUTO")
      */
+    #[ORM\Column(type: 'integer')]
+    #[ORM\Id]
+    #[ORM\GeneratedValue(strategy: 'AUTO')]
     protected $id;
 
-    /**
-     * @ORM\Column(name="name", type="string", length=30)
-     */
+    #[ORM\Column(name: 'name', type: 'string', length: 30)]
     private $name;
 
-    /**
-     * @ORM\Column(name="role", type="string", length=20, unique=true)
-     */
+    #[ORM\Column(name: 'role', type: 'string', length: 20, unique: true)]
     private $role;
 
-    /**
-     * @ORM\ManyToMany(targetEntity="User", mappedBy="roles")
-     */
+    #[ORM\ManyToMany(targetEntity: User::class, mappedBy: 'roles')]
     private $users;
 
     public function __construct()

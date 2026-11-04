@@ -6,8 +6,8 @@ use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Concerto\PanelBundle\Entity\User;
 use Concerto\PanelBundle\Entity\Role;
 use Symfony\Bundle\FrameworkBundle\KernelBrowser;
-use Doctrine\DBAL\Platforms\MySqlPlatform;
-use Doctrine\DBAL\Platforms\PostgreSqlPlatform;
+use Doctrine\DBAL\Platforms\AbstractMySQLPlatform;
+use Doctrine\DBAL\Platforms\PostgreSQLPlatform;
 
 abstract class AFunctionalTest extends WebTestCase {
 
@@ -89,21 +89,21 @@ abstract class AFunctionalTest extends WebTestCase {
         $dbPlatform = $connection->getDatabasePlatform();
 
         $prefix = "";
-        if ($dbPlatform instanceof PostgreSqlPlatform) {
+        if ($dbPlatform instanceof PostgreSQLPlatform) {
             $prefix.='ALTER SEQUENCE ' . $cmd->getTableName() . '_id_seq RESTART;';
         }
-        if ($dbPlatform instanceof MySqlPlatform) {
+        if ($dbPlatform instanceof AbstractMySQLPlatform) {
             $prefix.='SET FOREIGN_KEY_CHECKS=0;';
         }
 
-        $q = $dbPlatform->getTruncateTableSql($cmd->getTableName()) . "";
-        if ($dbPlatform instanceof PostgreSqlPlatform) {
+        $q = $dbPlatform->getTruncateTableSQL($cmd->getTableName()) . "";
+        if ($dbPlatform instanceof PostgreSQLPlatform) {
             $q.= ' CASCADE';
         }
         $q.=";";
 
         $suffix = "";
-        if ($dbPlatform instanceof MySqlPlatform) {
+        if ($dbPlatform instanceof AbstractMySQLPlatform) {
             $suffix.='SET FOREIGN_KEY_CHECKS=1;';
         }
 

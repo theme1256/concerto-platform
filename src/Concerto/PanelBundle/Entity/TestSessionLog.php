@@ -6,11 +6,9 @@ use DateTime;
 use Doctrine\ORM\Mapping as ORM;
 use Concerto\PanelBundle\Entity\Test;
 
-/**
- * @ORM\Table
- * @ORM\Entity(repositoryClass="Concerto\PanelBundle\Repository\TestSessionLogRepository")
- * @ORM\HasLifecycleCallbacks
- */
+#[ORM\Table]
+#[ORM\Entity(repositoryClass: \Concerto\PanelBundle\Repository\TestSessionLogRepository::class)]
+#[ORM\HasLifecycleCallbacks]
 class TestSessionLog implements \JsonSerializable {
 
     const TYPE_SYSTEM = 2;
@@ -19,58 +17,56 @@ class TestSessionLog implements \JsonSerializable {
 
     /**
      * @var integer
-     * @ORM\Column(type="integer")
-     * @ORM\Id
-     * @ORM\GeneratedValue(strategy="AUTO")
      */
+    #[ORM\Column(type: 'integer')]
+    #[ORM\Id]
+    #[ORM\GeneratedValue(strategy: 'AUTO')]
     protected $id;
 
     /**
      *
      * @var DateTime
-     * @ORM\Column(type="datetime", nullable=true)
      */
+    #[ORM\Column(type: 'datetime', nullable: true)]
     protected $updated;
 
     /**
      *
      * @var DateTime
-     * @ORM\Column(type="datetime", nullable=true)
      */
+    #[ORM\Column(type: 'datetime', nullable: true)]
     protected $created;
 
     /**
      *
      * @var string
-     * @ORM\Column(type="string", nullable=true)
      */
+    #[ORM\Column(type: 'string', nullable: true)]
     private $ip;
 
     /**
      *
      * @var string
-     * @ORM\Column(type="string", nullable=true)
      */
+    #[ORM\Column(type: 'string', nullable: true)]
     private $browser;
 
     /**
      *
      * @var string
-     * @ORM\Column(type="text")
      */
+    #[ORM\Column(type: 'text')]
     private $message;
 
     /**
      *
      * @var integer
-     * @ORM\Column(type="integer")
      */
+    #[ORM\Column(type: 'integer')]
     private $type;
 
-    /**
-     * @ORM\ManyToOne(targetEntity="Test", inversedBy="logs")
-     * @ORM\JoinColumn(onDelete="CASCADE")
-     */
+    #[ORM\ManyToOne(targetEntity: Test::class, inversedBy: 'logs')]
+    #[ORM\JoinColumn(onDelete: 'CASCADE')]
     private $test;
 
     public function __construct()
@@ -261,7 +257,7 @@ class TestSessionLog implements \JsonSerializable {
         return false;
     }
 
-    /** @ORM\PreUpdate() */
+    #[ORM\PreUpdate]
     public function preUpdate()
     {
         $this->setUpdated(new DateTime("now"));

@@ -7,11 +7,9 @@ use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use \Doctrine\Common\Collections\ArrayCollection;
 
-/**
- * @ORM\Table
- * @ORM\Entity(repositoryClass="Concerto\PanelBundle\Repository\TestRepository")
- * @ORM\HasLifecycleCallbacks
- */
+#[ORM\Table]
+#[ORM\Entity(repositoryClass: \Concerto\PanelBundle\Repository\TestRepository::class)]
+#[ORM\HasLifecycleCallbacks]
 #[UniqueEntity(fields: 'name', message: 'validate.test.name.unique')]
 class Test extends ATopEntity implements \JsonSerializable
 {
@@ -24,8 +22,8 @@ class Test extends ATopEntity implements \JsonSerializable
 
     /**
      * @var string
-     * @ORM\Column(type="string", length=64, unique=true)
      */
+    #[ORM\Column(type: 'string', length: 64, unique: true)]
     #[Assert\Length(min: 1, max: 64, minMessage: 'validate.test.name.min', maxMessage: 'validate.test.name.max')]
     #[Assert\NotBlank(message: 'validate.test.name.blank')]
     private $name;
@@ -33,104 +31,88 @@ class Test extends ATopEntity implements \JsonSerializable
     /**
      *
      * @var string
-     * @ORM\Column(type="text")
      */
+    #[ORM\Column(type: 'text')]
     private $description;
 
     /**
      *
      * @var integer
-     * @ORM\Column(type="integer")
      */
+    #[ORM\Column(type: 'integer')]
     private $visibility;
 
     /**
      *
      * @var integer
-     * @ORM\Column(type="integer")
      */
+    #[ORM\Column(type: 'integer')]
     private $type;
 
-    /**
-     * @ORM\OneToMany(targetEntity="TestSessionLog", mappedBy="test")
-     */
+    #[ORM\OneToMany(targetEntity: TestSessionLog::class, mappedBy: 'test')]
     private $logs;
 
-    /**
-     * @ORM\OneToMany(targetEntity="TestVariable", mappedBy="test", cascade={"remove"}, orphanRemoval=true)
-     */
+    #[ORM\OneToMany(targetEntity: TestVariable::class, mappedBy: 'test', cascade: ['remove'], orphanRemoval: true)]
     private $variables;
 
-    /**
-     * @ORM\OneToMany(targetEntity="TestWizard", mappedBy="test", cascade={"remove"}, orphanRemoval=true)
-     */
+    #[ORM\OneToMany(targetEntity: TestWizard::class, mappedBy: 'test', cascade: ['remove'], orphanRemoval: true)]
     private $wizards;
 
     /**
      * @var string
-     * @ORM\Column(type="text", nullable=true)
      */
+    #[ORM\Column(type: 'text', nullable: true)]
     private $code;
 
-    /**
-     * @ORM\OneToMany(targetEntity="TestSession", mappedBy="test", cascade={"remove"}, orphanRemoval=true)
-     */
+    #[ORM\OneToMany(targetEntity: TestSession::class, mappedBy: 'test', cascade: ['remove'], orphanRemoval: true)]
     private $sessions;
 
-    /**
-     * @ORM\OneToMany(targetEntity="TestNode", mappedBy="flowTest", cascade={"remove"}, orphanRemoval=true)
-     */
+    #[ORM\OneToMany(targetEntity: TestNode::class, mappedBy: 'flowTest', cascade: ['remove'], orphanRemoval: true)]
     private $nodes;
 
-    /**
-     * @ORM\OneToMany(targetEntity="TestNode", mappedBy="sourceTest", cascade={"remove"}, orphanRemoval=true)
-     */
+    #[ORM\OneToMany(targetEntity: TestNode::class, mappedBy: 'sourceTest', cascade: ['remove'], orphanRemoval: true)]
     private $sourceForNodes;
 
-    /**
-     * @ORM\OneToMany(targetEntity="TestNodeConnection", mappedBy="flowTest", cascade={"remove"}, orphanRemoval=true)
-     */
+    #[ORM\OneToMany(targetEntity: TestNodeConnection::class, mappedBy: 'flowTest', cascade: ['remove'], orphanRemoval: true)]
     private $nodesConnections;
 
     /**
      * @var TestWizard
-     * @ORM\ManyToOne(targetEntity="TestWizard", inversedBy="resultingTests")
      */
+    #[ORM\ManyToOne(targetEntity: TestWizard::class, inversedBy: 'resultingTests')]
     private $sourceWizard;
 
     /**
      *
      * @var string
-     * @ORM\Column(type="string", length=64, unique=true )
      */
+    #[ORM\Column(type: 'string', length: 64, unique: true)]
     #[Assert\Length(min: 1, max: 64, minMessage: 'validate.test.slug.min', maxMessage: 'validate.test.slug.max')]
     #[Assert\NotBlank(message: 'validate.test.slug.blank')]
     private $slug;
 
-    /**
-     * @ORM\ManyToOne(targetEntity="User")
-     * @ORM\JoinColumn(nullable=true, onDelete="SET NULL")
-     */
+    #[ORM\ManyToOne(targetEntity: User::class)]
+    #[ORM\JoinColumn(nullable: true, onDelete: 'SET NULL')]
     private $owner;
 
     /**
      * @var string
-     * @ORM\Column(type="text", nullable=true)
      */
+    #[ORM\Column(type: 'text', nullable: true)]
     private $configOverride;
 
     /**
      * @var ViewTemplate
-     * @ORM\ManyToOne(targetEntity="ViewTemplate", inversedBy="baseTemplateForTests")
-     * @ORM\JoinColumn(nullable=true, onDelete="SET NULL")
      */
+    #[ORM\ManyToOne(targetEntity: ViewTemplate::class, inversedBy: 'baseTemplateForTests')]
+    #[ORM\JoinColumn(nullable: true, onDelete: 'SET NULL')]
     private $baseTemplate;
 
     /**
      *
      * @var boolean
-     * @ORM\Column(type="boolean")
      */
+    #[ORM\Column(type: 'boolean')]
     private $protected;
 
     /**
@@ -809,14 +791,14 @@ class Test extends ATopEntity implements \JsonSerializable
         return $serialized;
     }
 
-    /** @ORM\PreRemove */
+    #[ORM\PreRemove]
     public function preRemove()
     {
         if ($this->getSourceWizard()) $this->getSourceWizard()->removeResultingTest($this);
         if ($this->getBaseTemplate()) $this->getBaseTemplate()->removeBaseTemplateForTest($this);
     }
 
-    /** @ORM\PrePersist */
+    #[ORM\PrePersist]
     public function prePersist()
     {
         if ($this->getSourceWizard() && !$this->getSourceWizard()->isResultingTest($this)) $this->getSourceWizard()->addResultingTest($this);

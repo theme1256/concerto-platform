@@ -3,7 +3,7 @@
 namespace Concerto\PanelBundle\Repository;
 
 use Concerto\PanelBundle\Entity\TestSession;
-use Doctrine\DBAL\Types\Type;
+use Doctrine\DBAL\Types\Types;
 
 /**
  * TestSessionRepository
@@ -18,9 +18,9 @@ class TestSessionRepository extends AEntityRepository
 
         $builder = $this->getEntityManager()->getConnection()->createQueryBuilder()->select('count(ts.id)')->from("TestSession", "ts");
         $builder->where("ts.status = :status")->setParameter('status', TestSession::STATUS_RUNNING);
-        $builder->andWhere("ts.updated >= :updated")->setParameter('updated', $dt, Type::DATETIME);
+        $builder->andWhere("ts.updated >= :updated")->setParameter('updated', $dt, Types::DATETIME_MUTABLE);
 
-        return (int)$builder->execute()->fetchOne();
+        return (int)$builder->executeQuery()->fetchOne();
     }
 
     public function getUpdatedAgo($id)
@@ -28,6 +28,6 @@ class TestSessionRepository extends AEntityRepository
         $builder = $this->getEntityManager()->getConnection()->createQueryBuilder()->select('TIME_TO_SEC(TIMEDIFF(CURRENT_TIMESTAMP, ts.updated))')->from("TestSession", "ts");
         $builder->where("ts.id = :id")->setParameter('id', $id);
 
-        return (int)$builder->execute()->fetchOne();
+        return (int)$builder->executeQuery()->fetchOne();
     }
 }

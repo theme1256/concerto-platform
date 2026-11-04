@@ -7,19 +7,17 @@ use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use \Doctrine\Common\Collections\ArrayCollection;
 
-/**
- * @ORM\Table
- * @ORM\Entity(repositoryClass="Concerto\PanelBundle\Repository\TestWizardRepository")
- * @ORM\HasLifecycleCallbacks
- */
+#[ORM\Table]
+#[ORM\Entity(repositoryClass: \Concerto\PanelBundle\Repository\TestWizardRepository::class)]
+#[ORM\HasLifecycleCallbacks]
 #[UniqueEntity(fields: 'name', message: 'validate.test.wizards.name.unique')]
 class TestWizard extends ATopEntity implements \JsonSerializable
 {
 
     /**
      * @var string
-     * @ORM\Column(type="string", length=64, unique=true)
      */
+    #[ORM\Column(type: 'string', length: 64, unique: true)]
     #[Assert\Length(min: 1, max: 64, minMessage: 'validate.test.wizards.name.min', maxMessage: 'validate.test.wizards.name.max')]
     #[Assert\NotBlank(message: 'validate.test.wizards.name.blank')]
     private $name;
@@ -27,36 +25,26 @@ class TestWizard extends ATopEntity implements \JsonSerializable
     /**
      *
      * @var string
-     * @ORM\Column(type="text")
      */
+    #[ORM\Column(type: 'text')]
     private $description;
 
-    /**
-     * @ORM\ManyToOne(targetEntity="Test", inversedBy="wizards")
-     */
+    #[ORM\ManyToOne(targetEntity: Test::class, inversedBy: 'wizards')]
     #[Assert\NotNull(message: 'validate.test.wizards.test.null')]
     private $test;
 
-    /**
-     * @ORM\OneToMany(targetEntity="TestWizardParam", mappedBy="wizard", cascade={"remove"}, orphanRemoval=true)
-     */
+    #[ORM\OneToMany(targetEntity: TestWizardParam::class, mappedBy: 'wizard', cascade: ['remove'], orphanRemoval: true)]
     private $params;
 
-    /**
-     * @ORM\OneToMany(targetEntity="TestWizardStep", mappedBy="wizard", cascade={"remove"}, orphanRemoval=true)
-     * @ORM\OrderBy({"orderNum" = "ASC"})
-     */
+    #[ORM\OneToMany(targetEntity: TestWizardStep::class, mappedBy: 'wizard', cascade: ['remove'], orphanRemoval: true)]
+    #[ORM\OrderBy(['orderNum' => \SortDirection::Ascending])]
     private $steps;
 
-    /**
-     * @ORM\OneToMany(targetEntity="Test", mappedBy="sourceWizard", cascade={"remove"}, orphanRemoval=true)
-     */
+    #[ORM\OneToMany(targetEntity: Test::class, mappedBy: 'sourceWizard', cascade: ['remove'], orphanRemoval: true)]
     private $resultingTests;
 
-    /**
-     * @ORM\ManyToOne(targetEntity="User")
-     * @ORM\JoinColumn(nullable=true, onDelete="SET NULL")
-     */
+    #[ORM\ManyToOne(targetEntity: User::class)]
+    #[ORM\JoinColumn(nullable: true, onDelete: 'SET NULL')]
     private $owner;
 
     /**
@@ -360,13 +348,13 @@ class TestWizard extends ATopEntity implements \JsonSerializable
         return $serialized;
     }
 
-    /** @ORM\PreRemove */
+    #[ORM\PreRemove]
     public function preRemove()
     {
         $this->getTest()->removeWizards($this);
     }
 
-    /** @ORM\PrePersist */
+    #[ORM\PrePersist]
     public function prePersist()
     {
         if (!$this->getTest()->hasWizard($this)) $this->getTest()->addWizard($this);

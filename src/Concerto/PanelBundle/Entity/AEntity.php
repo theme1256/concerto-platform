@@ -7,15 +7,16 @@ use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use DateTime;
 
+#[ORM\MappedSuperclass]
 abstract class AEntity
 {
 
     /**
      * @var integer
-     * @ORM\Column(type="integer")
-     * @ORM\Id
-     * @ORM\GeneratedValue(strategy="AUTO")
      */
+    #[ORM\Column(type: 'integer')]
+    #[ORM\Id]
+    #[ORM\GeneratedValue(strategy: 'AUTO')]
     protected $id;
 
     public function __construct()
@@ -54,7 +55,7 @@ abstract class AEntity
         return null;
     }
 
-    /** @ORM\PreUpdate() */
+    #[ORM\PreUpdate]
     public function preUpdate()
     {
         $this->getTopEntity()->setUpdated(new DateTime("now"));

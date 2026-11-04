@@ -11,10 +11,8 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Scheb\TwoFactorBundle\Model\Google\TwoFactorInterface;
 
-/**
- * @ORM\Table(name="ConcertoUser")
- * @ORM\Entity(repositoryClass="Concerto\PanelBundle\Repository\UserRepository")
- */
+#[ORM\Table(name: 'ConcertoUser')]
+#[ORM\Entity(repositoryClass: \Concerto\PanelBundle\Repository\UserRepository::class)]
 #[UniqueEntity(fields: 'username', message: 'validate.user.username.unique')]
 #[UniqueEntity(fields: 'email', message: 'validate.user.email.unique')]
 class User extends ATopEntity implements UserInterface, LegacyPasswordAuthenticatedUserInterface, \Serializable, \JsonSerializable, EquatableInterface, TwoFactorInterface
@@ -31,23 +29,22 @@ class User extends ATopEntity implements UserInterface, LegacyPasswordAuthentica
 
     /**
      * @var string
-     * @ORM\Column(type="string", length=25, unique=true)
      */
+    #[ORM\Column(type: 'string', length: 25, unique: true)]
     #[Assert\Length(min: 3, max: 25, minMessage: 'validate.user.username.min', maxMessage: 'validate.user.username.max')]
     #[Assert\NotBlank(message: 'validate.user.username.blank')]
     private $username;
 
     /**
      * @var string
-     *
-     * @ORM\Column(type="string", length=32)
      */
+    #[ORM\Column(type: 'string', length: 32)]
     private $salt;
 
     /**
      * @var string
-     * @ORM\Column(type="string", length=40)
      */
+    #[ORM\Column(type: 'string', length: 40)]
     #[Assert\Length(min: 4, max: 40, minMessage: 'validate.user.password.min', maxMessage: 'validate.user.password.max')]
     #[Assert\NotBlank(message: 'validate.user.password.blank', groups: ['create'])]
     private $password;
@@ -60,39 +57,32 @@ class User extends ATopEntity implements UserInterface, LegacyPasswordAuthentica
 
     /**
      * @var string
-     *
-     * @ORM\Column(type="string", length=60, unique=true)
      */
+    #[ORM\Column(type: 'string', length: 60, unique: true)]
     #[Assert\Email(message: 'validate.user.email')]
     #[Assert\Length(max: 60, maxMessage: 'validate.user.email.max')]
     #[Assert\NotBlank(message: 'validate.user.email.blank')]
     private $email;
 
-    /**
-     * @ORM\ManyToMany(targetEntity="Role", inversedBy="users")
-     */
+    #[ORM\ManyToMany(targetEntity: Role::class, inversedBy: 'users')]
     private $roles;
 
     /**
      * @var integer
-     * @ORM\Column(type="integer")
      */
+    #[ORM\Column(type: 'integer')]
     private $failedAuthenticationStreak;
 
     /**
      * @var \DateTime|null
-     * @ORM\Column(type="datetime", nullable=true)
      */
+    #[ORM\Column(type: 'datetime', nullable: true)]
     private $lockedUntil;
 
-    /**
-     * @ORM\Column(type="boolean")
-     */
+    #[ORM\Column(type: 'boolean')]
     private $googleAuthenticatorEnabled;
 
-    /**
-     * @ORM\Column(type="string", nullable=true)
-     */
+    #[ORM\Column(type: 'string', nullable: true)]
     private $googleAuthenticatorSecret;
 
     /**

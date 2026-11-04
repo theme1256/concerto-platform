@@ -8,19 +8,17 @@ use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use \Doctrine\Common\Collections\ArrayCollection;
 
-/**
- * @ORM\Table
- * @ORM\Entity(repositoryClass="Concerto\PanelBundle\Repository\TestVariableRepository")
- * @ORM\HasLifecycleCallbacks
- */
+#[ORM\Table]
+#[ORM\Entity(repositoryClass: \Concerto\PanelBundle\Repository\TestVariableRepository::class)]
+#[ORM\HasLifecycleCallbacks]
 #[UniqueEntity(fields: ['name', 'type', 'test'], message: 'validate.test.variables.unique')]
 class TestVariable extends AEntity implements \JsonSerializable
 {
 
     /**
      * @var string
-     * @ORM\Column(type="string", length=64)
      */
+    #[ORM\Column(type: 'string', length: 64)]
     #[Assert\Length(min: 1, max: 64, minMessage: 'validate.test.variables.name.min', maxMessage: 'validate.test.variables.name.max')]
     #[Assert\NotBlank(message: 'validate.test.variables.name.blank')]
     #[Assert\Regex('/^\\.?[a-zA-Z][a-zA-Z0-9_]*(?<!_)$/', message: 'validate.test.variables.name.incorrect')]
@@ -29,55 +27,45 @@ class TestVariable extends AEntity implements \JsonSerializable
     /**
      *
      * @var string
-     * @ORM\Column(type="text")
      */
+    #[ORM\Column(type: 'text')]
     private $description;
 
     /**
      *
      * @var string
-     * @ORM\Column(type="text", nullable=true)
      */
+    #[ORM\Column(type: 'text', nullable: true)]
     private $value;
 
     /**
      *
      * @var boolean
-     * @ORM\Column(type="boolean")
      */
+    #[ORM\Column(type: 'boolean')]
     private $passableThroughUrl;
 
     /**
      *
      * @var integer
-     * @ORM\Column(type="integer")
      */
+    #[ORM\Column(type: 'integer')]
     private $type;
 
-    /**
-     * @ORM\ManyToOne(targetEntity="Test", inversedBy="variables")
-     */
+    #[ORM\ManyToOne(targetEntity: Test::class, inversedBy: 'variables')]
     private $test;
 
-    /**
-     * @ORM\JoinColumn(name="parentVariable_id", referencedColumnName="id", nullable=true)
-     * @ORM\ManyToOne(targetEntity="TestVariable", inversedBy="childVariables")
-     */
+    #[ORM\JoinColumn(name: 'parentVariable_id', referencedColumnName: 'id', nullable: true)]
+    #[ORM\ManyToOne(targetEntity: TestVariable::class, inversedBy: 'childVariables')]
     private $parentVariable;
 
-    /**
-     * @ORM\OneToMany(targetEntity="TestVariable", mappedBy="parentVariable", cascade={"remove"}, orphanRemoval=true)
-     */
+    #[ORM\OneToMany(targetEntity: TestVariable::class, mappedBy: 'parentVariable', cascade: ['remove'], orphanRemoval: true)]
     private $childVariables;
 
-    /**
-     * @ORM\OneToMany(targetEntity="TestWizardParam", mappedBy="variable", cascade={"remove"}, orphanRemoval=true)
-     */
+    #[ORM\OneToMany(targetEntity: TestWizardParam::class, mappedBy: 'variable', cascade: ['remove'], orphanRemoval: true)]
     private $params;
 
-    /**
-     * @ORM\OneToMany(targetEntity="TestNodePort", mappedBy="variable", cascade={"remove"}, orphanRemoval=true)
-     */
+    #[ORM\OneToMany(targetEntity: TestNodePort::class, mappedBy: 'variable', cascade: ['remove'], orphanRemoval: true)]
     private $ports;
 
     public function __construct()
@@ -443,14 +431,14 @@ class TestVariable extends AEntity implements \JsonSerializable
         return $serialized;
     }
 
-    /** @ORM\PreRemove */
+    #[ORM\PreRemove]
     public function preRemove()
     {
         if ($this->getParentVariable()) $this->getParentVariable()->removeChildVariable($this);
         $this->getTest()->removeVariable($this);
     }
 
-    /** @ORM\PrePersist */
+    #[ORM\PrePersist]
     public function prePersist()
     {
         if ($this->getParentVariable() && !$this->getParentVariable()->hasChildVariable($this)) $this->getParentVariable()->addChildVariable($this);

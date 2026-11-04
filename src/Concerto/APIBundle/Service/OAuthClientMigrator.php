@@ -4,7 +4,9 @@ namespace Concerto\APIBundle\Service;
 
 use Concerto\APIBundle\Command\CreateClientCommand;
 use Concerto\APIBundle\Entity\Client;
+use Concerto\PanelBundle\DAO\DBStructureDAO;
 use Doctrine\DBAL\Connection;
+use Doctrine\DBAL\Schema\AbstractSchemaManager;
 use Doctrine\ORM\EntityManagerInterface;
 use League\Bundle\OAuth2ServerBundle\Manager\ClientManagerInterface;
 use League\Bundle\OAuth2ServerBundle\ValueObject\Grant;
@@ -52,7 +54,7 @@ class OAuthClientMigrator
 
         $migrated = 0;
         $rows = $connection->fetchAllAssociative(
-            'SELECT id, random_id, secret, redirect_uris, allowed_grant_types FROM ' . $connection->quoteIdentifier(self::LEGACY_CLIENT_TABLE)
+            'SELECT id, random_id, secret, redirect_uris, allowed_grant_types FROM ' . $connection->quoteSingleIdentifier(self::LEGACY_CLIENT_TABLE)
         );
         foreach ($rows as $row) {
             $identifier = $row['id'] . '_' . $row['random_id'];
@@ -69,12 +71,13 @@ class OAuthClientMigrator
             $migrated++;
         }
 
-        $schemaManager = $connection->getSchemaManager();
-        foreach (self::LEGACY_TABLES as $table) {
-            if ($schemaManager->tablesExist(array($table))) {
-                $schemaManager->dropTable($connection->quoteIdentifier($table));
+        DBStructureDAO::withAllTables($connection, function (AbstractSchemaManager $schemaManager) use ($connection) {
+            foreach (self::LEGACY_TABLES as $table) {
+                if ($schemaManager->tableExists($table)) {
+                    $schemaManager->dropTable($connection->quoteSingleIdentifier($table));
+                }
             }
-        }
+        });
 
         return $migrated;
     }
@@ -84,11 +87,15 @@ class OAuthClientMigrator
      */
     private function hasLegacyClientTable(Connection $connection)
     {
-        $schemaManager = $connection->getSchemaManager();
-        if (!$schemaManager->tablesExist(array(self::LEGACY_CLIENT_TABLE))) {
+        $schemaManager = $connection->createSchemaManager();
+        if (!DBStructureDAO::withAllTables($connection, function (AbstractSchemaManager $schemaManager) {
+            return $schemaManager->tableExists(self::LEGACY_CLIENT_TABLE);
+        })) {
             return false;
         }
-        $columns = array_map('strtolower', array_keys($schemaManager->listTableColumns(self::LEGACY_CLIENT_TABLE)));
+        $columns = array_map(function ($column) {
+            return strtolower(DBStructureDAO::columnName($column));
+        }, $schemaManager->introspectTableColumnsByUnquotedName(self::LEGACY_CLIENT_TABLE));
         return count(array_diff(self::LEGACY_CLIENT_COLUMNS, $columns)) === 0;
     }
 

@@ -164,10 +164,10 @@ class DataRecordService
             $f = $formatted_filters[$i];
             $found = false;
             foreach ($columns as $column) {
-                if ($column->getName() != $f["name"])
+                if (DBStructureDAO::columnName($column) != $f["name"])
                     continue;
                 $found = true;
-                switch ($column->getType()->getName()) {
+                switch (DBStructureDAO::columnType($column)) {
                     case "date":
                         $f["value"] = new \DateTime($f["value"]);
                         break;

@@ -53,18 +53,7 @@ class DataTableControllerTest extends AFunctionalTest
 
     private function dropTable($name)
     {
-        $fromSchema = static::$entityManager->getConnection()->getSchemaManager()->createSchema();
-        $toSchema = clone $fromSchema;
-        try {
-            $toSchema->dropTable($name);
-
-            $sql = $fromSchema->getMigrateToSql($toSchema, static::$entityManager->getConnection()->getDatabasePlatform());
-            foreach ($sql as $query) {
-                static::$entityManager->getConnection()->executeQuery($query);
-            }
-        } catch (\Exception $ex) {
-
-        }
+        static::$entityManager->getConnection()->executeStatement('DROP TABLE IF EXISTS ' . $name);
     }
 
     public function testCollectionAction()

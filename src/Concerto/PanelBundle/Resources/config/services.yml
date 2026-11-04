@@ -19,6 +19,10 @@ services:
         public: true
         tags: ['controller.service_arguments']
 
+    Concerto\PanelBundle\Doctrine\UnmappedTablesSchemaFilter:
+        tags:
+            - { name: doctrine.dbal.schema_filter, connection: local }
+
 #event subscribers
     Concerto\PanelBundle\EventSubscriber\LocaleSubscriber:
         arguments:

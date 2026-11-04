@@ -21,14 +21,13 @@
     ]
   },
   "require": {
-    "php": ">=8.2",
+    "php": ">=8.4",
     "cocur/slugify": "^4.7",
-    "doctrine/annotations": "^1.14",
-    "doctrine/dbal": "^2.13",
-    "doctrine/doctrine-bundle": "^2.7",
+    "doctrine/dbal": "^4.5",
+    "doctrine/doctrine-bundle": "^2.19",
     "doctrine/inflector": "^2.0",
-    "doctrine/orm": "^2.14",
-    "doctrine/persistence": "^2.5",
+    "doctrine/orm": "^3.7",
+    "doctrine/persistence": "^4.0",
     "incenteev/composer-parameter-handler": "^2.0",
     "league/oauth2-server-bundle": "^0.8",
     "lexik/jwt-authentication-bundle": "^3.2",
@@ -38,6 +37,7 @@
     "symfony/doctrine-messenger": "6.4.*",
     "symfony/monolog-bundle": "^3.7",
     "symfony/polyfill-apcu": "^1.0",
+    "symfony/polyfill-php86": "^1.43",
     "symfony/symfony": "6.4.*",
     "twig/twig": "^3.27"
   },

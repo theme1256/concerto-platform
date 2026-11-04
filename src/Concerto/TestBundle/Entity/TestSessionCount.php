@@ -5,32 +5,30 @@ namespace Concerto\TestBundle\Entity;
 use Doctrine\ORM\Mapping as ORM;
 use DateTime;
 
-/**
- * @ORM\Table
- * @ORM\Entity(repositoryClass="Concerto\TestBundle\Repository\TestSessionCountRepository") 
- */
+#[ORM\Table]
+#[ORM\Entity(repositoryClass: \Concerto\TestBundle\Repository\TestSessionCountRepository::class)]
 class TestSessionCount implements \JsonSerializable {
 
     /**
      * @var integer
-     * @ORM\Column(type="integer")
-     * @ORM\Id
-     * @ORM\GeneratedValue(strategy="AUTO")
      */
+    #[ORM\Column(type: 'integer')]
+    #[ORM\Id]
+    #[ORM\GeneratedValue(strategy: 'AUTO')]
     private $id;
 
     /**
      * 
      * @var DateTime
-     * @ORM\Column(type="datetime")
      */
+    #[ORM\Column(type: 'datetime')]
     private $created;
 
     /**
      *
      * @var integer
-     * @ORM\Column(type="integer")
      */
+    #[ORM\Column(type: 'integer')]
     private $count;
 
     public function __construct() {

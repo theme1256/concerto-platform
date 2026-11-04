@@ -25,7 +25,7 @@ class SamlTokenRepository extends AEntityRepository
             ->andWhere('t.hash = :hash')
             ->setParameter('hash', $tokenHash)
             ->setParameter('now', $now)
-            ->orderBy('t.id', 'desc')
+            ->orderBy('t.id', \SortDirection::Descending)
             ->setMaxResults(1)
             ->getQuery();
 

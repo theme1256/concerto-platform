@@ -7,19 +7,17 @@ use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Doctrine\Common\Collections\ArrayCollection;
 
-/**
- * @ORM\Table
- * @ORM\Entity(repositoryClass="Concerto\PanelBundle\Repository\TestWizardStepRepository")
- * @ORM\HasLifecycleCallbacks
- */
+#[ORM\Table]
+#[ORM\Entity(repositoryClass: \Concerto\PanelBundle\Repository\TestWizardStepRepository::class)]
+#[ORM\HasLifecycleCallbacks]
 #[UniqueEntity(fields: ['wizard', 'title'], message: 'validate.test.wizards.steps.unique')]
 class TestWizardStep extends AEntity implements \JsonSerializable
 {
 
     /**
      * @var string
-     * @ORM\Column(type="string", length=64)
      */
+    #[ORM\Column(type: 'string', length: 64)]
     #[Assert\Length(min: 1, max: 64, minMessage: 'validate.test.wizards.steps.title.min', maxMessage: 'validate.test.wizards.steps.title.max')]
     #[Assert\NotBlank(message: 'validate.test.wizards.steps.title.blank')]
     private $title;
@@ -27,32 +25,28 @@ class TestWizardStep extends AEntity implements \JsonSerializable
     /**
      *
      * @var string
-     * @ORM\Column(type="text")
      */
+    #[ORM\Column(type: 'text')]
     private $description;
 
     /**
      *
      * @var integer
-     * @ORM\Column(type="integer")
      */
+    #[ORM\Column(type: 'integer')]
     private $orderNum;
 
     /**
      *
      * @var integer
-     * @ORM\Column(type="integer")
      */
+    #[ORM\Column(type: 'integer')]
     private $colsNum;
 
-    /**
-     * @ORM\ManyToOne(targetEntity="TestWizard", inversedBy="steps")
-     */
+    #[ORM\ManyToOne(targetEntity: TestWizard::class, inversedBy: 'steps')]
     private $wizard;
 
-    /**
-     * @ORM\OneToMany(targetEntity="TestWizardParam", mappedBy="step", cascade={"remove"}, orphanRemoval=true)
-     */
+    #[ORM\OneToMany(targetEntity: TestWizardParam::class, mappedBy: 'step', cascade: ['remove'], orphanRemoval: true)]
     private $params;
 
     /**
@@ -286,13 +280,13 @@ class TestWizardStep extends AEntity implements \JsonSerializable
         return $serialized;
     }
 
-    /** @ORM\PreRemove */
+    #[ORM\PreRemove]
     public function preRemove()
     {
         $this->getWizard()->removeStep($this);
     }
 
-    /** @ORM\PrePersist */
+    #[ORM\PrePersist]
     public function prePersist()
     {
         if (!$this->getWizard()->hasStep($this)) $this->getWizard()->addStep($this);

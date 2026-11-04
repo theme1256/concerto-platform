@@ -9,19 +9,17 @@ use Concerto\PanelBundle\Entity\TestWizard;
 use Concerto\PanelBundle\Entity\TestVariable;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 
-/**
- * @ORM\Table
- * @ORM\Entity(repositoryClass="Concerto\PanelBundle\Repository\TestWizardParamRepository")
- * @ORM\HasLifecycleCallbacks
- */
+#[ORM\Table]
+#[ORM\Entity(repositoryClass: \Concerto\PanelBundle\Repository\TestWizardParamRepository::class)]
+#[ORM\HasLifecycleCallbacks]
 #[UniqueEntity(fields: ['wizard', 'variable'], message: 'validate.test.wizards.params.variable.unique')]
 class TestWizardParam extends AEntity implements \JsonSerializable
 {
 
     /**
      * @var string
-     * @ORM\Column(type="string", length=64)
      */
+    #[ORM\Column(type: 'string', length: 64)]
     #[Assert\Length(min: 1, max: 64, minMessage: 'validate.test.wizards.params.label.min', maxMessage: 'validate.test.wizards.params.label.max')]
     #[Assert\NotBlank(message: 'validate.test.wizards.params.label.blank')]
     private $label;
@@ -29,67 +27,61 @@ class TestWizardParam extends AEntity implements \JsonSerializable
     /**
      *
      * @var string
-     * @ORM\Column(type="text")
      */
+    #[ORM\Column(type: 'text')]
     private $description;
 
     /**
      *
      * @var string
-     * @ORM\Column(type="text")
      */
+    #[ORM\Column(type: 'text')]
     private $hideCondition;
 
     /**
      *
      * @var integer
-     * @ORM\Column(type="integer")
      */
+    #[ORM\Column(type: 'integer')]
     private $type;
 
     /**
      *
      * @var boolean
-     * @ORM\Column(type="boolean")
      */
+    #[ORM\Column(type: 'boolean')]
     private $passableThroughUrl;
 
-    /**
-     * @ORM\ManyToOne(targetEntity="TestWizardStep", inversedBy="params")
-     */
+    #[ORM\ManyToOne(targetEntity: TestWizardStep::class, inversedBy: 'params')]
     #[Assert\NotNull(message: 'validate.test.wizards.params.step.null')]
     private $step;
 
     /**
      *
      * @var integer
-     * @ORM\Column(name="orderIndex", type="integer")
      */
+    #[ORM\Column(name: 'orderIndex', type: 'integer')]
     private $order;
 
-    /**
-     * @ORM\ManyToOne(targetEntity="TestWizard", inversedBy="params")
-     */
+    #[ORM\ManyToOne(targetEntity: TestWizard::class, inversedBy: 'params')]
     private $wizard;
 
-    /**
-     * @ORM\ManyToOne(targetEntity="TestVariable", inversedBy="params")
-     */
+    #[ORM\ManyToOne(targetEntity: TestVariable::class, inversedBy: 'params')]
     #[Assert\NotNull(message: 'validate.test.wizards.params.variable.null')]
     private $variable;
 
     /**
      *
      * @var string
-     * @ORM\Column(type="text", nullable=true)
      */
+    #[ORM\Column(type: 'text', nullable: true)]
     private $value;
 
     /**
      *
      * @var array
-     * @ORM\Column(type="json")
      */
+    #[ORM\Column(type: 'json')]
     private $definition;
 
     /**
@@ -536,7 +528,7 @@ class TestWizardParam extends AEntity implements \JsonSerializable
         return $serialized;
     }
 
-    /** @ORM\PreRemove */
+    #[ORM\PreRemove]
     public function preRemove()
     {
         $this->getVariable()->removeParam($this);
@@ -544,7 +536,7 @@ class TestWizardParam extends AEntity implements \JsonSerializable
         $this->getStep()->removeParam($this);
     }
 
-    /** @ORM\PrePersist */
+    #[ORM\PrePersist]
     public function prePersist()
     {
         if (!$this->getVariable()->hasParam($this)) $this->getVariable()->addParam($this);

@@ -8,19 +8,17 @@ use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 
-/**
- * @ORM\Table
- * @ORM\Entity(repositoryClass="Concerto\PanelBundle\Repository\ViewTemplateRepository")
- * @ORM\HasLifecycleCallbacks
- */
+#[ORM\Table]
+#[ORM\Entity(repositoryClass: \Concerto\PanelBundle\Repository\ViewTemplateRepository::class)]
+#[ORM\HasLifecycleCallbacks]
 #[UniqueEntity(fields: 'name', message: 'validate.table.name.unique')]
 class ViewTemplate extends ATopEntity implements \JsonSerializable
 {
 
     /**
      * @var string
-     * @ORM\Column(type="string", length=64, unique=true)
      */
+    #[ORM\Column(type: 'string', length: 64, unique: true)]
     #[Assert\Length(min: 1, max: 64, minMessage: 'validate.template.name.min', maxMessage: 'validate.template.name.max')]
     #[Assert\NotBlank(message: 'validate.template.name.blank')]
     private $name;
@@ -28,48 +26,44 @@ class ViewTemplate extends ATopEntity implements \JsonSerializable
     /**
      *
      * @var string
-     * @ORM\Column(type="text")
      */
+    #[ORM\Column(type: 'text')]
     private $description;
 
     /**
      *
      * @var string
-     * @ORM\Column(type="text")
      */
+    #[ORM\Column(type: 'text')]
     private $head;
 
     /**
      *
      * @var string
-     * @ORM\Column(type="text")
      */
+    #[ORM\Column(type: 'text')]
     private $css;
 
     /**
      *
      * @var string
-     * @ORM\Column(type="text")
      */
+    #[ORM\Column(type: 'text')]
     private $js;
 
     /**
      *
      * @var string
-     * @ORM\Column(type="text")
      */
+    #[ORM\Column(type: 'text')]
     private $html;
 
 
-    /**
-     * @ORM\OneToMany(targetEntity="Test", mappedBy="baseTemplate")
-     */
+    #[ORM\OneToMany(targetEntity: Test::class, mappedBy: 'baseTemplate')]
     private $baseTemplateForTests;
 
-    /**
-     * @ORM\ManyToOne(targetEntity="User")
-     * @ORM\JoinColumn(nullable=true, onDelete="SET NULL")
-     */
+    #[ORM\ManyToOne(targetEntity: User::class)]
+    #[ORM\JoinColumn(nullable: true, onDelete: 'SET NULL')]
     private $owner;
 
     public function __construct()

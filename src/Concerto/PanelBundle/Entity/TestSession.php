@@ -3,18 +3,13 @@
 namespace Concerto\PanelBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
-use Doctrine\ORM\Mapping\UniqueConstraint;
-use Doctrine\ORM\Mapping\Index;
 use DateTime;
 
-/**
- * @ORM\Table(
- *     uniqueConstraints={@UniqueConstraint(name="hash_idx", columns={"hash"})},
- *     indexes={@Index(name="idx", columns={"status","updated"})}
- * )
- * @ORM\Entity(repositoryClass="Concerto\PanelBundle\Repository\TestSessionRepository")
- * @ORM\HasLifecycleCallbacks
- */
+#[ORM\Table]
+#[ORM\Index(name: 'idx', columns: ['status', 'updated'])]
+#[ORM\UniqueConstraint(name: 'hash_idx', columns: ['hash'])]
+#[ORM\Entity(repositoryClass: \Concerto\PanelBundle\Repository\TestSessionRepository::class)]
+#[ORM\HasLifecycleCallbacks]
 class TestSession
 {
 
@@ -22,83 +17,54 @@ class TestSession
 
     /**
      * @var integer
-     * @ORM\Column(type="integer")
-     * @ORM\Id
-     * @ORM\GeneratedValue(strategy="AUTO")
      */
+    #[ORM\Column(type: 'integer')]
+    #[ORM\Id]
+    #[ORM\GeneratedValue(strategy: 'AUTO')]
     protected $id;
 
     /**
      *
      * @var DateTime
-     * @ORM\Column(type="datetime")
      */
+    #[ORM\Column(type: 'datetime')]
     protected $updated;
 
     /**
      *
      * @var DateTime
-     * @ORM\Column(type="datetime")
      */
+    #[ORM\Column(type: 'datetime')]
     protected $created;
 
-    /**
-     * @ORM\ManyToOne(targetEntity="Test", inversedBy="sessions")
-     */
+    #[ORM\ManyToOne(targetEntity: Test::class, inversedBy: 'sessions')]
     private $test;
 
-    /**
-     *
-     * @ORM\Column(type="integer", nullable=true)
-     */
+    #[ORM\Column(type: 'integer', nullable: true)]
     private $submitterPort;
 
-    /**
-     *
-     * @ORM\Column(type="integer")
-     */
+    #[ORM\Column(type: 'integer')]
     private $status;
 
-    /**
-     *
-     * @ORM\Column(type="integer")
-     */
+    #[ORM\Column(type: 'integer')]
     private $timeLimit;
 
-    /**
-     *
-     * @ORM\Column(type="text", nullable=true)
-     */
+    #[ORM\Column(type: 'text', nullable: true)]
     private $params;
 
-    /**
-     *
-     * @ORM\Column(type="text", nullable=true)
-     */
+    #[ORM\Column(type: 'text', nullable: true)]
     private $error;
 
-    /**
-     *
-     * @ORM\Column(type="string", length=15, nullable=true)
-     */
+    #[ORM\Column(type: 'string', length: 15, nullable: true)]
     private $clientIp;
 
-    /**
-     *
-     * @ORM\Column(type="string", nullable=true)
-     */
+    #[ORM\Column(type: 'string', nullable: true)]
     private $clientBrowser;
 
-    /**
-     *
-     * @ORM\Column(type="string", length=40, nullable=true)
-     */
+    #[ORM\Column(type: 'string', length: 40, nullable: true)]
     private $hash;
 
-    /**
-     *
-     * @ORM\Column(type="boolean")
-     */
+    #[ORM\Column(type: 'boolean')]
     private $debug;
 
     public function __construct()
@@ -405,7 +371,7 @@ class TestSession
         return false;
     }
 
-    /** @ORM\PreUpdate() */
+    #[ORM\PreUpdate]
     public function preUpdate()
     {
         $this->setUpdated(new DateTime("now"));

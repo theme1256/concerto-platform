@@ -1,7 +1,7 @@
 ## 5.1.0
 
 * renamed test_runner_settings.r_environ_path to test_runner_settings.r_environ_session_path
-* requires **PHP 8.2 or newer**; the Docker image now runs **PHP 8.5** (official 8.5.12 release, built from source) instead of the PHP 7.4 security backport
+* requires **PHP 8.4 or newer**; the Docker image now runs **PHP 8.5** (official 8.5.12 release, built from source) instead of the PHP 7.4 security backport
   * Docker: PHP configuration moved from `/etc/php/7.4/` to `/etc/php/8.5/`, and the FPM binary from `/usr/sbin/php-fpm7.4` to `/usr/sbin/php-fpm8.5` - update custom images or mounted config files
 * upgraded to Symfony 6.4 and Twig 3
   * test base templates (view templates used as a test's base template) are rendered with Twig 3: the `{% spaceless %}` and `{% filter %}` tags and `{% for ... if ... %}` were removed - use `{% apply spaceless %}`, `{% apply ... %}` and `{% for ... %}{% if ... %}` instead. The starter content is not affected
@@ -13,6 +13,11 @@
   * the token endpoint `/oauth/v2/token` only accepts **POST** and only the **client_credentials** grant
   * the `/oauth/v2/auth` (authorize) endpoint was removed
   * the access token can still be passed as `access_token` query/form parameter, but the `Authorization: Bearer` header is preferred
+* upgraded to **Doctrine ORM 3 / DBAL 4**
+  * `doctrine:schema:update` only manages the tables mapped by Concerto's entities: data tables and other tables in the database are hidden from it by a schema filter (`Concerto\PanelBundle\Doctrine\UnmappedTablesSchemaFilter`). Do not remove this filter - without it Doctrine ORM 3 drops every table it does not map, including all data tables
+  * the first `concerto:setup` after the upgrade removes Doctrine's `(DC2Type:...)` column comments from the OAuth tables; data is not changed
+  * new tables keep the previous MySQL defaults (`utf8` / `utf8_unicode_ci`, InnoDB) through `doctrine.dbal.connections.local.default_table_options`
+  * MySQL 5.7 still works but is deprecated by Doctrine DBAL and will not be supported by DBAL 5; plan a move to MySQL 8 (**DB_VERSION**)
 * non-Docker installations: `env(...)` defaults in `app/config/parameters*.yml` must be strings - quote numeric and boolean values (see the `.dist` files)
 * **CONCERTO_BEHIND_PROXY** is now parsed as a boolean; previously any non-empty value (including `false`) made SAML trust `X-Forwarded-*` headers
 

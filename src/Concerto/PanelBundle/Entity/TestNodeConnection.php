@@ -7,50 +7,38 @@ use Concerto\PanelBundle\Entity\Test;
 use Concerto\PanelBundle\Entity\TestNode;
 use Concerto\PanelBundle\Entity\TestNodePort;
 
-/**
- * @ORM\Table
- * @ORM\Entity(repositoryClass="Concerto\PanelBundle\Repository\TestNodeConnectionRepository")
- * @ORM\HasLifecycleCallbacks
- */
+#[ORM\Table]
+#[ORM\Entity(repositoryClass: \Concerto\PanelBundle\Repository\TestNodeConnectionRepository::class)]
+#[ORM\HasLifecycleCallbacks]
 class TestNodeConnection extends AEntity implements \JsonSerializable
 {
 
-    /**
-     * @ORM\ManyToOne(targetEntity="Test", inversedBy="nodesConnections")
-     */
+    #[ORM\ManyToOne(targetEntity: Test::class, inversedBy: 'nodesConnections')]
     private $flowTest;
 
-    /**
-     * @ORM\ManyToOne(targetEntity="TestNode", inversedBy="sourceForConnections")
-     */
+    #[ORM\ManyToOne(targetEntity: TestNode::class, inversedBy: 'sourceForConnections')]
     private $sourceNode;
 
-    /**
-     * @ORM\ManyToOne(targetEntity="TestNodePort", inversedBy="sourceForConnections")
-     */
+    #[ORM\ManyToOne(targetEntity: TestNodePort::class, inversedBy: 'sourceForConnections')]
     private $sourcePort;
 
-    /**
-     * @ORM\ManyToOne(targetEntity="TestNode", inversedBy="destinationForConnections")
-     */
+    #[ORM\ManyToOne(targetEntity: TestNode::class, inversedBy: 'destinationForConnections')]
     private $destinationNode;
 
-    /**
-     * @ORM\ManyToOne(targetEntity="TestNodePort", inversedBy="destinationForConnections")
-     */
+    #[ORM\ManyToOne(targetEntity: TestNodePort::class, inversedBy: 'destinationForConnections')]
     private $destinationPort;
 
     /**
      * @var string
-     * @ORM\Column(type="text")
      */
+    #[ORM\Column(type: 'text')]
     private $returnFunction;
 
     /**
      *
      * @var boolean
-     * @ORM\Column(type="boolean")
      */
+    #[ORM\Column(type: 'boolean')]
     private $defaultReturnFunction;
 
     /**
@@ -295,7 +283,7 @@ class TestNodeConnection extends AEntity implements \JsonSerializable
         return $serialized;
     }
 
-    /** @ORM\PreRemove */
+    #[ORM\PreRemove]
     public function preRemove()
     {
         $this->getSourceNode()->removeSourceForConnection($this);
@@ -305,7 +293,7 @@ class TestNodeConnection extends AEntity implements \JsonSerializable
         $this->getFlowTest()->removeNodeConnection($this);
     }
 
-    /** @ORM\PrePersist */
+    #[ORM\PrePersist]
     public function prePersist()
     {
         if (!$this->getSourceNode()->isSourceForConnection($this)) $this->getSourceNode()->addSourceForConnection($this);

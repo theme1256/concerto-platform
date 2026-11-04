@@ -23,6 +23,20 @@ class DBDataDAO
         return $this->connection->getParams()["driver"] ?? "";
     }
 
+    private static function mysqlBufferedQueryAttribute()
+    {
+        // PHP 8.4 added Pdo\Mysql; PHP 8.5 deprecates the PDO::MYSQL_* constants
+        return \defined('Pdo\Mysql::ATTR_USE_BUFFERED_QUERY') ? \Pdo\Mysql::ATTR_USE_BUFFERED_QUERY : \PDO::MYSQL_ATTR_USE_BUFFERED_QUERY;
+    }
+
+    /**
+     * @return list<Column>
+     */
+    private function getColumns($table_name)
+    {
+        return $this->connection->createSchemaManager()->introspectTableColumnsByUnquotedName($table_name);
+    }
+
     public function getData($table_name, $id = null, $filter = null)
     {
         $stmt = $this->getFilteredDataResult($table_name, $id, $filter);
@@ -31,7 +45,10 @@ class DBDataDAO
 
     public function getFilteredDataResult($table_name, $id = null, $filter = null)
     {
-        $this->connection->getWrappedConnection()->setAttribute(\PDO::MYSQL_ATTR_USE_BUFFERED_QUERY, false);
+        if ($this->getDriverName() === "pdo_mysql") {
+            // stream large tables instead of buffering them in PHP memory
+            $this->connection->getNativeConnection()->setAttribute(self::mysqlBufferedQueryAttribute(), false);
+        }
         $q = $this->connection->createQueryBuilder()->select("*")->from($table_name, "d");
 
         $i = 0;
@@ -41,9 +58,9 @@ class DBDataDAO
                 if (is_a($f["value"], "DateTime"))
                     $f["value"] = $f["value"]->format("Y-m-d");
                 if ($i == 0) {
-                    $q = $q->where("d." . $f["name"] . " " . $f["op"] . " :p$i")->setParameter(":p$i", $f["value"]);
+                    $q = $q->where("d." . $f["name"] . " " . $f["op"] . " :p$i")->setParameter("p$i", $f["value"]);
                 } else {
-                    $q = $q->andWhere("d." . $f["name"] . " " . $f["op"] . " :p$i")->setParameter(":p$i", $f["value"]);
+                    $q = $q->andWhere("d." . $f["name"] . " " . $f["op"] . " :p$i")->setParameter("p$i", $f["value"]);
                 }
                 $i++;
             }
@@ -54,9 +71,9 @@ class DBDataDAO
                 $q = $q->where("d.id = :id");
             else
                 $q = $q->andWhere("d.id = :id");
-            $q = $q->setParameter(":id", $id);
+            $q = $q->setParameter("id", $id);
         }
-        return $q->execute();
+        return $q->executeQuery();
     }
 
     /**
@@ -69,7 +86,7 @@ class DBDataDAO
         $builder = $this->connection->createQueryBuilder()->select("*")->from($table_name, "d");
 
         if (!$filters) {
-            return $builder->execute()->fetchAllAssociative();
+            return $builder->executeQuery()->fetchAllAssociative();
         }
         $f = json_decode($filters, true);
 
@@ -81,7 +98,7 @@ class DBDataDAO
             $builder->addOrderBy("d." . $sort["name"], $sort["dir"]);
         }
 
-        return $builder->setFirstResult(($f["paging"]["page"] - 1) * $f["paging"]["pageSize"])->setMaxResults($f["paging"]["pageSize"])->execute()->fetchAllAssociative();
+        return $builder->setFirstResult(($f["paging"]["page"] - 1) * $f["paging"]["pageSize"])->setMaxResults($f["paging"]["pageSize"])->executeQuery()->fetchAllAssociative();
     }
 
     public function countMatchingData($table_name, $filters)
@@ -97,27 +114,27 @@ class DBDataDAO
             }
         }
 
-        return (int)$builder->execute()->fetchOne();
+        return (int)$builder->executeQuery()->fetchOne();
     }
 
     public function updateRow($table_name, $row_id, $values, $id_field = "id")
     {
         $qb = $this->connection->createQueryBuilder()->update($table_name);
         $i = -1;
-        $cols = $this->connection->getSchemaManager()->listTableColumns($table_name);
+        $cols = $this->getColumns($table_name);
         foreach ($values as $k => $v) {
             $i++;
             if ($k == "id") continue;
             $found = false;
             foreach ($cols as $col) {
-                if ($col->getName() == $k) {
+                if (DBStructureDAO::columnName($col) == $k) {
                     $found = true;
                     break;
                 }
             }
             if (!$found) continue;
 
-            $qb->set($k, ":k" . $i)->setParameter(":k" . $i, $v);
+            $qb->set($k, ":k" . $i)->setParameter("k" . $i, $v);
         }
 
         foreach ($cols as $col) {
@@ -125,18 +142,18 @@ class DBDataDAO
             $i++;
             $found = false;
             foreach ($values as $k => $v) {
-                if ($k === $col->getName()) {
+                if ($k === DBStructureDAO::columnName($col)) {
                     $found = true;
                     break;
                 }
             }
 
             if (!$found) {
-                $qb->set($col->getName(), ":k" . $i)->setParameter(":k" . $i, null);
+                $qb->set(DBStructureDAO::columnName($col), ":k" . $i)->setParameter("k" . $i, null);
             }
         }
 
-        $qb->where("$id_field=:id")->setParameter(":id", $row_id)->execute();
+        $qb->where("$id_field=:id")->setParameter("id", $row_id)->executeStatement();
         return array();
     }
 
@@ -149,7 +166,7 @@ class DBDataDAO
     public function getColumnDefaultValue(Column $col)
     {
         if (!$col->getNotnull()) return null;
-        switch ($col->getType()->getName()) {
+        switch (DBStructureDAO::columnType($col)) {
             case "text":
                 return "";
         }
@@ -172,11 +189,11 @@ class DBDataDAO
             default:
             {
                 $vals = array();
-                $cols = $this->connection->getSchemaManager()->listTableColumns($table_name);
+                $cols = $this->getColumns($table_name);
                 foreach ($cols as $col) {
                     $defaultValue = $this->getColumnDefaultValue($col);
                     if ($defaultValue !== false) {
-                        $vals[$col->getName()] = $defaultValue;
+                        $vals[DBStructureDAO::columnName($col)] = $defaultValue;
                     }
                 }
 
@@ -211,11 +228,11 @@ class DBDataDAO
             $this->insertRow($table_name, $data);
         } else {
 
-            $cols = $this->connection->getSchemaManager()->listTableColumns($table_name);
+            $cols = $this->getColumns($table_name);
             foreach ($cols as $col) {
                 $defaultValue = $this->getColumnDefaultValue($col);
-                if ($defaultValue !== false && $data[$col->getName()] === "") {
-                    $data[$col->getName()] = $defaultValue;
+                if ($defaultValue !== false && $data[DBStructureDAO::columnName($col)] === "") {
+                    $data[DBStructureDAO::columnName($col)] = $defaultValue;
                 }
             }
 
@@ -247,7 +264,6 @@ class DBDataDAO
     {
         if ($this->getDriverName() === "pdo_mysql") {
             if ($batch !== null && $batch["index"] > 0) {
-                $this->connection->connect();
                 $this->connection->executeStatement($batch["sql"], $batch["params"]);
                 $batch["sql"] = "";
                 $batch["params"] = array();

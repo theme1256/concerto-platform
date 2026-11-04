@@ -6,19 +6,17 @@ use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 
-/**
- * @ORM\Table
- * @ORM\Entity(repositoryClass="Concerto\PanelBundle\Repository\DataTableRepository")
- * @ORM\HasLifecycleCallbacks
- */
+#[ORM\Table]
+#[ORM\Entity(repositoryClass: \Concerto\PanelBundle\Repository\DataTableRepository::class)]
+#[ORM\HasLifecycleCallbacks]
 #[UniqueEntity(fields: 'name', message: 'validate.table.name.unique')]
 class DataTable extends ATopEntity implements \JsonSerializable
 {
 
     /**
      * @var string
-     * @ORM\Column(type="string", length=64, unique=true)
      */
+    #[ORM\Column(type: 'string', length: 64, unique: true)]
     #[Assert\Length(min: 1, max: 64, minMessage: 'validate.table.name.min', maxMessage: 'validate.table.name.max')]
     #[Assert\NotBlank(message: 'validate.table.name.blank')]
     #[Assert\Regex('/^[a-zA-Z][a-zA-Z0-9_]*(?<!_)$/', message: 'validate.table.name.incorrect')]
@@ -27,15 +25,13 @@ class DataTable extends ATopEntity implements \JsonSerializable
     /**
      *
      * @var string
-     * @ORM\Column(type="text")
      */
+    #[ORM\Column(type: 'text')]
     private $description;
     private $columns;
 
-    /**
-     * @ORM\ManyToOne(targetEntity="User")
-     * @ORM\JoinColumn(nullable=true, onDelete="SET NULL")
-     */
+    #[ORM\ManyToOne(targetEntity: User::class)]
+    #[ORM\JoinColumn(nullable: true, onDelete: 'SET NULL')]
     private $owner;
 
     public function __construct()

@@ -3,7 +3,6 @@
 namespace Concerto\PanelBundle\Service;
 
 use Concerto\PanelBundle\DAO\DBStructureDAO;
-use Doctrine\DBAL\Schema\Column;
 use Psr\Log\LoggerInterface;
 
 class DBStructureService
@@ -71,8 +70,8 @@ class DBStructureService
         $cols = $this->dbStructureDao->getColumns($table_name);
         foreach ($cols as $col) {
             array_push($result, [
-                "name" => $col->getName(),
-                "type" => $col->getType()->getName(),
+                "name" => DBStructureDAO::columnName($col),
+                "type" => DBStructureDAO::columnType($col),
                 "nullable" => !$col->getNotnull(),
                 "length" => $this->dbStructureDao->getLengthString($col)
             ]);
@@ -85,10 +84,10 @@ class DBStructureService
         $result = array();
         $cols = $this->dbStructureDao->getColumns($table_name);
         foreach ($cols as $col) {
-            if ($column_name == $col->getName()) {
+            if ($column_name == DBStructureDAO::columnName($col)) {
                 return [
-                    "name" => $col->getName(),
-                    "type" => $col->getType()->getName(),
+                    "name" => DBStructureDAO::columnName($col),
+                    "type" => DBStructureDAO::columnType($col),
                     "nullable" => !$col->getNotnull(),
                     "length" => $this->dbStructureDao->getLengthString($col)
                 ];
