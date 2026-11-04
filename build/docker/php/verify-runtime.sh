@@ -6,6 +6,10 @@ cmp "$config_dir/source.lock" /opt/concerto/php/share/concerto/source.lock
 test "$(readlink -f /usr/bin/php)" = /opt/concerto/php/bin/php
 test "$(readlink -f /usr/sbin/php-fpm8.5)" = /opt/concerto/php/sbin/php-fpm
 (cd /opt/concerto/php && sha256sum --check --strict share/concerto/binaries.sha256)
+if ldd /opt/concerto/php/bin/php /opt/concerto/php/sbin/php-fpm | grep 'not found'; then
+    echo 'PHP runtime libraries missing' >&2
+    exit 1
+fi
 . "$config_dir/source.lock"
 
 PHP_EXPECTED_VERSION=$PHP_VERSION php -c /etc/php/8.5/fpm/php.ini <<'PHP'

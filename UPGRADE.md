@@ -3,6 +3,7 @@
 * renamed test_runner_settings.r_environ_path to test_runner_settings.r_environ_session_path
 * requires **PHP 8.4 or newer**; the Docker image now runs **PHP 8.5** (official 8.5.12 release, built from source) instead of the PHP 7.4 security backport
   * Docker: PHP configuration moved from `/etc/php/7.4/` to `/etc/php/8.5/`, and the FPM binary from `/usr/sbin/php-fpm7.4` to `/usr/sbin/php-fpm8.5` - update custom images or mounted config files
+* Docker: the image is based on **Ubuntu 26.04 LTS** (previously 20.04, end of standard support): R 4.6 (from 4.5), OpenSSL 3.5 (from 1.1.1), nginx 1.28, MariaDB client 11.8. Images built `FROM campsych/concerto-platform` must use the new package names (e.g. `libmariadb-dev`, `libaio1t64` for Oracle Instant Client) and keyrings with `signed-by` instead of `apt-key`, which no longer exists, and reinstall any R packages they compiled themselves
 * upgraded to **Symfony 7.4** (LTS) and Twig 3
   * the `symfony/symfony` package is replaced by the individual components Concerto uses; custom code that needs other components (e.g. Form, Mailer, Serializer) must require them itself
   * user e-mail addresses are validated with the HTML5 pattern (previously a loose check): addresses with non-ASCII characters or without a dot in the domain are rejected when a user is saved
@@ -35,7 +36,7 @@
     docker compose up -d
     ```
     An in-place upgrade (start `mysql:8.0` once on the 5.7 directory, then `mysql:8.4`) also works, but accounts created on 5.7 use `mysql_native_password`, which MySQL 8.4 does not load: switch them while on 8.0 with `ALTER USER 'concerto'@'%' IDENTIFIED WITH caching_sha2_password BY '<password>';` (and the same for `root`)
-  * the R test runtime connects to MySQL 8 servers using `caching_sha2_password` over TLS when needed (its MariaDB client cannot use the RSA key exchange); MySQL 8 enables TLS by default - keep it enabled
+  * the R test runtime supports MySQL 8's default `caching_sha2_password` authentication; with older MariaDB clients built on GnuTLS (e.g. custom images on Ubuntu 20.04) it reconnects over TLS, which MySQL 8 enables by default
   * data table and column names that became reserved words in MySQL 8 (e.g. `rank`, `groups`, `row`, `system`, `lead`) keep working in the panel, the data API and CSV import/export; your own SQL in tests (`concerto.table.query`) must quote such names with backticks, e.g. ``SELECT `rank` FROM scores``
 * non-Docker installations: `env(...)` defaults in `app/config/parameters*.yml` must be strings - quote numeric and boolean values (see the `.dist` files)
 * **CONCERTO_BEHIND_PROXY** is now parsed as a boolean; previously any non-empty value (including `false`) made SAML trust `X-Forwarded-*` headers

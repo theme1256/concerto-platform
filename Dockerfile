@@ -1,13 +1,13 @@
-FROM ubuntu:20.04 AS php-build
+FROM ubuntu:26.04 AS php-build
 COPY build/docker/php/build-source.sh build/docker/php/source.lock /tmp/concerto-php/
 RUN sh /tmp/concerto-php/build-source.sh
 
-FROM ubuntu:20.04 AS php-runtime
-RUN apt-get update && apt-get install -y --no-install-recommends \
-    ca-certificates libargon2-1 libcurl4 libonig5 libreadline8 libsodium23 \
-    libsqlite3-0 libssl1.1 libxml2 libzip5 zlib1g \
- && rm -rf /var/lib/apt/lists/*
+FROM ubuntu:26.04 AS php-runtime
 COPY --from=php-build /opt/concerto/php /opt/concerto/php
+# runtime-packages: the Ubuntu packages of the libraries PHP was linked against (build-source.sh)
+RUN apt-get update && xargs apt-get install -y --no-install-recommends ca-certificates \
+      < /opt/concerto/php/share/concerto/runtime-packages \
+ && rm -rf /var/lib/apt/lists/*
 COPY build/docker/php /usr/local/share/concerto/php
 COPY build/docker/php/php.ini /etc/php/8.5/fpm/php.ini
 COPY build/docker/php-fpm/php-fpm.conf /etc/php/8.5/fpm/php-fpm.conf
@@ -17,7 +17,7 @@ RUN sh /usr/local/share/concerto/php/install-runtime.sh \
  && sh /usr/local/share/concerto/php/verify-runtime.sh
 
 FROM php-runtime AS concerto
-MAINTAINER Przemyslaw Lis <przemek@concertoplatform.com>
+LABEL maintainer="Przemyslaw Lis <przemek@concertoplatform.com>"
 
 ARG CRAN_MIRROR=https://cloud.r-project.org
 
@@ -97,9 +97,15 @@ RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone \
  && apt-get update -y \
  && apt-get -y install \
     ca-certificates \
+    curl \
     gnupg \
- && echo "deb $CRAN_MIRROR/bin/linux/ubuntu focal-cran40/" | tee -a /etc/apt/sources.list \
- && apt-key adv --no-tty --keyserver keyserver.ubuntu.com --recv-keys E298A3A825C0D65DFD57CBB651716619E084DAB9 \
+ && install -d -m 0755 /etc/apt/keyrings \
+ && curl --fail --location --retry 3 https://cloud.r-project.org/bin/linux/ubuntu/marutter_pubkey.asc \
+      | gpg --dearmor > /etc/apt/keyrings/cran.gpg \
+ && gpg --show-keys --with-colons /etc/apt/keyrings/cran.gpg \
+      | grep -qx 'fpr:::::::::E298A3A825C0D65DFD57CBB651716619E084DAB9:' \
+ && echo "deb [signed-by=/etc/apt/keyrings/cran.gpg] $CRAN_MIRROR/bin/linux/ubuntu $(. /etc/os-release && echo "$VERSION_CODENAME")-cran40/" \
+      > /etc/apt/sources.list.d/cran.list \
  && apt-get update -y \
  && apt-get -y install \
     cron \
@@ -108,7 +114,7 @@ RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone \
     git \
     libcurl4-openssl-dev \
     libhiredis-dev \
-    libmariadbclient-dev \
+    libmariadb-dev \
     libnginx-mod-http-headers-more-filter \
     libxml2-dev \
     libssl-dev \
@@ -124,6 +130,7 @@ RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone \
  && Rscript -e "install.packages(c('digest','filelock','httr','jsonlite','redux','RMySQL','xml2'), repos='$CRAN_MIRROR')" \
  && Rscript -e "install.packages('https://cran.r-project.org/src/contrib/Archive/catR/catR_3.16.tar.gz')" \
  && R CMD INSTALL /app/concerto/src/Concerto/TestBundle/Resources/R/concerto5 \
+ && Rscript -e "pkgs <- c('rjson','digest','filelock','httr','jsonlite','redux','RMySQL','xml2','catR','concerto5'); missing <- pkgs[!sapply(pkgs, requireNamespace, quietly=TRUE)]; if (length(missing)) stop('R packages failed to install: ', paste(missing, collapse=', '))" \
  && chmod +x /wait-for-it.sh \
  && php /app/concerto/bin/console concerto:r:cache \
  && crontab -l | { cat; echo "* * * * * . /app/concerto/cron/concerto.schedule.tick.sh >> /var/log/cron.log 2>&1"; } | crontab - \

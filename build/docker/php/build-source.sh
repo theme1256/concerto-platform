@@ -37,3 +37,11 @@ cp php.ini-production /opt/concerto/php/share/concerto/php.ini-production
 cp "$build_dir/source.lock" /opt/concerto/php/share/concerto/source.lock
 cd /opt/concerto/php
 sha256sum bin/php sbin/php-fpm > share/concerto/binaries.sha256
+
+# Ubuntu packages providing the shared libraries the binaries link against, so the runtime
+# stage installs exactly these (package names change between releases, e.g. libssl3t64).
+for lib in $(ldd bin/php sbin/php-fpm | awk '$2 == "=>" && $3 ~ /^\// {print $3}' | sort -u); do
+    dpkg -S "$lib" 2>/dev/null || dpkg -S "$(readlink -f "$lib")" 2>/dev/null \
+        || dpkg -S "/usr$lib" 2>/dev/null || { echo "no package provides $lib" >&2; exit 1; }
+done | cut -d: -f1 | sort -u > share/concerto/runtime-packages
+cat share/concerto/runtime-packages
