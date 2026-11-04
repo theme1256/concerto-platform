@@ -2,6 +2,7 @@
 
 namespace Concerto\PanelBundle\Controller;
 
+use Concerto\PanelBundle\Utils\RequestParameters;
 use Twig\Environment;
 use Concerto\PanelBundle\Service\TestService;
 use Concerto\PanelBundle\Service\TestNodeConnectionService;
@@ -88,24 +89,24 @@ class TestNodeConnectionController extends ASectionController
     #[Route('/TestNodeConnection/{object_id}/save', name: 'TestNodeConnection_save', methods: ['POST'])]
     public function saveAction(Request $request, $object_id)
     {
-        if (!$this->service->canBeModified($object_id, $request->get("objectTimestamp"), $errorMessages)) {
+        if (!$this->service->canBeModified($object_id, RequestParameters::get($request, "objectTimestamp"), $errorMessages)) {
             $response = new Response(json_encode(array("result" => 1, "errors" => $this->trans($errorMessages))));
             $response->headers->set('Content-Type', 'application/json');
             return $response;
         }
 
-        $sourcePort = $request->get("sourcePort");
-        $destinationPort = $request->get("destinationPort");
+        $sourcePort = RequestParameters::get($request, "sourcePort");
+        $destinationPort = RequestParameters::get($request, "destinationPort");
 
         $result = $this->service->save(
             $object_id,
-            $this->testService->get($request->get("flowTest")),
-            $this->testNodeService->get($request->get("sourceNode")),
+            $this->testService->get(RequestParameters::get($request, "flowTest")),
+            $this->testNodeService->get(RequestParameters::get($request, "sourceNode")),
             $sourcePort ? $this->testPortService->get($sourcePort) : null,
-            $this->testNodeService->get($request->get("destinationNode")),
+            $this->testNodeService->get(RequestParameters::get($request, "destinationNode")),
             $destinationPort ? $this->testPortService->get($destinationPort) : null,
-            $request->get("returnFunction"),
-            $request->get("default") === "1");
+            RequestParameters::get($request, "returnFunction"),
+            RequestParameters::get($request, "default") === "1");
         return $this->getSaveResponse($result);
     }
 

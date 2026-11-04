@@ -2,6 +2,7 @@
 
 namespace Concerto\PanelBundle\Controller;
 
+use Concerto\PanelBundle\Utils\RequestParameters;
 use Concerto\PanelBundle\Entity\Test;
 use Concerto\PanelBundle\Service\FileService;
 use Concerto\PanelBundle\Service\TestService;
@@ -103,7 +104,7 @@ class TestController extends AExportableTabController
     #[Route('/Test/{object_id}/save', name: 'Test_save', methods: ['POST'])]
     public function saveAction(Request $request, $object_id)
     {
-        if (!$this->service->canBeModified($object_id, $request->get("updatedOn"), $errorMessages)) {
+        if (!$this->service->canBeModified($object_id, RequestParameters::get($request, "updatedOn"), $errorMessages)) {
             $response = new Response(json_encode(array("result" => 1, "errors" => $this->trans($errorMessages))));
             $response->headers->set('Content-Type', 'application/json');
             return $response;
@@ -111,20 +112,20 @@ class TestController extends AExportableTabController
 
         $result = $this->service->save(
             $object_id,
-            $request->get("name"),
-            $request->get("description"),
-            $request->get("accessibility"),
-            $request->get("archived") === "1",
-            $this->userService->get($request->get("owner")),
-            $request->get("groups"),
-            $request->get("visibility"),
-            $request->get("type"),
-            $request->get("code"),
-            $this->testWizardService->get($request->get("sourceWizard"), false),
-            $request->get("slug"),
-            $request->get("serializedVariables"),
-            $this->viewTemplateService->get($request->get("baseTemplate"), false),
-            $request->get("protected") === "1"
+            RequestParameters::get($request, "name"),
+            RequestParameters::get($request, "description"),
+            RequestParameters::get($request, "accessibility"),
+            RequestParameters::get($request, "archived") === "1",
+            $this->userService->get(RequestParameters::get($request, "owner")),
+            RequestParameters::get($request, "groups"),
+            RequestParameters::get($request, "visibility"),
+            RequestParameters::get($request, "type"),
+            RequestParameters::get($request, "code"),
+            $this->testWizardService->get(RequestParameters::get($request, "sourceWizard"), false),
+            RequestParameters::get($request, "slug"),
+            RequestParameters::get($request, "serializedVariables"),
+            $this->viewTemplateService->get(RequestParameters::get($request, "baseTemplate"), false),
+            RequestParameters::get($request, "protected") === "1"
         );
         return $this->getSaveResponse($result);
     }
@@ -200,18 +201,18 @@ class TestController extends AExportableTabController
     #[Route('/Test/{object_id}/node/add', name: 'Test_add_node', methods: ['POST'])]
     public function addNodeAction(Request $request, $object_id)
     {
-        if (!$this->service->canBeModified($object_id, $request->get("objectTimestamp"), $errorMessages)) {
+        if (!$this->service->canBeModified($object_id, RequestParameters::get($request, "objectTimestamp"), $errorMessages)) {
             $response = new Response(json_encode(array("result" => 1, "errors" => $this->trans($errorMessages))));
             $response->headers->set('Content-Type', 'application/json');
             return $response;
         }
 
         $result = $this->service->addFlowNode(
-            $request->get("type"),
-            $request->get("posX"),
-            $request->get("posY"),
-            $this->service->get($request->get("flowTest")),
-            $this->service->get($request->get("sourceTest")),
+            RequestParameters::get($request, "type"),
+            RequestParameters::get($request, "posX"),
+            RequestParameters::get($request, "posY"),
+            $this->service->get(RequestParameters::get($request, "flowTest")),
+            $this->service->get(RequestParameters::get($request, "sourceTest")),
             "",
             false);
         return $this->getSaveResponse($result);
@@ -225,20 +226,20 @@ class TestController extends AExportableTabController
     #[Route('/Test/{object_id}/connection/add', name: 'Test_add_connection', methods: ['POST'])]
     public function addNodeConnectionAction(Request $request, $object_id)
     {
-        if (!$this->service->canBeModified($object_id, $request->get("objectTimestamp"), $errorMessages)) {
+        if (!$this->service->canBeModified($object_id, RequestParameters::get($request, "objectTimestamp"), $errorMessages)) {
             $response = new Response(json_encode(array("result" => 1, "errors" => $this->trans($errorMessages))));
             $response->headers->set('Content-Type', 'application/json');
             return $response;
         }
 
         $result = $this->service->addFlowConnection(
-            $this->service->get($request->get("flowTest")),
-            $request->get("sourceNode"),
-            $request->get("sourcePort") ? $request->get("sourcePort") : null,
-            $request->get("destinationNode"),
-            $request->get("destinationPort") ? $request->get("destinationPort") : null,
-            $request->get("returnFunction"),
-            $request->get("default") == "1",
+            $this->service->get(RequestParameters::get($request, "flowTest")),
+            RequestParameters::get($request, "sourceNode"),
+            RequestParameters::get($request, "sourcePort") ? RequestParameters::get($request, "sourcePort") : null,
+            RequestParameters::get($request, "destinationNode"),
+            RequestParameters::get($request, "destinationPort") ? RequestParameters::get($request, "destinationPort") : null,
+            RequestParameters::get($request, "returnFunction"),
+            RequestParameters::get($request, "default") == "1",
             false);
         return $this->getSaveResponse($result);
     }
@@ -250,13 +251,13 @@ class TestController extends AExportableTabController
     #[Route('/Test/node/move', name: 'Test_move_node', methods: ['POST'])]
     public function moveNodeAction(Request $request)
     {
-        if (!$this->service->canBeModified($request->get("object_id"), $request->get("objectTimestamp"), $errorMessages)) {
+        if (!$this->service->canBeModified(RequestParameters::get($request, "object_id"), RequestParameters::get($request, "objectTimestamp"), $errorMessages)) {
             $response = new Response(json_encode(array("result" => 1, "errors" => $this->trans($errorMessages))));
             $response->headers->set('Content-Type', 'application/json');
             return $response;
         }
 
-        $nodes = json_decode($request->get("nodes"), true);
+        $nodes = json_decode(RequestParameters::get($request, "nodes"), true);
         $this->service->moveFlowNode($nodes);
 
         $response = new Response(json_encode([
@@ -275,7 +276,7 @@ class TestController extends AExportableTabController
     #[Route('/Test/{object_id}/node/paste', name: 'Test_paste_nodes', methods: ['POST'])]
     public function pasteNodesAction(Request $request, $object_id)
     {
-        if (!$this->service->canBeModified($object_id, $request->get("objectTimestamp"), $errorMessages)) {
+        if (!$this->service->canBeModified($object_id, RequestParameters::get($request, "objectTimestamp"), $errorMessages)) {
             $response = new Response(json_encode(array("result" => 1, "errors" => $this->trans($errorMessages))));
             $response->headers->set('Content-Type', 'application/json');
             return $response;
@@ -283,7 +284,7 @@ class TestController extends AExportableTabController
 
         $result = $this->service->pasteNodes(
             $this->service->get($object_id),
-            json_decode($request->get("nodes"), true),
+            json_decode(RequestParameters::get($request, "nodes"), true),
             false);
         return $this->getSaveResponse($result);
     }

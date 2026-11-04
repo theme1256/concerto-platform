@@ -2,6 +2,7 @@
 
 namespace Concerto\PanelBundle\Controller;
 
+use Concerto\PanelBundle\Utils\RequestParameters;
 use Concerto\PanelBundle\Service\FileService;
 use Symfony\Component\HttpFoundation\Response;
 use Twig\Environment;
@@ -31,7 +32,7 @@ abstract class AExportableTabController extends ASectionController
 
     public function preImportStatusAction(Request $request)
     {
-        $filePath = realpath($this->fileService->getPrivateUploadDirectory()) . "/" . $this->fileService->canonicalizePath(basename($request->get("file")));
+        $filePath = realpath($this->fileService->getPrivateUploadDirectory()) . "/" . $this->fileService->canonicalizePath(basename(RequestParameters::get($request, "file")));
         $instructions = $this->importService->getPreImportStatusFromFile(
             $filePath,
             $errorMessages
@@ -48,9 +49,9 @@ abstract class AExportableTabController extends ASectionController
 
     public function scheduleImportAction(Request $request)
     {
-        $file = $this->fileService->getPrivateUploadDirectory() . $request->get("file");
-        $instructions = $request->get("instructions");
-        $scheduled = $request->get("instant") != 1;
+        $file = $this->fileService->getPrivateUploadDirectory() . RequestParameters::get($request, "file");
+        $instructions = RequestParameters::get($request, "instructions");
+        $scheduled = RequestParameters::get($request, "instant") != 1;
 
         $success = $this->importService->scheduleTaskImportContent($file, $instructions, $scheduled, $output, $errorMessages);
 
@@ -88,7 +89,7 @@ abstract class AExportableTabController extends ASectionController
         $copySuccessful = $this->importService->copy(
             $this->entityName,
             $object_id,
-            $request->get("name"),
+            RequestParameters::get($request, "name"),
             $errorMessages,
             $newObject
         );
@@ -100,7 +101,7 @@ abstract class AExportableTabController extends ASectionController
 
     public function toggleLock(Request $request, $object_id)
     {
-        $timestamp = $request->get("objectTimestamp");
+        $timestamp = RequestParameters::get($request, "objectTimestamp");
         if (!$this->service->canBeModified($object_id, $timestamp, $errorMessages)) {
             $response = new Response(json_encode(array("result" => 1, "errors" => $this->trans($errorMessages))));
             $response->headers->set('Content-Type', 'application/json');

@@ -2,6 +2,7 @@
 
 namespace Concerto\PanelBundle\Controller;
 
+use Concerto\PanelBundle\Utils\RequestParameters;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Twig\Environment;
@@ -36,7 +37,7 @@ abstract class ASectionController
 
     public function deleteAction(Request $request, $object_ids)
     {
-        $timestamp = $request->get("objectTimestamp");
+        $timestamp = RequestParameters::get($request, "objectTimestamp");
         if (!$this->service->canBeModified($object_ids, $timestamp, $errorMessages)) {
             $response = new Response(json_encode(array("result" => 1, "errors" => $this->trans($errorMessages))));
             $response->headers->set('Content-Type', 'application/json');

@@ -2,6 +2,7 @@
 
 namespace Concerto\PanelBundle\Controller;
 
+use Concerto\PanelBundle\Utils\RequestParameters;
 use Concerto\PanelBundle\Service\FileService;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\ResponseHeaderBag;
@@ -89,7 +90,7 @@ class DataTableController extends AExportableTabController
     #[Route('/DataTable/{object_id}/save', name: 'DataTable_save', methods: ['POST'])]
     public function saveAction(Request $request, $object_id)
     {
-        if (!$this->service->canBeModified($object_id, $request->get("updatedOn"), $errorMessages)) {
+        if (!$this->service->canBeModified($object_id, RequestParameters::get($request, "updatedOn"), $errorMessages)) {
             $response = new Response(json_encode(array("result" => 1, "errors" => $this->trans($errorMessages))));
             $response->headers->set('Content-Type', 'application/json');
             return $response;
@@ -97,12 +98,12 @@ class DataTableController extends AExportableTabController
 
         $result = $this->service->save(
             $object_id,
-            $request->get("name"),
-            $request->get("description"),
-            $request->get("accessibility"),
-            $request->get("archived") === "1",
-            $this->userService->get($request->get("owner")),
-            $request->get("groups")
+            RequestParameters::get($request, "name"),
+            RequestParameters::get($request, "description"),
+            RequestParameters::get($request, "accessibility"),
+            RequestParameters::get($request, "archived") === "1",
+            $this->userService->get(RequestParameters::get($request, "owner")),
+            RequestParameters::get($request, "groups")
         );
         return $this->getSaveResponse($result);
     }
@@ -176,7 +177,7 @@ class DataTableController extends AExportableTabController
     #[Route('/DataTable/{table_id}/data/collection/{prefixed}', name: 'DataTable_data_collection', defaults: ['prefixed' => 0])]
     public function dataCollectionAction(Request $request, $table_id, $prefixed = 0)
     {
-        $filters = $request->get("filters");
+        $filters = RequestParameters::get($request, "filters");
 
         $result_data = array(
             'content' => $this->service->getFilteredData($table_id, $prefixed, $filters),
@@ -196,7 +197,7 @@ class DataTableController extends AExportableTabController
     #[Route('/DataTable/{table_id}/data/csv/{name}', name: 'DataTable_data_collection_csv')]
     public function streamedCsvDataCollectionAction(Request $request, $table_id)
     {
-        $name = $request->get("name");
+        $name = RequestParameters::get($request, "name");
 
         $response = new StreamedResponse();
         $response->setCallback(function () use ($table_id) {
@@ -235,7 +236,7 @@ class DataTableController extends AExportableTabController
     #[Route('/DataTable/{table_id}/column/{column_names}/delete', name: 'DataTable_column_delete', methods: ['POST'])]
     public function deleteColumnAction(Request $request, $table_id, $column_names)
     {
-        if (!$this->service->canBeModified($table_id, $request->get("objectTimestamp"), $errorMessages)) {
+        if (!$this->service->canBeModified($table_id, RequestParameters::get($request, "objectTimestamp"), $errorMessages)) {
             $response = new Response(json_encode(array("result" => 1, "errors" => $this->trans($errorMessages))));
             $response->headers->set('Content-Type', 'application/json');
             return $response;
@@ -256,7 +257,7 @@ class DataTableController extends AExportableTabController
     #[Route('/DataTable/{table_id}/row/{row_ids}/delete', name: 'DataTable_row_delete', methods: ['POST'])]
     public function deleteRowAction(Request $request, $table_id, $row_ids)
     {
-        if (!$this->service->canBeModified($table_id, $request->get("objectTimestamp"), $errorMessages)) {
+        if (!$this->service->canBeModified($table_id, RequestParameters::get($request, "objectTimestamp"), $errorMessages)) {
             $response = new Response(json_encode(array("result" => 1, "errors" => $this->trans($errorMessages))));
             $response->headers->set('Content-Type', 'application/json');
             return $response;
@@ -279,7 +280,7 @@ class DataTableController extends AExportableTabController
     #[Route('/DataTable/{table_id}/truncate', name: 'DataTable_truncate', methods: ['POST'])]
     public function truncateAction(Request $request, $table_id)
     {
-        if (!$this->service->canBeModified($table_id, $request->get("objectTimestamp"), $errorMessages)) {
+        if (!$this->service->canBeModified($table_id, RequestParameters::get($request, "objectTimestamp"), $errorMessages)) {
             $response = new Response(json_encode(array("result" => 1, "errors" => $this->trans($errorMessages))));
             $response->headers->set('Content-Type', 'application/json');
             return $response;
@@ -299,7 +300,7 @@ class DataTableController extends AExportableTabController
     #[Route('/DataTable/{table_id}/deleteAll', name: 'DataTable_deleteAll', methods: ['POST'])]
     public function deleteAllAction(Request $request, $table_id)
     {
-        if (!$this->service->canBeModified($table_id, $request->get("objectTimestamp"), $errorMessages)) {
+        if (!$this->service->canBeModified($table_id, RequestParameters::get($request, "objectTimestamp"), $errorMessages)) {
             $response = new Response(json_encode(array("result" => 1, "errors" => $this->trans($errorMessages))));
             $response->headers->set('Content-Type', 'application/json');
             return $response;
@@ -323,7 +324,7 @@ class DataTableController extends AExportableTabController
     #[Route('/DataTable/{table_id}/column/{column_name}/save', name: 'DataTable_column_save', methods: ['POST'])]
     public function saveColumnAction(Request $request, $table_id, $column_name)
     {
-        if (!$this->service->canBeModified($table_id, $request->get("objectTimestamp"), $errorMessages)) {
+        if (!$this->service->canBeModified($table_id, RequestParameters::get($request, "objectTimestamp"), $errorMessages)) {
             $response = new Response(json_encode(array("result" => 1, "errors" => $this->trans($errorMessages))));
             $response->headers->set('Content-Type', 'application/json');
             return $response;
@@ -333,10 +334,10 @@ class DataTableController extends AExportableTabController
             $errors = $this->service->saveColumn(
                 $table_id,
                 $column_name,
-                $request->get("name"),
-                $request->get("type"),
-                $request->get("length"),
-                $request->get("nullable") === "true"
+                RequestParameters::get($request, "name"),
+                RequestParameters::get($request, "type"),
+                RequestParameters::get($request, "length"),
+                RequestParameters::get($request, "nullable") === "true"
             );
             $errors = $this->trans($errors);
             $response = new Response(json_encode(array("result" => count($errors) > 0 ? 1 : 0, "errors" => $errors)));
@@ -355,7 +356,7 @@ class DataTableController extends AExportableTabController
     #[Route('/DataTable/{table_id}/row/insert', name: 'DataTable_row_insert', methods: ['POST'])]
     public function insertRowAction(Request $request, $table_id)
     {
-        if (!$this->service->canBeModified($table_id, $request->get("objectTimestamp"), $errorMessages)) {
+        if (!$this->service->canBeModified($table_id, RequestParameters::get($request, "objectTimestamp"), $errorMessages)) {
             $response = new Response(json_encode(array("result" => 1, "errors" => $this->trans($errorMessages))));
             $response->headers->set('Content-Type', 'application/json');
             return $response;
@@ -380,13 +381,13 @@ class DataTableController extends AExportableTabController
     #[Route('/DataTable/{table_id}/row/{row_id}/update/{prefixed}', name: 'DataTable_row_update', defaults: ['prefixed' => 0], methods: ['POST'])]
     public function updateRowAction(Request $request, $table_id, $row_id, $prefixed = 0)
     {
-        if (!$this->service->canBeModified($table_id, $request->get("objectTimestamp"), $errorMessages)) {
+        if (!$this->service->canBeModified($table_id, RequestParameters::get($request, "objectTimestamp"), $errorMessages)) {
             $response = new Response(json_encode(array("result" => 1, "errors" => $this->trans($errorMessages))));
             $response->headers->set('Content-Type', 'application/json');
             return $response;
         }
 
-        $this->service->updateRow($table_id, $row_id, $request->get("values"), $prefixed == 1);
+        $this->service->updateRow($table_id, $row_id, RequestParameters::get($request, "values"), $prefixed == 1);
         $response = new Response(json_encode([
             "result" => 0,
             "objectTimestamp" => time()
@@ -448,13 +449,13 @@ class DataTableController extends AExportableTabController
     #[Route('/DataTable/{table_id}/csv/{restructure}/{header}/{delimiter}/{enclosure}/import', name: 'DataTable_csv_import', methods: ['POST'])]
     public function importCsvAction(Request $request, $table_id, $restructure, $header, $delimiter, $enclosure)
     {
-        if (!$this->service->canBeModified($table_id, $request->get("objectTimestamp"), $errorMessages)) {
+        if (!$this->service->canBeModified($table_id, RequestParameters::get($request, "objectTimestamp"), $errorMessages)) {
             $response = new Response(json_encode(array("result" => 1, "errors" => $this->trans($errorMessages))));
             $response->headers->set('Content-Type', 'application/json');
             return $response;
         }
 
-        $filePath = realpath($this->fileService->getPrivateUploadDirectory()) . "/" . $this->fileService->canonicalizePath(basename($request->get("file")));
+        $filePath = realpath($this->fileService->getPrivateUploadDirectory()) . "/" . $this->fileService->canonicalizePath(basename(RequestParameters::get($request, "file")));
         try {
             $this->service->importFromCsv(
                 $table_id,

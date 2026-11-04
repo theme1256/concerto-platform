@@ -2,6 +2,7 @@
 
 namespace Concerto\PanelBundle\Controller;
 
+use Concerto\PanelBundle\Utils\RequestParameters;
 use Twig\Environment;
 use Concerto\PanelBundle\Service\UserService;
 use Symfony\Contracts\Translation\TranslatorInterface;
@@ -67,20 +68,20 @@ class UserController extends ASectionController
     {
         $result = $this->service->save(
             $object_id,
-            $request->get("accessibility"),
-            $request->get("archived") === "1",
-            $this->service->get($request->get("owner")),
-            $request->get("groups"),
-            $request->get("email"),
-            $request->get("username"),
-            $request->get("password"),
-            $request->get("passwordConfirmation"),
-            $request->get("role_super_admin"),
-            $request->get("role_test"),
-            $request->get("role_template"),
-            $request->get("role_table"),
-            $request->get("role_file"),
-            $request->get("role_wizard")
+            RequestParameters::get($request, "accessibility"),
+            RequestParameters::get($request, "archived") === "1",
+            $this->service->get(RequestParameters::get($request, "owner")),
+            RequestParameters::get($request, "groups"),
+            RequestParameters::get($request, "email"),
+            RequestParameters::get($request, "username"),
+            RequestParameters::get($request, "password"),
+            RequestParameters::get($request, "passwordConfirmation"),
+            RequestParameters::get($request, "role_super_admin"),
+            RequestParameters::get($request, "role_test"),
+            RequestParameters::get($request, "role_template"),
+            RequestParameters::get($request, "role_table"),
+            RequestParameters::get($request, "role_file"),
+            RequestParameters::get($request, "role_wizard")
         );
         return $this->getSaveResponse($result);
     }

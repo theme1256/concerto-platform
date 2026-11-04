@@ -2,6 +2,7 @@
 
 namespace Concerto\PanelBundle\Controller;
 
+use Concerto\PanelBundle\Utils\RequestParameters;
 use Concerto\PanelBundle\Service\UserService;
 use Twig\Environment;
 use Concerto\PanelBundle\Service\PanelService;
@@ -58,7 +59,7 @@ class PanelController
     {
         return new Response($this->templating->render('@ConcertoPanel/Panel/login.html.twig', array(
             'last_username' => $request->getSession()->get(SecurityRequestAttributes::LAST_USERNAME),
-            'error' => $this->service->getLoginErrors($request->get(SecurityRequestAttributes::AUTHENTICATION_ERROR), $request->getSession()))));
+            'error' => $this->service->getLoginErrors(RequestParameters::get($request, SecurityRequestAttributes::AUTHENTICATION_ERROR), $request->getSession()))));
     }
 
     /**

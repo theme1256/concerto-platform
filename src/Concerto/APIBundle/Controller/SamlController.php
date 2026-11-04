@@ -2,6 +2,7 @@
 
 namespace Concerto\APIBundle\Controller;
 
+use Concerto\PanelBundle\Utils\RequestParameters;
 use Concerto\APIBundle\Service\SamlService;
 use Concerto\PanelBundle\Service\AdministrationService;
 use Symfony\Component\HttpFoundation\Cookie;
@@ -35,7 +36,7 @@ class SamlController
         if (!$this->administrationService->isApiEnabled())
             return new Response("API disabled", Response::HTTP_FORBIDDEN);
 
-        $redirectTo = $request->get("redirectTo");
+        $redirectTo = RequestParameters::get($request, "redirectTo");
         $this->service->login($redirectTo);
 
         return new Response('', 200);
@@ -51,7 +52,7 @@ class SamlController
         if (!$this->administrationService->isApiEnabled())
             return new Response("API disabled", Response::HTTP_FORBIDDEN);
 
-        $redirectTo = $request->get("redirectTo");
+        $redirectTo = RequestParameters::get($request, "redirectTo");
         $tokenHash = $request->cookies->get("concertoSamlTokenHash");
         $this->service->logout($redirectTo, $tokenHash);
 
@@ -68,7 +69,7 @@ class SamlController
         if (!$this->administrationService->isApiEnabled())
             return new Response("API disabled", Response::HTTP_FORBIDDEN);
 
-        $stateRelay = $request->get("RelayState");
+        $stateRelay = RequestParameters::get($request, "RelayState");
         $token = $this->service->acs($stateRelay);
 
         if ($token !== false) {
@@ -108,7 +109,7 @@ class SamlController
             return new Response("API disabled", Response::HTTP_FORBIDDEN);
 
         $tokenHash = $request->cookies->get("concertoSamlTokenHash");
-        $stateRelay = $request->get("RelayState");
+        $stateRelay = RequestParameters::get($request, "RelayState");
         $success = $this->service->sls($tokenHash, $stateRelay);
 
         if ($success) {

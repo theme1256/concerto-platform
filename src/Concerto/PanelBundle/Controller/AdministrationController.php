@@ -2,6 +2,7 @@
 
 namespace Concerto\PanelBundle\Controller;
 
+use Concerto\PanelBundle\Utils\RequestParameters;
 use Concerto\PanelBundle\Entity\User;
 use Concerto\PanelBundle\Service\FileService;
 use Concerto\PanelBundle\Service\GitService;
@@ -72,7 +73,7 @@ class AdministrationController
     #[IsGranted(new Expression("is_granted('ROLE_SUPER_ADMIN')"))]
     public function updateSettingsMapAction(Request $request)
     {
-        $this->service->setSettings(json_decode($request->get("map")), true);
+        $this->service->setSettings(json_decode(RequestParameters::get($request, "map")), true);
         $result = array("result" => 0);
         $response = new Response(json_encode($result));
         $response->headers->set('Content-Type', 'application/json');
@@ -154,7 +155,7 @@ class AdministrationController
     #[IsGranted(new Expression("is_granted('ROLE_SUPER_ADMIN')"))]
     public function taskPackageInstallAction(Request $request)
     {
-        $installOptions = json_decode($request->get("install_options"), true);
+        $installOptions = json_decode(RequestParameters::get($request, "install_options"), true);
         $success = $this->service->scheduleTaskPackageInstall($installOptions, $output, $errors);
         $content = array(
             "result" => $success ? 0 : 1,
@@ -175,7 +176,7 @@ class AdministrationController
     #[IsGranted(new Expression("is_granted('ROLE_SUPER_ADMIN')"))]
     public function taskGitPullAction(Request $request)
     {
-        $exportInstructions = $request->get("exportInstructions");
+        $exportInstructions = RequestParameters::get($request, "exportInstructions");
         $success = $this->gitService->scheduleTaskGitPull($exportInstructions, $output, $errors);
         $content = array(
             "result" => $success ? 0 : 1,
@@ -196,12 +197,12 @@ class AdministrationController
     #[IsGranted(new Expression("is_granted('ROLE_SUPER_ADMIN')"))]
     public function taskGitEnableAction(Request $request)
     {
-        $instructions = $request->get("instructions");
+        $instructions = RequestParameters::get($request, "instructions");
         $success = $this->gitService->scheduleTaskGitEnable(
-            $request->get("url"),
-            $request->get("branch"),
-            $request->get("login"),
-            $request->get("password"),
+            RequestParameters::get($request, "url"),
+            RequestParameters::get($request, "branch"),
+            RequestParameters::get($request, "login"),
+            RequestParameters::get($request, "password"),
             $instructions,
             false,
             $output,
@@ -226,7 +227,7 @@ class AdministrationController
     #[IsGranted(new Expression("is_granted('ROLE_SUPER_ADMIN')"))]
     public function taskGitUpdateAction(Request $request)
     {
-        $exportInstructions = $request->get("exportInstructions");
+        $exportInstructions = RequestParameters::get($request, "exportInstructions");
         $success = $this->gitService->scheduleTaskGitUpdate($exportInstructions, $output, $errors);
         $content = array(
             "result" => $success ? 0 : 1,
@@ -247,7 +248,7 @@ class AdministrationController
     #[IsGranted(new Expression("is_granted('ROLE_SUPER_ADMIN')"))]
     public function taskGitResetAction(Request $request)
     {
-        $exportInstructions = $request->get("exportInstructions");
+        $exportInstructions = RequestParameters::get($request, "exportInstructions");
         $success = $this->gitService->scheduleTaskGitReset($exportInstructions, $output, $errors);
         $content = array(
             "result" => $success ? 0 : 1,
@@ -333,15 +334,15 @@ class AdministrationController
     #[IsGranted(new Expression("is_granted('ROLE_SUPER_ADMIN')"))]
     public function taskContentImportAction(Request $request)
     {
-        $file = $request->get("file");
+        $file = RequestParameters::get($request, "file");
         if ($file) {
             $file = realpath($this->fileService->getPrivateUploadDirectory()) . "/" . $this->fileService->canonicalizePath(basename($file));
         }
-        $url = $request->get("url");
+        $url = RequestParameters::get($request, "url");
         $input = $file ? $file : $url;
         if ($input === null) $input = $this->service->getSettingValue("content_url");
 
-        $instructions = $request->get("instructions");
+        $instructions = RequestParameters::get($request, "instructions");
         if ($instructions === null) $instructions = $this->service->getContentTransferOptions();
 
         $success = $this->importService->scheduleTaskImportContent($input, $instructions, true, $output, $errors);
@@ -466,7 +467,7 @@ class AdministrationController
     public function gitCommitAction(Request $request)
     {
         $commit = $this->gitService->commit(
-            $request->get("message"),
+            RequestParameters::get($request, "message"),
             $output,
             $errorMessages
         );

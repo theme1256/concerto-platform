@@ -2,6 +2,7 @@
 
 namespace Concerto\PanelBundle\Controller;
 
+use Concerto\PanelBundle\Utils\RequestParameters;
 use Twig\Environment;
 use Concerto\PanelBundle\Service\TestNodeService;
 use Concerto\PanelBundle\Service\TestNodePortService;
@@ -73,23 +74,23 @@ class TestNodePortController extends ASectionController
     #[Route('/TestNodePort/{object_id}/save', name: 'TestNodePort_save', methods: ['POST'])]
     public function saveAction(Request $request, $object_id)
     {
-        if (!$this->service->canBeModified($object_id, $request->get("objectTimestamp"), $errorMessages)) {
+        if (!$this->service->canBeModified($object_id, RequestParameters::get($request, "objectTimestamp"), $errorMessages)) {
             $response = new Response(json_encode(array("result" => 1, "errors" => $this->trans($errorMessages))));
             $response->headers->set('Content-Type', 'application/json');
             return $response;
         }
 
-        $node = $this->testNodeService->get($request->get("node"));
-        $variable = $this->testVariableService->get($request->get("variable"));
-        $default = $request->get("default") === "1";
-        $value = $request->get("value");
-        $string = $request->get("string") === "1";
-        $type = $request->get("type");
-        $dynamic = $request->get("dynamic") === "1";
-        $exposed = $request->get("exposed") === "1";
-        $name = $request->get("name");
-        $pointer = $request->get("pointer") === "1";
-        $pointerVariable = $request->get("pointerVariable");
+        $node = $this->testNodeService->get(RequestParameters::get($request, "node"));
+        $variable = $this->testVariableService->get(RequestParameters::get($request, "variable"));
+        $default = RequestParameters::get($request, "default") === "1";
+        $value = RequestParameters::get($request, "value");
+        $string = RequestParameters::get($request, "string") === "1";
+        $type = RequestParameters::get($request, "type");
+        $dynamic = RequestParameters::get($request, "dynamic") === "1";
+        $exposed = RequestParameters::get($request, "exposed") === "1";
+        $name = RequestParameters::get($request, "name");
+        $pointer = RequestParameters::get($request, "pointer") === "1";
+        $pointerVariable = RequestParameters::get($request, "pointerVariable");
 
         $result = $this->service->save(
             $object_id,
@@ -115,14 +116,14 @@ class TestNodePortController extends ASectionController
     #[Route('/TestNodePort/save', name: 'TestNodePort_save_collection', methods: ['POST'])]
     public function saveCollectionAction(Request $request)
     {
-        if (!$this->testNodeService->canBeModified($request->get("node_id"), $request->get("objectTimestamp"), $errorMessages)) {
+        if (!$this->testNodeService->canBeModified(RequestParameters::get($request, "node_id"), RequestParameters::get($request, "objectTimestamp"), $errorMessages)) {
             $response = new Response(json_encode(array("result" => 1, "errors" => $this->trans($errorMessages))));
             $response->headers->set('Content-Type', 'application/json');
             return $response;
         }
 
         $result = $this->service->saveCollection(
-            $request->get("serializedCollection")
+            RequestParameters::get($request, "serializedCollection")
         );
 
         $errors = $this->trans($result["errors"]);
@@ -143,7 +144,7 @@ class TestNodePortController extends ASectionController
     #[Route('/TestNodePort/{object_id}/hide', name: 'TestNodePort_hide', methods: ['POST'])]
     public function hideAction(Request $request, $object_id)
     {
-        if (!$this->service->canBeModified($object_id, $request->get("objectTimestamp"), $errorMessages)) {
+        if (!$this->service->canBeModified($object_id, RequestParameters::get($request, "objectTimestamp"), $errorMessages)) {
             $response = new Response(json_encode(array("result" => 1, "errors" => $this->trans($errorMessages))));
             $response->headers->set('Content-Type', 'application/json');
             return $response;

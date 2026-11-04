@@ -15,6 +15,7 @@ use Concerto\PanelBundle\Entity\TestWizardStep;
 use Concerto\PanelBundle\Entity\User;
 use Concerto\PanelBundle\Entity\ViewTemplate;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
+use Symfony\Component\Security\Core\Authorization\Voter\Vote;
 use Symfony\Component\Security\Core\Authorization\Voter\Voter;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Concerto\PanelBundle\Entity\ATopEntity;
@@ -39,7 +40,7 @@ class ObjectVoter extends Voter
                 $object instanceof ViewTemplate) && in_array($attribute, array(self::ATTR_ACCESS));
     }
 
-    protected function voteOnAttribute($attribute, $object, TokenInterface $token): bool
+    protected function voteOnAttribute(string $attribute, mixed $object, TokenInterface $token, ?Vote $vote = null): bool
     {
         if (!$token->getUser() instanceof UserInterface || !$token->getUser() instanceof User) {
             return false;

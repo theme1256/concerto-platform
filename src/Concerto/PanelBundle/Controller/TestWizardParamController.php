@@ -2,6 +2,7 @@
 
 namespace Concerto\PanelBundle\Controller;
 
+use Concerto\PanelBundle\Utils\RequestParameters;
 use Symfony\Component\HttpFoundation\Response;
 use Twig\Environment;
 use Concerto\PanelBundle\Service\TestWizardService;
@@ -100,7 +101,7 @@ class TestWizardParamController extends ASectionController
     #[Route('/TestWizardParam/{object_id}/save', name: 'TestWizardParam_save', methods: ['POST'])]
     public function saveAction(Request $request, $object_id)
     {
-        if (!$this->service->canBeModified($object_id, $request->get("objectTimestamp"), $errorMessages)) {
+        if (!$this->service->canBeModified($object_id, RequestParameters::get($request, "objectTimestamp"), $errorMessages)) {
             $response = new Response(json_encode(array("result" => 1, "errors" => $this->trans($errorMessages))));
             $response->headers->set('Content-Type', 'application/json');
             return $response;
@@ -108,17 +109,17 @@ class TestWizardParamController extends ASectionController
 
         $result = $this->service->save(
             $object_id,
-            $this->testVariableService->get($request->get("testVariable")),
-            $request->get("label"),
-            $request->get("type"),
-            $request->get("serializedDefinition"),
-            $request->get("hideCondition"),
-            $request->get("description"),
-            $request->get("passableThroughUrl"),
-            $request->get("value"),
-            $this->testWizardStepService->get($request->get("wizardStep")),
-            $request->get("order"),
-            $this->testWizardService->get($request->get("wizard")));
+            $this->testVariableService->get(RequestParameters::get($request, "testVariable")),
+            RequestParameters::get($request, "label"),
+            RequestParameters::get($request, "type"),
+            RequestParameters::get($request, "serializedDefinition"),
+            RequestParameters::get($request, "hideCondition"),
+            RequestParameters::get($request, "description"),
+            RequestParameters::get($request, "passableThroughUrl"),
+            RequestParameters::get($request, "value"),
+            $this->testWizardStepService->get(RequestParameters::get($request, "wizardStep")),
+            RequestParameters::get($request, "order"),
+            $this->testWizardService->get(RequestParameters::get($request, "wizard")));
         return $this->getSaveResponse($result);
     }
 
@@ -130,7 +131,7 @@ class TestWizardParamController extends ASectionController
     #[Route('/TestWizardParam/TestWizard/{wizard_id}/clear', name: 'TestWizardParam_clear', methods: ['POST'])]
     public function clearAction(Request $request, $wizard_id)
     {
-        if (!$this->service->canBeModified($wizard_id, $request->get("objectTimestamp"), $errorMessages)) {
+        if (!$this->service->canBeModified($wizard_id, RequestParameters::get($request, "objectTimestamp"), $errorMessages)) {
             $response = new Response(json_encode(array("result" => 1, "errors" => $this->trans($errorMessages))));
             $response->headers->set('Content-Type', 'application/json');
             return $response;

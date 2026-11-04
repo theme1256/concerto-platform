@@ -2,6 +2,7 @@
 
 namespace Concerto\APIBundle\Controller;
 
+use Concerto\PanelBundle\Utils\RequestParameters;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Concerto\APIBundle\Service\DataRecordService;
@@ -66,7 +67,7 @@ class DataRecordController
 
     private function getDataObject(Request $request, $table_id, $id)
     {
-        $format = $request->get("format") ? $request->get("format") : "json";
+        $format = RequestParameters::get($request, "format") ? RequestParameters::get($request, "format") : "json";
         $data = $this->service->getData($table_id, $id, $format);
 
         switch ($data["response"]) {
@@ -81,7 +82,7 @@ class DataRecordController
 
     private function getDataCollection(Request $request, $table_id)
     {
-        $format = $request->get("format") ? $request->get("format") : "json";
+        $format = RequestParameters::get($request, "format") ? RequestParameters::get($request, "format") : "json";
         $filter = $request->query->all();
         $data = $this->service->getDataCollection($table_id, $filter, $format);
 
@@ -102,7 +103,7 @@ class DataRecordController
         if (strpos((string)$request->getContentTypeFormat(), "json") === false) {
             return new Response("Content-Type: application/json expected", Response::HTTP_BAD_REQUEST);
         }
-        $format = $request->get("format") ? $request->get("format") : "json";
+        $format = RequestParameters::get($request, "format") ? RequestParameters::get($request, "format") : "json";
         $newSerializedData = $request->getContent();
         $data = $this->service->updateData($table_id, $id, $newSerializedData, $format);
 
@@ -123,7 +124,7 @@ class DataRecordController
         if (strpos((string)$request->getContentTypeFormat(), "json") === false) {
             return new Response("Content-Type: application/json expected", Response::HTTP_BAD_REQUEST);
         }
-        $format = $request->get("format") ? $request->get("format") : "json";
+        $format = RequestParameters::get($request, "format") ? RequestParameters::get($request, "format") : "json";
         $serializedData = $request->getContent();
         $data = $this->service->insertData($table_id, $serializedData, $format);
 

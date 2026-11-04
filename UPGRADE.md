@@ -3,7 +3,10 @@
 * renamed test_runner_settings.r_environ_path to test_runner_settings.r_environ_session_path
 * requires **PHP 8.4 or newer**; the Docker image now runs **PHP 8.5** (official 8.5.12 release, built from source) instead of the PHP 7.4 security backport
   * Docker: PHP configuration moved from `/etc/php/7.4/` to `/etc/php/8.5/`, and the FPM binary from `/usr/sbin/php-fpm7.4` to `/usr/sbin/php-fpm8.5` - update custom images or mounted config files
-* upgraded to Symfony 6.4 and Twig 3
+* upgraded to **Symfony 7.4** (LTS) and Twig 3
+  * the `symfony/symfony` package is replaced by the individual components Concerto uses; custom code that needs other components (e.g. Form, Mailer, Serializer) must require them itself
+  * user e-mail addresses are validated with the HTML5 pattern (previously a loose check): addresses with non-ASCII characters or without a dot in the domain are rejected when a user is saved
+  * the session cookie gets the `Secure` flag when the panel is accessed over HTTPS, also behind a reverse proxy that sends `X-Forwarded-Proto`; **CONCERTO_COOKIES_SECURE**=true still sets it on every request
   * test base templates (view templates used as a test's base template) are rendered with Twig 3: the `{% spaceless %}` and `{% filter %}` tags and `{% for ... if ... %}` were removed - use `{% apply spaceless %}`, `{% apply ... %}` and `{% for ... %}{% if ... %}` instead. The starter content is not affected
   * two-factor authentication (Google Authenticator): a code from the previous or next 30 second period is accepted while its period is within 29 seconds of the current time (previously: always); the setting is `scheb_two_factor.google.leeway`
 * **FOSOAuthServerBundle** replaced by **league/oauth2-server-bundle**:

@@ -2,6 +2,7 @@
 
 namespace Concerto\PanelBundle\Controller;
 
+use Concerto\PanelBundle\Utils\RequestParameters;
 use Concerto\PanelBundle\Service\FileService;
 use Concerto\PanelBundle\Service\ViewTemplateService;
 use Twig\Environment;
@@ -89,7 +90,7 @@ class ViewTemplateController extends AExportableTabController
     #[IsGranted(new Expression("is_granted('ROLE_TEMPLATE') or is_granted('ROLE_SUPER_ADMIN')"))]
     public function saveAction(Request $request, $object_id)
     {
-        if (!$this->service->canBeModified($object_id, $request->get("objectTimestamp"), $errorMessages)) {
+        if (!$this->service->canBeModified($object_id, RequestParameters::get($request, "objectTimestamp"), $errorMessages)) {
             $response = new Response(json_encode(array("result" => 1, "errors" => $this->trans($errorMessages))));
             $response->headers->set('Content-Type', 'application/json');
             return $response;
@@ -97,16 +98,16 @@ class ViewTemplateController extends AExportableTabController
 
         $result = $this->service->save(
             $object_id,
-            $request->get("name"),
-            $request->get("description"),
-            $request->get("accessibility"),
-            $request->get("archived") === "1",
-            $this->userService->get($request->get("owner")),
-            $request->get("groups"),
-            $request->get("html"),
-            $request->get("head"),
-            $request->get("css"),
-            $request->get("js"));
+            RequestParameters::get($request, "name"),
+            RequestParameters::get($request, "description"),
+            RequestParameters::get($request, "accessibility"),
+            RequestParameters::get($request, "archived") === "1",
+            $this->userService->get(RequestParameters::get($request, "owner")),
+            RequestParameters::get($request, "groups"),
+            RequestParameters::get($request, "html"),
+            RequestParameters::get($request, "head"),
+            RequestParameters::get($request, "css"),
+            RequestParameters::get($request, "js"));
         return $this->getSaveResponse($result);
     }
 
@@ -191,11 +192,11 @@ class ViewTemplateController extends AExportableTabController
         $showCss = true;
         $showJs = true;
 
-        $htmlOverride = $request->get("html");
+        $htmlOverride = RequestParameters::get($request, "html");
         if ($htmlOverride !== null) $showHtml = $htmlOverride == 1;
-        $cssOverride = $request->get("css");
+        $cssOverride = RequestParameters::get($request, "css");
         if ($cssOverride !== null) $showCss = $cssOverride == 1;
-        $jsOverride = $request->get("js");
+        $jsOverride = RequestParameters::get($request, "js");
         if ($jsOverride !== null) $showJs = $jsOverride == 1;
 
         $content = $this->service->getContent($id, true, $showHtml, $showCss, $showJs);

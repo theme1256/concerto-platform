@@ -2,6 +2,7 @@
 
 namespace Concerto\PanelBundle\Controller;
 
+use Concerto\PanelBundle\Utils\RequestParameters;
 use Symfony\Component\HttpFoundation\Response;
 use Twig\Environment;
 use Concerto\PanelBundle\Service\TestWizardService;
@@ -82,7 +83,7 @@ class TestWizardStepController extends ASectionController
     #[Route('/TestWizardStep/{object_id}/save', name: 'TestWizardStep_save', methods: ['POST'])]
     public function saveAction(Request $request, $object_id)
     {
-        if (!$this->service->canBeModified($object_id, $request->get("objectTimestamp"), $errorMessages)) {
+        if (!$this->service->canBeModified($object_id, RequestParameters::get($request, "objectTimestamp"), $errorMessages)) {
             $response = new Response(json_encode(array("result" => 1, "errors" => $this->trans($errorMessages))));
             $response->headers->set('Content-Type', 'application/json');
             return $response;
@@ -90,10 +91,10 @@ class TestWizardStepController extends ASectionController
 
         $result = $this->service->save(
             $object_id,
-            $request->get("title"),
-            $request->get("description"),
-            $request->get("orderNum"),
-            $this->testWizardService->get($request->get("wizard")));
+            RequestParameters::get($request, "title"),
+            RequestParameters::get($request, "description"),
+            RequestParameters::get($request, "orderNum"),
+            $this->testWizardService->get(RequestParameters::get($request, "wizard")));
         return $this->getSaveResponse($result);
     }
 
@@ -105,7 +106,7 @@ class TestWizardStepController extends ASectionController
     #[Route('/TestWizardStep/TestWizard/{wizard_id}/clear', name: 'TestWizardStep_clear', methods: ['POST'])]
     public function clearAction(Request $request, $wizard_id)
     {
-        if (!$this->service->canBeModified($wizard_id, $request->get("objectTimestamp"), $errorMessages)) {
+        if (!$this->service->canBeModified($wizard_id, RequestParameters::get($request, "objectTimestamp"), $errorMessages)) {
             $response = new Response(json_encode(array("result" => 1, "errors" => $this->trans($errorMessages))));
             $response->headers->set('Content-Type', 'application/json');
             return $response;

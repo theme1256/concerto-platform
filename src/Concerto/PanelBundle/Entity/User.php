@@ -99,11 +99,12 @@ class User extends ATopEntity implements UserInterface, LegacyPasswordAuthentica
     }
 
     /**
-     * @inheritDoc
+     * No sensitive data is held in plain text. Still required by UserInterface in Symfony 7;
+     * removed from the interface in Symfony 8.
      */
+    #[\Deprecated]
     public function eraseCredentials(): void
     {
-
     }
 
     /**

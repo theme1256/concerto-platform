@@ -2,6 +2,7 @@
 
 namespace Concerto\PanelBundle\Controller;
 
+use Concerto\PanelBundle\Utils\RequestParameters;
 use Doctrine\Common\Collections\ArrayCollection;
 use Twig\Environment;
 use Symfony\Contracts\Translation\TranslatorInterface;
@@ -93,7 +94,7 @@ class TestVariableController extends ASectionController
     #[Route('/TestVariable/{object_id}/save', name: 'TestVariable_save', methods: ['POST'])]
     public function saveAction(Request $request, $object_id)
     {
-        if (!$this->service->canBeModified($object_id, $request->get("objectTimestamp"), $errorMessages)) {
+        if (!$this->service->canBeModified($object_id, RequestParameters::get($request, "objectTimestamp"), $errorMessages)) {
             $response = new Response(json_encode(array("result" => 1, "errors" => $this->trans($errorMessages))));
             $response->headers->set('Content-Type', 'application/json');
             return $response;
@@ -101,12 +102,12 @@ class TestVariableController extends ASectionController
 
         $result = $this->service->save(
             $object_id,
-            $request->get("name"),
-            $request->get("type"),
-            $request->get("description"),
-            $request->get("passableThroughUrl"),
-            $request->get("value"),
-            $this->testService->get($request->get("test"))
+            RequestParameters::get($request, "name"),
+            RequestParameters::get($request, "type"),
+            RequestParameters::get($request, "description"),
+            RequestParameters::get($request, "passableThroughUrl"),
+            RequestParameters::get($request, "value"),
+            $this->testService->get(RequestParameters::get($request, "test"))
         );
         return $this->getSaveResponse($result);
     }

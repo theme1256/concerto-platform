@@ -2,6 +2,7 @@
 
 namespace Concerto\PanelBundle\Controller;
 
+use Concerto\PanelBundle\Utils\RequestParameters;
 use Concerto\PanelBundle\Service\FileService;
 use Concerto\PanelBundle\Service\TestService;
 use Twig\Environment;
@@ -89,7 +90,7 @@ class TestWizardController extends AExportableTabController
     #[Route('/TestWizard/{object_id}/save', name: 'TestWizard_save', methods: ['POST'])]
     public function saveAction(Request $request, $object_id)
     {
-        if (!$this->service->canBeModified($object_id, $request->get("objectTimestamp"), $errorMessages)) {
+        if (!$this->service->canBeModified($object_id, RequestParameters::get($request, "objectTimestamp"), $errorMessages)) {
             $response = new Response(json_encode(array("result" => 1, "errors" => $this->trans($errorMessages))));
             $response->headers->set('Content-Type', 'application/json');
             return $response;
@@ -97,14 +98,14 @@ class TestWizardController extends AExportableTabController
 
         $result = $this->service->save(
             $object_id,
-            $request->get("name"),
-            $request->get("description"),
-            $request->get("accessibility"),
-            $request->get("archived") === "1",
-            $this->userService->get($request->get("owner")),
-            $request->get("groups"),
-            $this->testService->get($request->get("test")),
-            $request->get("serializedSteps")
+            RequestParameters::get($request, "name"),
+            RequestParameters::get($request, "description"),
+            RequestParameters::get($request, "accessibility"),
+            RequestParameters::get($request, "archived") === "1",
+            $this->userService->get(RequestParameters::get($request, "owner")),
+            RequestParameters::get($request, "groups"),
+            $this->testService->get(RequestParameters::get($request, "test")),
+            RequestParameters::get($request, "serializedSteps")
         );
         return $this->getSaveResponse($result);
     }

@@ -2,6 +2,7 @@
 
 namespace Concerto\APIBundle\Controller;
 
+use Concerto\PanelBundle\Utils\RequestParameters;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Concerto\TestBundle\Service\TestRunnerService;
@@ -170,7 +171,7 @@ class TestRunnerController
         $result = $this->service->uploadFile(
             $session_hash,
             $request->files,
-            $request->get("name")
+            RequestParameters::get($request, "name")
         );
         $response = new Response(json_encode($result), $this->getHttpCode($result));
         $response->headers->set('Content-Type', 'application/json');

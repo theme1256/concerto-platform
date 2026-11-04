@@ -2,6 +2,7 @@
 
 namespace Concerto\TestBundle\Controller;
 
+use Concerto\PanelBundle\Utils\RequestParameters;
 use Concerto\TestBundle\Service\ASessionRunnerService;
 use Concerto\TestBundle\Service\TestRunnerService;
 use Lexik\Bundle\JWTAuthenticationBundle\Encoder\JWTEncoderInterface;
@@ -71,7 +72,7 @@ class TestRunnerController
     {
         $this->logger->info(__CLASS__ . ":" . __FUNCTION__ . " - $test_slug, $test_name, $params");
 
-        $locale = $request->get("locale");
+        $locale = RequestParameters::get($request, "locale");
         if ($locale && $locale != $request->getLocale()) {
             $request->setLocale($locale);
             $request->setDefaultLocale($locale);
@@ -224,7 +225,7 @@ class TestRunnerController
 
         $result = $this->testRunnerService->submitToSession(
             $session_hash,
-            $request->get("values"),
+            RequestParameters::get($request, "values"),
             $request->cookies->all(),
             $request->getClientIp(),
             $request->server->get('HTTP_USER_AGENT')
@@ -251,7 +252,7 @@ class TestRunnerController
 
         $result = $this->testRunnerService->backgroundWorker(
             $session_hash,
-            $request->get("values"),
+            RequestParameters::get($request, "values"),
             $request->cookies->all(),
             $request->getClientIp(),
             $request->server->get('HTTP_USER_AGENT')
@@ -326,7 +327,7 @@ class TestRunnerController
         $result = $this->testRunnerService->uploadFile(
             $session_hash,
             $request->files,
-            $request->get("name")
+            RequestParameters::get($request, "name")
         );
         $result["token"] = $this->extendAuthorizationToken($request);
         $response = new Response(json_encode($result));
@@ -386,7 +387,7 @@ class TestRunnerController
 
         $result = $this->testRunnerService->logError(
             $session_hash,
-            $request->get("error"),
+            RequestParameters::get($request, "error"),
             TestSessionLog::TYPE_JS
         );
         $response = new Response(json_encode($result));
@@ -425,7 +426,7 @@ class TestRunnerController
      */
     private function decodeAuthorizationToken(Request $request)
     {
-        $token = $request->get("token");
+        $token = RequestParameters::get($request, "token");
         if (!is_string($token) || $token === "") return null;
         try {
             return $this->jwtEncoder->decode($token);

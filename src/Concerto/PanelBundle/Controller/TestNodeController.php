@@ -2,6 +2,7 @@
 
 namespace Concerto\PanelBundle\Controller;
 
+use Concerto\PanelBundle\Utils\RequestParameters;
 use Twig\Environment;
 use Concerto\PanelBundle\Service\TestService;
 use Concerto\PanelBundle\Service\TestNodeService;
@@ -81,7 +82,7 @@ class TestNodeController extends ASectionController
     #[Route('/TestNode/{object_id}/save', name: 'TestNode_save', methods: ['POST'])]
     public function saveAction(Request $request, $object_id)
     {
-        if (!$this->service->canBeModified($object_id, $request->get("objectTimestamp"), $errorMessages)) {
+        if (!$this->service->canBeModified($object_id, RequestParameters::get($request, "objectTimestamp"), $errorMessages)) {
             $response = new Response(json_encode(array("result" => 1, "errors" => $this->trans($errorMessages))));
             $response->headers->set('Content-Type', 'application/json');
             return $response;
@@ -89,12 +90,12 @@ class TestNodeController extends ASectionController
 
         $result = $this->service->save(
             $object_id,
-            $request->get("type"),
-            $request->get("posX"),
-            $request->get("posY"),
-            $this->testService->get($request->get("flowTest")),
-            $this->testService->get($request->get("sourceTest")),
-            $request->get("title"));
+            RequestParameters::get($request, "type"),
+            RequestParameters::get($request, "posX"),
+            RequestParameters::get($request, "posY"),
+            $this->testService->get(RequestParameters::get($request, "flowTest")),
+            $this->testService->get(RequestParameters::get($request, "sourceTest")),
+            RequestParameters::get($request, "title"));
         return $this->getSaveResponse($result);
     }
 
@@ -106,14 +107,14 @@ class TestNodeController extends ASectionController
     #[Route('/TestNode/{object_id}/ports/expose', name: 'TestNode_expose_ports', methods: ['POST'])]
     public function exposePorts(Request $request, $object_id)
     {
-        if (!$this->service->canBeModified($object_id, $request->get("objectTimestamp"), $errorMessages)) {
+        if (!$this->service->canBeModified($object_id, RequestParameters::get($request, "objectTimestamp"), $errorMessages)) {
             $response = new Response(json_encode(array("result" => 1, "errors" => $this->trans($errorMessages))));
             $response->headers->set('Content-Type', 'application/json');
             return $response;
         }
 
         $this->service->exposePorts(
-            json_decode($request->get("exposedPorts"), true)
+            json_decode(RequestParameters::get($request, "exposedPorts"), true)
         );
         $response = new Response(json_encode([
             "result" => 0,
@@ -132,7 +133,7 @@ class TestNodeController extends ASectionController
     #[Route('/TestNode/{object_id}/port/{type}/add', name: 'TestNode_add_dynamic_port', methods: ['POST'])]
     public function addDynamicPort(Request $request, $object_id, $type)
     {
-        if (!$this->service->canBeModified($object_id, $request->get("objectTimestamp"), $errorMessages)) {
+        if (!$this->service->canBeModified($object_id, RequestParameters::get($request, "objectTimestamp"), $errorMessages)) {
             $response = new Response(json_encode(array("result" => 1, "errors" => $this->trans($errorMessages))));
             $response->headers->set('Content-Type', 'application/json');
             return $response;
@@ -140,7 +141,7 @@ class TestNodeController extends ASectionController
 
         $result = $this->service->addDynamicPort(
             $object_id,
-            $request->get("name"),
+            RequestParameters::get($request, "name"),
             (int)$type
         );
 
