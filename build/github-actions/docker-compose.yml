@@ -9,6 +9,7 @@ services:
         - DB_TEST_NAME=concerto_test
         - DB_TEST_USER=root
         - DB_TEST_PASSWORD=test
+        - DB_VERSION=${DB_VERSION:-5.7}
         - PHP_FPM_PM=dynamic
         - PHP_FPM_PM_MAX_CHILDREN=30
         - PHP_FPM_PM_START_SERVERS=10

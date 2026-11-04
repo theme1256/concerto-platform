@@ -209,8 +209,9 @@ class DataTableService extends AExportableSectionService
             foreach (array_keys($decodedFilters["filters"]) as $filterElem) {
                 if (empty($this->dbStructureService->getColumn($tableName, $filterElem))) return false;
             }
-            foreach (array_keys($decodedFilters["sorting"]) as $sortingElem) {
-                if (empty($this->dbStructureService->getColumn($tableName, $sortingElem))) return false;
+            // sorting is a list of {name, dir}; validate the names, not the list indexes
+            foreach ($decodedFilters["sorting"] as $sortingElem) {
+                if (!is_array($sortingElem) || empty($this->dbStructureService->getColumn($tableName, $sortingElem["name"] ?? null))) return false;
             }
         }
         return true;

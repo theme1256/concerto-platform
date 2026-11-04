@@ -20,8 +20,23 @@
   * `doctrine:schema:update` only manages the tables mapped by Concerto's entities: data tables and other tables in the database are hidden from it by a schema filter (`Concerto\PanelBundle\Doctrine\UnmappedTablesSchemaFilter`). Do not remove this filter - without it Doctrine ORM 3 drops every table it does not map, including all data tables
   * the first `concerto:setup` after the upgrade removes Doctrine's `(DC2Type:...)` column comments from the OAuth tables; data is not changed
   * new tables keep the previous MySQL defaults (`utf8` / `utf8_unicode_ci`, InnoDB) through `doctrine.dbal.connections.local.default_table_options`
-  * MySQL 5.7 still works but is deprecated by Doctrine DBAL and will not be supported by DBAL 5; plan a move to MySQL 8 (**DB_VERSION**)
 * data API (`/api/data/{table_id}`): insert/update field names must match the column names exactly as GET returns them (previously column names were only matched in lower case). A rejected request now returns a 400 response naming the unknown fields and listing the expected ones
+* **MySQL 8** support (5.7, 8.0 and 8.4 are tested); `deploy/docker-compose/docker-compose.yml` now uses **MySQL 8.4** with **DB_VERSION**=8.4
+  * MySQL 5.7 still works but is deprecated by Doctrine DBAL and will not be supported by DBAL 5
+  * set **DB_VERSION** to the major.minor version of your MySQL server (e.g. `8.4`); the Docker image default stays `5.7`
+  * existing installations: **back up `data/mysql` first and do not start `mysql:8.4` on a MySQL 5.7 data directory** - it fails (`Failed to initialize DD Storage Engine`), but its start attempts already write to the InnoDB files, after which 5.7 reports `log sequence number ... is in the future`. Either keep `image: mysql:5.7`, or move the data with a dump (with the old compose file still in place, run from `deploy/docker-compose`):
+    ```
+    docker compose exec database sh -c 'mysqldump -uroot -p"$MYSQL_ROOT_PASSWORD" --single-transaction --routines --triggers concerto' > concerto.sql
+    docker compose down
+    sudo mv data/mysql data/mysql-5.7   # data/ is created by Docker and owned by root
+    # switch to the new docker-compose.yml (mysql:8.4, DB_VERSION=8.4), then:
+    docker compose up -d database   # wait until "ready for connections" in: docker compose logs database
+    docker compose exec -T database sh -c 'mysql -uroot -p"$MYSQL_ROOT_PASSWORD" concerto' < concerto.sql
+    docker compose up -d
+    ```
+    An in-place upgrade (start `mysql:8.0` once on the 5.7 directory, then `mysql:8.4`) also works, but accounts created on 5.7 use `mysql_native_password`, which MySQL 8.4 does not load: switch them while on 8.0 with `ALTER USER 'concerto'@'%' IDENTIFIED WITH caching_sha2_password BY '<password>';` (and the same for `root`)
+  * the R test runtime connects to MySQL 8 servers using `caching_sha2_password` over TLS when needed (its MariaDB client cannot use the RSA key exchange); MySQL 8 enables TLS by default - keep it enabled
+  * data table and column names that became reserved words in MySQL 8 (e.g. `rank`, `groups`, `row`, `system`, `lead`) keep working in the panel, the data API and CSV import/export; your own SQL in tests (`concerto.table.query`) must quote such names with backticks, e.g. ``SELECT `rank` FROM scores``
 * non-Docker installations: `env(...)` defaults in `app/config/parameters*.yml` must be strings - quote numeric and boolean values (see the `.dist` files)
 * **CONCERTO_BEHIND_PROXY** is now parsed as a boolean; previously any non-empty value (including `false`) made SAML trust `X-Forwarded-*` headers
 

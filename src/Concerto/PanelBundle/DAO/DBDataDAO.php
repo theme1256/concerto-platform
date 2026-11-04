@@ -29,6 +29,29 @@ class DBDataDAO
         return \defined('Pdo\Mysql::ATTR_USE_BUFFERED_QUERY') ? \Pdo\Mysql::ATTR_USE_BUFFERED_QUERY : \PDO::MYSQL_ATTR_USE_BUFFERED_QUERY;
     }
 
+    private function id($name)
+    {
+        return DBStructureDAO::quoteName($this->connection, $name);
+    }
+
+    private function quoteKeys(array $values)
+    {
+        $quoted = array();
+        foreach ($values as $k => $v) {
+            $quoted[$this->id($k)] = $v;
+        }
+        return $quoted;
+    }
+
+    private static function sortDirection($dir)
+    {
+        $dir = strtoupper(trim((string)$dir));
+        if ($dir !== "ASC" && $dir !== "DESC") {
+            throw new \InvalidArgumentException("Invalid sort direction");
+        }
+        return $dir;
+    }
+
     /**
      * @return list<Column>
      */
@@ -49,7 +72,7 @@ class DBDataDAO
             // stream large tables instead of buffering them in PHP memory
             $this->connection->getNativeConnection()->setAttribute(self::mysqlBufferedQueryAttribute(), false);
         }
-        $q = $this->connection->createQueryBuilder()->select("*")->from($table_name, "d");
+        $q = $this->connection->createQueryBuilder()->select("*")->from($this->id($table_name), "d");
 
         $i = 0;
         if ($filter !== null) {
@@ -58,9 +81,9 @@ class DBDataDAO
                 if (is_a($f["value"], "DateTime"))
                     $f["value"] = $f["value"]->format("Y-m-d");
                 if ($i == 0) {
-                    $q = $q->where("d." . $f["name"] . " " . $f["op"] . " :p$i")->setParameter("p$i", $f["value"]);
+                    $q = $q->where("d." . $this->id($f["name"]) . " " . $f["op"] . " :p$i")->setParameter("p$i", $f["value"]);
                 } else {
-                    $q = $q->andWhere("d." . $f["name"] . " " . $f["op"] . " :p$i")->setParameter("p$i", $f["value"]);
+                    $q = $q->andWhere("d." . $this->id($f["name"]) . " " . $f["op"] . " :p$i")->setParameter("p$i", $f["value"]);
                 }
                 $i++;
             }
@@ -83,19 +106,16 @@ class DBDataDAO
      */
     public function fetchMatchingData($table_name, $filters)
     {
-        $builder = $this->connection->createQueryBuilder()->select("*")->from($table_name, "d");
+        $builder = $this->connection->createQueryBuilder()->select("*")->from($this->id($table_name), "d");
 
         if (!$filters) {
             return $builder->executeQuery()->fetchAllAssociative();
         }
         $f = json_decode($filters, true);
 
-        foreach ($f["filters"] as $k => $v) {
-            if (!$v) continue;
-            $builder->andWhere("d.$k LIKE :$k")->setParameter($k, '%' . $v . '%');
-        }
+        $this->addGridFilters($builder, $f["filters"]);
         foreach ($f["sorting"] as $sort) {
-            $builder->addOrderBy("d." . $sort["name"], $sort["dir"]);
+            $builder->addOrderBy("d." . $this->id($sort["name"]), self::sortDirection($sort["dir"]));
         }
 
         return $builder->setFirstResult(($f["paging"]["page"] - 1) * $f["paging"]["pageSize"])->setMaxResults($f["paging"]["pageSize"])->executeQuery()->fetchAllAssociative();
@@ -103,23 +123,29 @@ class DBDataDAO
 
     public function countMatchingData($table_name, $filters)
     {
-        $builder = $this->connection->createQueryBuilder()->select('count(d.id)')->from($table_name, "d");
+        $builder = $this->connection->createQueryBuilder()->select('count(d.id)')->from($this->id($table_name), "d");
 
         if ($filters) {
             $f = json_decode($filters, true);
-
-            foreach ($f["filters"] as $k => $v) {
-                if (!$v) continue;
-                $builder->andWhere("d.$k LIKE :$k")->setParameter($k, '%' . $v . '%');
-            }
+            $this->addGridFilters($builder, $f["filters"]);
         }
 
         return (int)$builder->executeQuery()->fetchOne();
     }
 
+    private function addGridFilters($builder, $filters)
+    {
+        $i = 0;
+        foreach ($filters as $k => $v) {
+            if (!$v) continue;
+            $builder->andWhere("d." . $this->id($k) . " LIKE :f$i")->setParameter("f$i", '%' . $v . '%');
+            $i++;
+        }
+    }
+
     public function updateRow($table_name, $row_id, $values, $id_field = "id")
     {
-        $qb = $this->connection->createQueryBuilder()->update($table_name);
+        $qb = $this->connection->createQueryBuilder()->update($this->id($table_name));
         $i = -1;
         $cols = $this->getColumns($table_name);
         foreach ($values as $k => $v) {
@@ -134,7 +160,7 @@ class DBDataDAO
             }
             if (!$found) continue;
 
-            $qb->set($k, ":k" . $i)->setParameter("k" . $i, $v);
+            $qb->set($this->id($k), ":k" . $i)->setParameter("k" . $i, $v);
         }
 
         foreach ($cols as $col) {
@@ -149,17 +175,17 @@ class DBDataDAO
             }
 
             if (!$found) {
-                $qb->set(DBStructureDAO::columnName($col), ":k" . $i)->setParameter("k" . $i, null);
+                $qb->set($this->id(DBStructureDAO::columnName($col)), ":k" . $i)->setParameter("k" . $i, null);
             }
         }
 
-        $qb->where("$id_field=:id")->setParameter("id", $row_id)->executeStatement();
+        $qb->where($this->id($id_field) . "=:id")->setParameter("id", $row_id)->executeStatement();
         return array();
     }
 
     public function removeRow($table_name, $id, $id_field = "id")
     {
-        $this->connection->delete($table_name, array("$id_field" => $id));
+        $this->connection->delete($this->id($table_name), array($this->id($id_field) => $id));
         return array();
     }
 
@@ -178,12 +204,12 @@ class DBDataDAO
         switch ($this->getDriverName()) {
             case 'pdo_pgsql':
             {
-                $this->connection->executeStatement('INSERT INTO ' . $table_name . ' ( id )  VALUES ( DEFAULT )');
+                $this->connection->executeStatement('INSERT INTO ' . $this->id($table_name) . ' ( id )  VALUES ( DEFAULT )');
                 break;
             }
             case 'pdo_sqlsrv':
             {
-                $this->connection->executeStatement('INSERT INTO ' . $table_name . ' DEFAULT VALUES ');
+                $this->connection->executeStatement('INSERT INTO ' . $this->id($table_name) . ' DEFAULT VALUES ');
                 break;
             }
             default:
@@ -197,7 +223,7 @@ class DBDataDAO
                     }
                 }
 
-                $this->connection->insert($table_name, $vals);
+                $this->connection->insert($this->id($table_name), $this->quoteKeys($vals));
                 break;
             }
         }
@@ -207,7 +233,7 @@ class DBDataDAO
 
     public function insertRow($table_name, $values)
     {
-        $this->connection->insert($table_name, $values);
+        $this->connection->insert($this->id($table_name), $this->quoteKeys($values));
         return $this->getLastInsertId();
     }
 
@@ -221,7 +247,7 @@ class DBDataDAO
         //TODO check sqlite and sql server
 
         if ($this->getDriverName() == "pdo_sqlsrv") {
-            $this->connection->executeStatement("SET IDENTITY_INSERT $table_name ON");
+            $this->connection->executeStatement("SET IDENTITY_INSERT " . $this->id($table_name) . " ON");
         }
 
         if ($this->getDriverName() !== "pdo_mysql") {
@@ -238,7 +264,7 @@ class DBDataDAO
 
             if ($batch === null) {
                 $batch = array(
-                    "insert_template" => 'INSERT INTO ' . $table_name . ' (' . implode(', ', array_keys($data)) . ')  VALUES ',
+                    "insert_template" => 'INSERT INTO ' . $this->id($table_name) . ' (' . implode(', ', array_keys($this->quoteKeys($data))) . ')  VALUES ',
                     "values_template" => '(' . implode(', ', array_fill(0, count($data), '?')) . ')',
                     "index" => 0,
                     "sql" => "",
@@ -279,7 +305,7 @@ class DBDataDAO
         if ($this->getDriverName() === "pdo_mysql")
             $this->connection->executeStatement('SET FOREIGN_KEY_CHECKS=0');
 
-        $q = $dbPlatform->getTruncateTableSql($table_name);
+        $q = $dbPlatform->getTruncateTableSQL($this->id($table_name));
         $this->connection->executeStatement($q);
 
         if ($this->getDriverName() === "pdo_mysql")
@@ -290,7 +316,7 @@ class DBDataDAO
 
     public function deleteAll($table_name)
     {
-        $this->connection->delete($table_name, array("1" => 1));
+        $this->connection->delete($this->id($table_name), array("1" => 1));
         return array();
     }
 }

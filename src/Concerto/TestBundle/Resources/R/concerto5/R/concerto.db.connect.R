@@ -3,15 +3,30 @@ concerto.db.connect = function(driver, username, password, dbname, host, unix_so
     con = NULL
     if (driver == "pdo_mysql") {
         require("RMySQL")
-        con <- dbConnect(
-            MySQL(),
-            username = username,
-            password = password,
-            dbname = dbname,
-            host = host,
-            unix.socket = unix_socket,
-            port = as.numeric(port)
-        )
+        connectMySQL = function(default.file = NULL) {
+            dbConnect(
+                MySQL(),
+                username = username,
+                password = password,
+                dbname = dbname,
+                host = host,
+                unix.socket = unix_socket,
+                port = as.numeric(port),
+                default.file = default.file
+            )
+        }
+        con <- tryCatch(connectMySQL(), error = function(e) {
+            # MySQL 8 caching_sha2_password: a full (uncached) authentication over an unencrypted
+            # connection needs RSA, which the GnuTLS build of the MariaDB client cannot do.
+            # Over TLS the password can be sent, so retry encrypted (servers without TLS keep
+            # working with the plain connection above).
+            if (!grepl("caching_sha2_password", conditionMessage(e), fixed = TRUE)) stop(e)
+            concerto.log("caching_sha2_password authentication needs TLS, reconnecting with TLS")
+            tlsOptions <- tempfile(fileext = ".cnf")
+            on.exit(unlink(tlsOptions))
+            writeLines(c("[client]", "ssl-enforce=1"), tlsOptions)
+            connectMySQL(default.file = tlsOptions)
+        })
         dbExecute(con, statement = 'SET NAMES \"utf8\"')
     } else if (driver == "pdo_sqlite") {
         #require("RSQLite")

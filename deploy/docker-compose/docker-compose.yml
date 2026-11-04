@@ -1,7 +1,9 @@
 version: '2'
 services:
   database:
-    image: mysql:5.7
+    # MySQL 8.4 LTS. Do not start it on an existing ./data/mysql from mysql:5.7: 8.4 cannot open
+    # it and its start attempts damage it. Migrate as described in UPGRADE.md (5.1.0).
+    image: mysql:8.4
     container_name: database
     restart: on-failure
     environment:
@@ -25,6 +27,7 @@ services:
       - CONCERTO_PLATFORM_URL=/
       - CONCERTO_GIT_REPOSITORY_PATH=/data/git
       - DB_HOST=database
+      - DB_VERSION=8.4
       - DB_PASSWORD=changeme
       - TZ=UTC
     ports:

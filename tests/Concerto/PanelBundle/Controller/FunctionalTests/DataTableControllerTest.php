@@ -480,6 +480,43 @@ class DataTableControllerTest extends AFunctionalTest
     }
 
     /**
+     * The panel data grid sends filters as {column: term} and sorting as a list of {name, dir}.
+     */
+    public function testDataCollectionActionFilteredAndSorted()
+    {
+        $client = self::createLoggedClient();
+        $grid = function (array $filters, array $sorting) {
+            return array("filters" => json_encode(array(
+                "filters" => (object)$filters,
+                "sorting" => $sorting,
+                "paging" => array("page" => 1, "pageSize" => 10)
+            )));
+        };
+
+        $client->request("POST", "/admin/DataTable/1/data/collection", $grid(array("temp" => "temp"), array(array("name" => "temp", "dir" => "desc"))));
+        $this->assertTrue($client->getResponse()->isSuccessful());
+        $this->assertEquals(array(
+            "content" => array(
+                array("id" => 2, "temp" => "temp2"),
+                array("id" => 1, "temp" => "temp1")
+            ),
+            "count" => 2
+        ), json_decode($client->getResponse()->getContent(), true));
+
+        $client->request("POST", "/admin/DataTable/1/data/collection", $grid(array("temp" => "2"), array(array("name" => "id", "dir" => "asc"))));
+        $this->assertEquals(array(
+            "content" => array(array("id" => 2, "temp" => "temp2")),
+            "count" => 1
+        ), json_decode($client->getResponse()->getContent(), true));
+
+        // unknown filter and sort columns are rejected
+        foreach (array($grid(array("nope" => "x"), array()), $grid(array(), array(array("name" => "nope", "dir" => "asc")))) as $params) {
+            $client->request("POST", "/admin/DataTable/1/data/collection", $params);
+            $this->assertSame(array(), json_decode($client->getResponse()->getContent(), true)["content"]);
+        }
+    }
+
+    /**
      * Is this test meaningful anymore?
      */
     public function testDataSectionAction()

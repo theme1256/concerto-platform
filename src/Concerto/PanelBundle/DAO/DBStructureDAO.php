@@ -76,6 +76,23 @@ class DBStructureDAO
         }
     }
 
+    /**
+     * SQL for a user-chosen table or column name.
+     *
+     * MySQL: always quoted. Names that are fine on 5.7 can be reserved words on 8.0+ ("rank",
+     * "groups", "row", "system", ...), and grid filter/sort names come from the request.
+     * Other platforms fold unquoted names (PostgreSQL: lower case), so plain names stay unquoted
+     * there as before and only anything else is quoted.
+     */
+    public static function quoteName(Connection $connection, $name): string
+    {
+        $name = (string)$name;
+        if (!($connection->getDatabasePlatform() instanceof AbstractMySQLPlatform) && preg_match('/^\w+$/', $name)) {
+            return $name;
+        }
+        return $connection->quoteSingleIdentifier($name);
+    }
+
     public static function columnName(Column $column): string
     {
         return $column->getObjectName()->getIdentifier()->getValue();
@@ -101,9 +118,19 @@ class DBStructureDAO
         return false;
     }
 
+    /**
+     * DDL names of data tables are quoted on MySQL, as in quoteName(): DBAL only quotes the
+     * reserved words of the configured DB_VERSION, which may be older than the server.
+     */
+    private function quotesNames(): bool
+    {
+        return $this->connection->getDatabasePlatform() instanceof AbstractMySQLPlatform;
+    }
+
     private function buildColumn($name, $type, array $options): Column
     {
-        $editor = Column::editor()->setUnquotedName($name)->setTypeName($type);
+        $editor = Column::editor()->setTypeName($type);
+        $this->quotesNames() ? $editor->setQuotedName($name) : $editor->setUnquotedName($name);
         if (array_key_exists("length", $options)) $editor->setLength((int)$options["length"]);
         if (array_key_exists("precision", $options)) $editor->setPrecision((int)$options["precision"]);
         if (array_key_exists("scale", $options)) $editor->setScale((int)$options["scale"]);
@@ -136,11 +163,13 @@ class DBStructureDAO
             $columns[] = $this->buildColumn($col["name"], $col["type"], $this->columnOptions($col["type"], $col["length"] ?? "", $col["nullable"]));
         }
 
+        $primaryKey = PrimaryKeyConstraint::editor();
+        $this->quotesNames() ? $primaryKey->setQuotedColumnNames("id") : $primaryKey->setUnquotedColumnNames("id");
         $editor = Table::editor()
-            ->setUnquotedName($table_name)
             ->setColumns(...$columns)
-            ->setPrimaryKeyConstraint(PrimaryKeyConstraint::editor()->setUnquotedColumnNames("id")->create());
-        if ($this->connection->getDatabasePlatform() instanceof AbstractMySQLPlatform) {
+            ->setPrimaryKeyConstraint($primaryKey->create());
+        $this->quotesNames() ? $editor->setQuotedName($table_name) : $editor->setUnquotedName($table_name);
+        if ($this->quotesNames()) {
             $editor->setOptions(self::MYSQL_TABLE_OPTIONS);
         }
         $this->schemaManager()->createTable($editor->create());
@@ -148,9 +177,9 @@ class DBStructureDAO
         foreach ($data as $row) {
             $esc_row = array();
             foreach ($row as $k => $v) {
-                $esc_row[$k] = $v;
+                $esc_row[self::quoteName($this->connection, $k)] = $v;
             }
-            $this->connection->insert($table_name, $esc_row);
+            $this->connection->insert(self::quoteName($this->connection, $table_name), $esc_row);
         }
     }
 
@@ -193,13 +222,15 @@ class DBStructureDAO
     private function alterTable($table_name, array $added, array $changed = array(), array $dropped = array())
     {
         $schemaManager = $this->schemaManager();
-        $table = $schemaManager->introspectTableByUnquotedName($table_name);
+        $table = $this->quotesNames()
+            ? $schemaManager->introspectTableByQuotedName($table_name)
+            : $schemaManager->introspectTableByUnquotedName($table_name);
         $schemaManager->alterTable(new TableDiff($table, $added, $changed, $dropped));
     }
 
     public function renameTable($table_old_name, $table_new_name)
     {
-        $data = $this->connection->createQueryBuilder()->select("*")->from($table_old_name, "d")->executeQuery()->iterateAssociative();
+        $data = $this->connection->createQueryBuilder()->select("*")->from(self::quoteName($this->connection, $table_old_name), "d")->executeQuery()->iterateAssociative();
 
         $cols = array();
         foreach ($this->getColumns($table_old_name) as $col) {
@@ -212,7 +243,7 @@ class DBStructureDAO
 
     public function deleteTable($table_name)
     {
-        $this->schemaManager()->dropTable($table_name);
+        $this->schemaManager()->dropTable(self::quoteName($this->connection, $table_name));
     }
 
     public function getTableNames()
