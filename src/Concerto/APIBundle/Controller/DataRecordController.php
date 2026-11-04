@@ -99,7 +99,7 @@ class DataRecordController
 
     private function updateDataObject(Request $request, $table_id, $id)
     {
-        if (strpos($request->getContentType(), "json") === false) {
+        if (strpos((string)$request->getContentTypeFormat(), "json") === false) {
             return new Response("Content-Type: application/json expected", Response::HTTP_BAD_REQUEST);
         }
         $format = $request->get("format") ? $request->get("format") : "json";
@@ -110,7 +110,7 @@ class DataRecordController
             case Response::HTTP_NOT_FOUND:
                 return new Response("Data not found", $data["response"]);
             case Response::HTTP_BAD_REQUEST:
-                return new Response("Incorrect fields", $data["response"]);
+                return new Response($data["result"] ?? "Incorrect fields", $data["response"]);
             default:
                 $response = new Response($data["result"], $data["response"]);
                 $response->headers->set('Content-Type', 'application/' . $format);
@@ -120,7 +120,7 @@ class DataRecordController
 
     private function insertDataObject(Request $request, $table_id)
     {
-        if (strpos($request->getContentType(), "json") === false) {
+        if (strpos((string)$request->getContentTypeFormat(), "json") === false) {
             return new Response("Content-Type: application/json expected", Response::HTTP_BAD_REQUEST);
         }
         $format = $request->get("format") ? $request->get("format") : "json";
@@ -131,7 +131,7 @@ class DataRecordController
             case Response::HTTP_NOT_FOUND:
                 return new Response("Data not found", $data["response"]);
             case Response::HTTP_BAD_REQUEST:
-                return new Response("Incorrect fields", $data["response"]);
+                return new Response($data["result"] ?? "Incorrect fields", $data["response"]);
             default:
                 $response = new Response($data["result"], $data["response"]);
                 $response->headers->set('Content-Type', 'application/' . $format);

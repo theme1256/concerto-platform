@@ -73,11 +73,9 @@ class DataRecordService
 
         $newData = $this->deserialize($newSerializedData, "json");
 
-        $columns = $this->dbStructureDAO->getColumns($table->getName());
-        foreach ($newData as $k => $v) {
-            if (!isset($columns[$k]))
-                return array("response" => Response::HTTP_BAD_REQUEST, "result" => null);
-        }
+        $error = $this->validateFields($table, $newData);
+        if ($error !== null)
+            return array("response" => Response::HTTP_BAD_REQUEST, "result" => $error);
 
         $this->dbDataDAO->updateRow($table->getName(), $id, $newData);
         $result = $this->dbDataDAO->getData($table->getName(), $id);
@@ -95,11 +93,9 @@ class DataRecordService
 
         $newData = $this->deserialize($newSerializedData, "json");
 
-        $columns = $this->dbStructureDAO->getColumns($table->getName());
-        foreach ($newData as $k => $v) {
-            if (!isset($columns[$k]))
-                return array("response" => Response::HTTP_BAD_REQUEST, "result" => null);
-        }
+        $error = $this->validateFields($table, $newData);
+        if ($error !== null)
+            return array("response" => Response::HTTP_BAD_REQUEST, "result" => $error);
 
         $lid = $this->dbDataDAO->insertRow($table->getName(), $newData);
         $result = $this->dbDataDAO->getData($table->getName(), $lid);
@@ -117,6 +113,41 @@ class DataRecordService
 
         $this->dbDataDAO->removeRow($table->getName(), $id);
         return array("response" => Response::HTTP_OK, "result" => null);
+    }
+
+    /**
+     * Checks that the decoded request body is an object whose keys are columns of the table.
+     * Names must match exactly (as returned by GET): the row update skips any other key.
+     *
+     * @return string|null error message for the API client, null when the fields are valid
+     */
+    protected function validateFields(DataTable $table, $data)
+    {
+        $expected = array();
+        foreach ($this->dbStructureDAO->getColumns($table->getName()) as $column) {
+            $expected[] = DBStructureDAO::columnName($column);
+        }
+        $expectedList = "Expected fields: " . implode(", ", $expected);
+
+        if (!is_array($data) || ($data !== array() && array_is_list($data))) {
+            return "Incorrect fields: request body must be a JSON object of field names and values. " . $expectedList;
+        }
+
+        $unknown = array();
+        foreach (array_keys($data) as $field) {
+            if (!in_array((string)$field, $expected, true)) {
+                $unknown[] = '"' . $field . '"';
+            }
+        }
+        if (count($unknown) > 0) {
+            return sprintf(
+                "Incorrect fields: unknown field%s %s. %s",
+                count($unknown) > 1 ? "s" : "",
+                implode(", ", $unknown),
+                $expectedList
+            );
+        }
+        return null;
     }
 
     public function serialize($data, $format = "json")

@@ -18,6 +18,7 @@
   * the first `concerto:setup` after the upgrade removes Doctrine's `(DC2Type:...)` column comments from the OAuth tables; data is not changed
   * new tables keep the previous MySQL defaults (`utf8` / `utf8_unicode_ci`, InnoDB) through `doctrine.dbal.connections.local.default_table_options`
   * MySQL 5.7 still works but is deprecated by Doctrine DBAL and will not be supported by DBAL 5; plan a move to MySQL 8 (**DB_VERSION**)
+* data API (`/api/data/{table_id}`): insert/update field names must match the column names exactly as GET returns them (previously column names were only matched in lower case). A rejected request now returns a 400 response naming the unknown fields and listing the expected ones
 * non-Docker installations: `env(...)` defaults in `app/config/parameters*.yml` must be strings - quote numeric and boolean values (see the `.dist` files)
 * **CONCERTO_BEHIND_PROXY** is now parsed as a boolean; previously any non-empty value (including `false`) made SAML trust `X-Forwarded-*` headers
 
