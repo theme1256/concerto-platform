@@ -9,11 +9,9 @@ use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Session\SessionInterface;
-use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Routing\Attribute\Route;
 
-/**
- * @Route("/api/saml")
- */
+#[Route('/api/saml')]
 class SamlController
 {
     private $service;
@@ -28,10 +26,10 @@ class SamlController
     }
 
     /**
-     * @Route("/login", methods={"GET"})
      * @param Request $request
      * @return Response
      */
+    #[Route('/login', methods: ['GET'])]
     public function loginAction(Request $request)
     {
         if (!$this->administrationService->isApiEnabled())
@@ -44,10 +42,10 @@ class SamlController
     }
 
     /**
-     * @Route("/logout", methods={"GET"})
      * @param Request $request
      * @return Response
      */
+    #[Route('/logout', methods: ['GET'])]
     public function logoutAction(Request $request)
     {
         if (!$this->administrationService->isApiEnabled())
@@ -61,10 +59,10 @@ class SamlController
     }
 
     /**
-     * @Route("/acs", methods={"POST"})
      * @param Request $request
      * @return Response
      */
+    #[Route('/acs', methods: ['POST'])]
     public function acsAction(Request $request)
     {
         if (!$this->administrationService->isApiEnabled())
@@ -100,10 +98,10 @@ class SamlController
     }
 
     /**
-     * @Route("/sls", methods={"GET"})
      * @param Request $request
      * @return Response
      */
+    #[Route('/sls', methods: ['GET'])]
     public function slsAction(Request $request)
     {
         if (!$this->administrationService->isApiEnabled())
@@ -127,9 +125,9 @@ class SamlController
     }
 
     /**
-     * @Route("/metadata", methods={"GET"})
      * @return Response
      */
+    #[Route('/metadata', methods: ['GET'])]
     public function metadataAction()
     {
         if (!$this->administrationService->isApiEnabled())

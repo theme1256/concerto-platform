@@ -1,6 +1,6 @@
 concerto_panel:
     resource: "@ConcertoPanelBundle/Controller/"
-    type:     annotation
+    type:     attribute
 
 login_check:
     path: /admin/login_check

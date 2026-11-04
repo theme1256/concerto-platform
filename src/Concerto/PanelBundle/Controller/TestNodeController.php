@@ -6,15 +6,14 @@ use Twig\Environment;
 use Concerto\PanelBundle\Service\TestService;
 use Concerto\PanelBundle\Service\TestNodeService;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Contracts\Translation\TranslatorInterface;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\ExpressionLanguage\Expression;
+use Symfony\Component\Security\Http\Attribute\IsGranted;
 
-/**
- * @Route("/admin")
- * @Security("is_granted('ROLE_TEST') or is_granted('ROLE_SUPER_ADMIN')")
- */
+#[Route('/admin')]
+#[IsGranted(new Expression("is_granted('ROLE_TEST') or is_granted('ROLE_SUPER_ADMIN')"))]
 class TestNodeController extends ASectionController
 {
 
@@ -31,31 +30,31 @@ class TestNodeController extends ASectionController
     }
 
     /**
-     * @Route("/TestNode/fetch/{object_id}/{format}", name="TestNode_object", defaults={"format":"json"})
      * @param $object_id
      * @param string $format
      * @return Response
      */
+    #[Route('/TestNode/fetch/{object_id}/{format}', name: 'TestNode_object', defaults: ['format' => 'json'])]
     public function objectAction($object_id, $format = "json")
     {
         return parent::objectAction($object_id, $format);
     }
 
     /**
-     * @Route("/TestNode/collection/{format}", name="TestNode_collection", defaults={"format":"json"})
      * @param string $format
      * @return Response
      */
+    #[Route('/TestNode/collection/{format}', name: 'TestNode_collection', defaults: ['format' => 'json'])]
     public function collectionAction($format = "json")
     {
         return parent::collectionAction($format);
     }
 
     /**
-     * @Route("/TestNode/flow/{test_id}/collection", name="TestNode_collection_by_flow_test")
      * @param $test_id
      * @return Response
      */
+    #[Route('/TestNode/flow/{test_id}/collection', name: 'TestNode_collection_by_flow_test')]
     public function collectionByFlowTestAction($test_id)
     {
         return new Response($this->templating->render('@ConcertoPanel/collection.json.twig', array(
@@ -64,22 +63,22 @@ class TestNodeController extends ASectionController
     }
 
     /**
-     * @Route("/TestNode/{object_ids}/delete", name="TestNode_delete", methods={"POST"})
      * @param Request $request
      * @param string $object_ids
      * @return Response
      */
+    #[Route('/TestNode/{object_ids}/delete', name: 'TestNode_delete', methods: ['POST'])]
     public function deleteAction(Request $request, $object_ids)
     {
         return parent::deleteAction($request, $object_ids);
     }
 
     /**
-     * @Route("/TestNode/{object_id}/save", name="TestNode_save", methods={"POST"})
      * @param Request $request
      * @param $object_id
      * @return Response
      */
+    #[Route('/TestNode/{object_id}/save', name: 'TestNode_save', methods: ['POST'])]
     public function saveAction(Request $request, $object_id)
     {
         if (!$this->service->canBeModified($object_id, $request->get("objectTimestamp"), $errorMessages)) {
@@ -100,11 +99,11 @@ class TestNodeController extends ASectionController
     }
 
     /**
-     * @Route("/TestNode/{object_id}/ports/expose", name="TestNode_expose_ports", methods={"POST"})
      * @param Request $request
      * @param $object_id
      * @return Response
      */
+    #[Route('/TestNode/{object_id}/ports/expose', name: 'TestNode_expose_ports', methods: ['POST'])]
     public function exposePorts(Request $request, $object_id)
     {
         if (!$this->service->canBeModified($object_id, $request->get("objectTimestamp"), $errorMessages)) {
@@ -125,12 +124,12 @@ class TestNodeController extends ASectionController
     }
 
     /**
-     * @Route("/TestNode/{object_id}/port/{type}/add", name="TestNode_add_dynamic_port", methods={"POST"})
      * @param Request $request
      * @param $object_id
      * @param $type
      * @return Response
      */
+    #[Route('/TestNode/{object_id}/port/{type}/add', name: 'TestNode_add_dynamic_port', methods: ['POST'])]
     public function addDynamicPort(Request $request, $object_id, $type)
     {
         if (!$this->service->canBeModified($object_id, $request->get("objectTimestamp"), $errorMessages)) {

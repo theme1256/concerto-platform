@@ -399,7 +399,7 @@ class FileService
         $dirSep = DIRECTORY_SEPARATOR;
         $wrongDirSep = DIRECTORY_SEPARATOR === '/' ? '\\' : '/';
         // Replace incorrect dir separators
-        $path = str_replace($wrongDirSep, $dirSep, $path);
+        $path = str_replace($wrongDirSep, $dirSep, (string)$path);
         $path = explode($dirSep, $path);
         $stack = array();
         foreach ($path as $seg) {

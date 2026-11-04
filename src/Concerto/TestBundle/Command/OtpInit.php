@@ -19,7 +19,7 @@ class OtpInit extends Command
         $this->googleAuthenticator = $googleAuthenticator;
     }
 
-    protected function configure()
+    protected function configure(): void
     {
         $this->setName("otp:init")->setDescription("Initializes OTP");
         $this->addArgument("username", InputArgument::REQUIRED);

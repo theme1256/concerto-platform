@@ -22,7 +22,7 @@ class ConcertoGitPushCommand extends Command
         parent::__construct();
     }
 
-    protected function configure()
+    protected function configure(): void
     {
         $this->setName("concerto:git:push")->setDescription("Performs git push");
     }

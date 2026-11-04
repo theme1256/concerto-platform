@@ -10,14 +10,17 @@ use Concerto\PanelBundle\Entity\TestNodePort;
 use Concerto\PanelBundle\Entity\TestVariable;
 use Concerto\PanelBundle\Entity\TestWizardParam;
 use Concerto\PanelBundle\Entity\TestWizardStep;
-use Doctrine\Common\EventSubscriber;
-use Doctrine\ORM\EntityManager;
-use Doctrine\ORM\Event\LifecycleEventArgs;
 use Doctrine\ORM\Event\PostFlushEventArgs;
-use Doctrine\ORM\Events;
+use Doctrine\ORM\Event\PrePersistEventArgs;
+use Doctrine\ORM\Event\PreRemoveEventArgs;
+use Doctrine\ORM\Event\PreUpdateEventArgs;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 
-class EntitySubscriber implements EventSubscriber
+/**
+ * Doctrine listener (see doctrine.event_listener tags in services.yml): keeps the owning
+ * top entity's update metadata current when its child entities change.
+ */
+class EntitySubscriber
 {
     private $securityTokenStorage;
     private $topEntitiesToUpdate;
@@ -28,17 +31,17 @@ class EntitySubscriber implements EventSubscriber
         $this->topEntitiesToUpdate = [];
     }
 
-    public function preUpdate(LifecycleEventArgs $args)
+    public function preUpdate(PreUpdateEventArgs $args)
     {
         $this->addTopEntityForUpdate($args->getObject());
     }
 
-    public function prePersist(LifecycleEventArgs $args)
+    public function prePersist(PrePersistEventArgs $args)
     {
         $this->addTopEntityForUpdate($args->getObject());
     }
 
-    public function preRemove(LifecycleEventArgs $args)
+    public function preRemove(PreRemoveEventArgs $args)
     {
         $this->addTopEntityForUpdate($args->getObject());
     }
@@ -46,7 +49,7 @@ class EntitySubscriber implements EventSubscriber
     public function postFlush(PostFlushEventArgs $args)
     {
         if (!empty($this->topEntitiesToUpdate)) {
-            $entityManager = $args->getEntityManager();
+            $entityManager = $args->getObjectManager();
             $user = null;
             $token = $this->securityTokenStorage->getToken();
             if ($token !== null) $user = $token->getUser();
@@ -62,16 +65,6 @@ class EntitySubscriber implements EventSubscriber
                 $entityManager->flush();
             }
         }
-    }
-
-    public function getSubscribedEvents(): array
-    {
-        return array(
-            Events::prePersist,
-            Events::preUpdate,
-            Events::preRemove,
-            Events::postFlush
-        );
     }
 
     private function addTopEntityForUpdate($entity)

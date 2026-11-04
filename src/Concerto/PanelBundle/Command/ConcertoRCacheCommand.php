@@ -24,7 +24,7 @@ class ConcertoRCacheCommand extends Command
         parent::__construct();
     }
 
-    protected function configure()
+    protected function configure(): void
     {
         $this->setName("concerto:r:cache")->setDescription("Caches R functions documentation.");
     }

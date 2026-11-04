@@ -24,7 +24,7 @@ class ConcertoGitPositionCommand extends Command
         parent::__construct();
     }
 
-    protected function configure()
+    protected function configure(): void
     {
         $this->setName("concerto:git:position")->setDescription("Returns how many commits ahead or behind is local branch");
         $this->addArgument("direction", InputArgument::OPTIONAL, "One of the following: behind, ahead.", "behind");

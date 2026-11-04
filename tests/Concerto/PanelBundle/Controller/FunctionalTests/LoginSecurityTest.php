@@ -17,7 +17,7 @@ class LoginSecurityTest extends AFunctionalTest
     {
         parent::setUp();
         self::$entityManager->createQuery(
-            'UPDATE ConcertoPanelBundle:User u SET u.lockedUntil = NULL, u.failedAuthenticationStreak = 0, u.archived = false'
+            'UPDATE Concerto\PanelBundle\Entity\User u SET u.lockedUntil = NULL, u.failedAuthenticationStreak = 0, u.archived = false'
         )->execute();
         self::$entityManager->clear();
     }
@@ -44,7 +44,7 @@ class LoginSecurityTest extends AFunctionalTest
     private function reloadUser()
     {
         self::$entityManager->clear();
-        return self::$entityManager->getRepository('ConcertoPanelBundle:User')->findOneBy(array('username' => self::USERNAME));
+        return self::$entityManager->getRepository(\Concerto\PanelBundle\Entity\User::class)->findOneBy(array('username' => self::USERNAME));
     }
 
     private function lockStreak()
@@ -92,7 +92,7 @@ class LoginSecurityTest extends AFunctionalTest
 
     public function testArchivedUserCannotLogIn()
     {
-        self::$entityManager->createQuery('UPDATE ConcertoPanelBundle:User u SET u.archived = true')->execute();
+        self::$entityManager->createQuery('UPDATE Concerto\PanelBundle\Entity\User u SET u.archived = true')->execute();
 
         $this->assertSame('/login', $this->login(self::USERNAME, self::PASSWORD));
     }

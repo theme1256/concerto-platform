@@ -7,26 +7,24 @@ build_dir=$(CDPATH= cd -- "$(dirname -- "$0")" && pwd)
 export DEBIAN_FRONTEND=noninteractive
 apt-get update
 apt-get install -y --no-install-recommends \
-    autoconf bison build-essential ca-certificates curl pkg-config re2c \
+    build-essential ca-certificates curl file pkg-config xz-utils \
     libargon2-dev libcurl4-openssl-dev libonig-dev libreadline-dev \
     libsodium-dev libsqlite3-dev libssl-dev libxml2-dev libzip-dev zlib1g-dev
 
 mkdir -p /tmp/php-src
 curl --fail --location --retry 3 --proto '=https' --tlsv1.2 \
-    "https://codeload.github.com/php/php-src/tar.gz/$PHP_SOURCE_COMMIT" \
-    --output /tmp/php-src.tar.gz
-printf '%s  %s\n' "$PHP_SOURCE_SHA256" /tmp/php-src.tar.gz | sha256sum --check --strict
-tar -xzf /tmp/php-src.tar.gz --strip-components=1 -C /tmp/php-src
+    "$PHP_SOURCE_URL" --output /tmp/php-src.tar.xz
+printf '%s  %s\n' "$PHP_SOURCE_SHA256" /tmp/php-src.tar.xz | sha256sum --check --strict
+tar -xJf /tmp/php-src.tar.xz --strip-components=1 -C /tmp/php-src
 cd /tmp/php-src
-./buildconf --force
 ./configure \
     --prefix=/opt/concerto/php \
-    --with-config-file-path=/etc/php/7.4/cli \
-    --with-config-file-scan-dir=/etc/php/7.4/conf.d \
+    --with-config-file-path=/etc/php/8.5/cli \
+    --with-config-file-scan-dir=/etc/php/8.5/conf.d \
     --enable-fpm --with-fpm-user=www-data --with-fpm-group=www-data \
     --disable-cgi --without-pear \
     --enable-calendar --enable-exif --enable-ftp --enable-mbstring \
-    --enable-opcache --enable-pcntl --enable-shmop --enable-sockets \
+    --enable-pcntl --enable-shmop --enable-sockets \
     --enable-sysvmsg --enable-sysvsem --enable-sysvshm \
     --with-curl --with-gettext --with-mysqli=mysqlnd --with-pdo-mysql=mysqlnd \
     --with-openssl --with-password-argon2 --with-readline --with-sodium \

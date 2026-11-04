@@ -26,11 +26,14 @@ jobs:
       - name: Git checkout
         uses: actions/checkout@v3
 
-      - name: Install PHP dependencies
-        uses: php-actions/composer@v6
+      - name: Set up PHP
+        uses: shivammathur/setup-php@v2
         with:
-          php_version: 7.4
-          version: 2.2.21
+          php-version: '8.5'
+          tools: composer:2.11.1
+
+      - name: Install PHP dependencies
+        run: composer install --no-interaction --no-progress
 
       - name: Setup node
         uses: actions/setup-node@v3

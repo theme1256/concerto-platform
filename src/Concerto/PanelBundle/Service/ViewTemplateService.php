@@ -139,7 +139,7 @@ class ViewTemplateService extends AExportableSectionService
         $old_name = $instruction["existing_object_name"];
         $new_name = $this->getNextValidName($this->formatImportName($instruction["rename"], $obj), $instruction["action"], $old_name);
         if ($instruction["action"] != 2 && $old_name != $new_name) {
-            $renames["ViewTemplate"][$old_name] = $new_name;
+            $renames["ViewTemplate"][(string)$old_name] = $new_name;
         }
 
         $result = array();

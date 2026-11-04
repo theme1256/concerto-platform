@@ -30,7 +30,7 @@ class StartForkerCommand extends Command
         $this->administrationService = $administrationService;
     }
 
-    protected function configure()
+    protected function configure(): void
     {
         $this->setName("concerto:forker:start")->setDescription("Start forker process.");
     }

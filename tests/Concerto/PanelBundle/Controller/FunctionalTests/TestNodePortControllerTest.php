@@ -14,16 +14,16 @@ class TestNodePortControllerTest extends AFunctionalTest
     public static function setUpBeforeClass(): void
     {
         parent::setUpBeforeClass();
-        self::$repository = static::$entityManager->getRepository("ConcertoPanelBundle:TestNodePort");
+        self::$repository = static::$entityManager->getRepository(\Concerto\PanelBundle\Entity\TestNodePort::class);
     }
 
     protected function setUp(): void
     {
-        self::truncateClass("ConcertoPanelBundle:Test");
-        self::truncateClass("ConcertoPanelBundle:TestVariable");
-        self::truncateClass("ConcertoPanelBundle:TestNode");
-        self::truncateClass("ConcertoPanelBundle:TestNodePort");
-        self::truncateClass("ConcertoPanelBundle:TestNodeConnection");
+        self::truncateClass(\Concerto\PanelBundle\Entity\Test::class);
+        self::truncateClass(\Concerto\PanelBundle\Entity\TestVariable::class);
+        self::truncateClass(\Concerto\PanelBundle\Entity\TestNode::class);
+        self::truncateClass(\Concerto\PanelBundle\Entity\TestNodePort::class);
+        self::truncateClass(\Concerto\PanelBundle\Entity\TestNodeConnection::class);
 
         $client = self::createLoggedClient();
         $client->request("POST", "/admin/Test/-1/save", array(

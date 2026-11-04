@@ -9,9 +9,9 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
  && rm -rf /var/lib/apt/lists/*
 COPY --from=php-build /opt/concerto/php /opt/concerto/php
 COPY build/docker/php /usr/local/share/concerto/php
-COPY build/docker/php/php.ini /etc/php/7.4/fpm/php.ini
-COPY build/docker/php-fpm/php-fpm.conf /etc/php/7.4/fpm/php-fpm.conf
-COPY build/docker/php-fpm/www.conf /etc/php/7.4/fpm/pool.d/www.conf
+COPY build/docker/php/php.ini /etc/php/8.5/fpm/php.ini
+COPY build/docker/php-fpm/php-fpm.conf /etc/php/8.5/fpm/php-fpm.conf
+COPY build/docker/php-fpm/www.conf /etc/php/8.5/fpm/pool.d/www.conf
 COPY build/docker/php-fpm/start.sh /usr/local/bin/concerto-start-php-fpm
 RUN sh /usr/local/share/concerto/php/install-runtime.sh \
  && sh /usr/local/share/concerto/php/verify-runtime.sh
@@ -136,10 +136,10 @@ RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone \
  && rm -f /etc/nginx/sites-enabled/default \
  && ln -fs /etc/nginx/sites-available/concerto.conf /etc/nginx/sites-enabled/concerto.conf
 
-COPY build/docker/php/php.ini /etc/php/7.4/fpm/php.ini
+COPY build/docker/php/php.ini /etc/php/8.5/fpm/php.ini
 COPY build/docker/nginx/nginx.conf /etc/nginx/nginx.conf
-COPY build/docker/php-fpm/php-fpm.conf /etc/php/7.4/fpm/php-fpm.conf
-COPY build/docker/php-fpm/www.conf /etc/php/7.4/fpm/pool.d/www.conf
+COPY build/docker/php-fpm/php-fpm.conf /etc/php/8.5/fpm/php-fpm.conf
+COPY build/docker/php-fpm/www.conf /etc/php/8.5/fpm/pool.d/www.conf
 
 RUN rm -rf /app/concerto/src/Concerto/PanelBundle/Resources/public/files \
  && rm -rf /app/concerto/src/Concerto/TestBundle/Resources/sessions \

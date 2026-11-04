@@ -9,18 +9,17 @@ use Symfony\Component\HttpFoundation\StreamedResponse;
 use Concerto\PanelBundle\DAO\DAOUnsupportedOperationException;
 use Twig\Environment;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Contracts\Translation\TranslatorInterface;
 use Concerto\PanelBundle\Service\DataTableService;
 use Concerto\PanelBundle\Service\ImportService;
 use Concerto\PanelBundle\Service\ExportService;
 use Concerto\PanelBundle\Service\UserService;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
+use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\ExpressionLanguage\Expression;
+use Symfony\Component\Security\Http\Attribute\IsGranted;
 
-/**
- * @Route("/admin")
- * @Security("is_granted('ROLE_TABLE') or is_granted('ROLE_SUPER_ADMIN')")
- */
+#[Route('/admin')]
+#[IsGranted(new Expression("is_granted('ROLE_TABLE') or is_granted('ROLE_SUPER_ADMIN')"))]
 class DataTableController extends AExportableTabController
 {
 
@@ -40,54 +39,54 @@ class DataTableController extends AExportableTabController
     }
 
     /**
-     * @Route("/DataTable/fetch/{object_id}/{format}", name="DataTable_object", defaults={"format":"json"})
      * @param $object_id
      * @param string $format
      * @return Response
      */
+    #[Route('/DataTable/fetch/{object_id}/{format}', name: 'DataTable_object', defaults: ['format' => 'json'])]
     public function objectAction($object_id, $format)
     {
         return parent::objectAction($object_id, $format);
     }
 
     /**
-     * @Route("/DataTable/collection/{format}", name="DataTable_collection", defaults={"format":"json"})
      * @param string $format
      * @return Response
      */
+    #[Route('/DataTable/collection/{format}', name: 'DataTable_collection', defaults: ['format' => 'json'])]
     public function collectionAction($format)
     {
         return parent::collectionAction($format);
     }
 
     /**
-     * @Route("/DataTable/{object_id}/toggleLock", name="DataTable_toggleLock")
      * @param Request $request
      * @param $object_id
      * @return Response
      */
+    #[Route('/DataTable/{object_id}/toggleLock', name: 'DataTable_toggleLock')]
     public function toggleLock(Request $request, $object_id)
     {
         return parent::toggleLock($request, $object_id);
     }
 
     /**
-     * @Route("/DataTable/form/{action}", name="DataTable_form", defaults={"action":"edit"})
      * @param string $action
      * @param array $params
      * @return Response
      */
+    #[Route('/DataTable/form/{action}', name: 'DataTable_form', defaults: ['action' => 'edit'])]
     public function formAction($action = "edit", $params = array())
     {
         return parent::formAction($action, $params);
     }
 
     /**
-     * @Route("/DataTable/{object_id}/save", name="DataTable_save", methods={"POST"})
      * @param Request $request
      * @param $object_id
      * @return Response
      */
+    #[Route('/DataTable/{object_id}/save', name: 'DataTable_save', methods: ['POST'])]
     public function saveAction(Request $request, $object_id)
     {
         if (!$this->service->canBeModified($object_id, $request->get("updatedOn"), $errorMessages)) {
@@ -109,32 +108,32 @@ class DataTableController extends AExportableTabController
     }
 
     /**
-     * @Route("/DataTable/{object_id}/copy", name="DataTable_copy", methods={"POST"})
      * @param Request $request
      * @param $object_id
      * @return Response
      */
+    #[Route('/DataTable/{object_id}/copy', name: 'DataTable_copy', methods: ['POST'])]
     public function copyAction(Request $request, $object_id)
     {
         return parent::copyAction($request, $object_id);
     }
 
     /**
-     * @Route("/DataTable/{object_ids}/delete", name="DataTable_delete", methods={"POST"})
      * @param Request $request
      * @param string $object_ids
      * @return Response
      */
+    #[Route('/DataTable/{object_ids}/delete', name: 'DataTable_delete', methods: ['POST'])]
     public function deleteAction(Request $request, $object_ids)
     {
         return parent::deleteAction($request, $object_ids);
     }
 
     /**
-     * @Route("/DataTable/{table_id}/columns/collection", name="DataTable_columns_collection")
      * @param $table_id
      * @return Response
      */
+    #[Route('/DataTable/{table_id}/columns/collection', name: 'DataTable_columns_collection')]
     public function columnsCollectionAction($table_id)
     {
         $result_data = $this->service->getColumns($table_id);
@@ -145,11 +144,11 @@ class DataTableController extends AExportableTabController
     }
 
     /**
-     * @Route("/DataTable/fetch/{table_id}/column/{column_name}", name="DataTable_column_object")
      * @param $table_id
      * @param string $column_name
      * @return Response
      */
+    #[Route('/DataTable/fetch/{table_id}/column/{column_name}', name: 'DataTable_column_object')]
     public function fetchColumnAction($table_id, $column_name)
     {
         $response = new Response(json_encode($this->service->getColumn($table_id, $column_name)));
@@ -169,12 +168,12 @@ class DataTableController extends AExportableTabController
     }
 
     /**
-     * @Route("/DataTable/{table_id}/data/collection/{prefixed}", name="DataTable_data_collection", defaults={"prefixed":0})
      * @param Request $request
      * @param $table_id
      * @param int $prefixed
      * @return Response
      */
+    #[Route('/DataTable/{table_id}/data/collection/{prefixed}', name: 'DataTable_data_collection', defaults: ['prefixed' => 0])]
     public function dataCollectionAction(Request $request, $table_id, $prefixed = 0)
     {
         $filters = $request->get("filters");
@@ -190,11 +189,11 @@ class DataTableController extends AExportableTabController
     }
 
     /**
-     * @Route("/DataTable/{table_id}/data/csv/{name}", name="DataTable_data_collection_csv")
      * @param Request $request
      * @param $table_id
      * @return Response
      */
+    #[Route('/DataTable/{table_id}/data/csv/{name}', name: 'DataTable_data_collection_csv')]
     public function streamedCsvDataCollectionAction(Request $request, $table_id)
     {
         $name = $request->get("name");
@@ -215,10 +214,10 @@ class DataTableController extends AExportableTabController
     }
 
     /**
-     * @Route("/DataTable/{table_id}/data/section", name="DataTable_data_section")
      * @param $table_id
      * @return Response
      */
+    #[Route('/DataTable/{table_id}/data/section', name: 'DataTable_data_section')]
     public function dataSectionAction($table_id)
     {
         return new Response($this->templating->render("@ConcertoPanel/DataTable/data_section.html.twig", array(
@@ -228,12 +227,12 @@ class DataTableController extends AExportableTabController
     }
 
     /**
-     * @Route("/DataTable/{table_id}/column/{column_names}/delete", name="DataTable_column_delete", methods={"POST"})
      * @param Request $request
      * @param $table_id
      * @param string $column_names
      * @return Response
      */
+    #[Route('/DataTable/{table_id}/column/{column_names}/delete', name: 'DataTable_column_delete', methods: ['POST'])]
     public function deleteColumnAction(Request $request, $table_id, $column_names)
     {
         if (!$this->service->canBeModified($table_id, $request->get("objectTimestamp"), $errorMessages)) {
@@ -249,12 +248,12 @@ class DataTableController extends AExportableTabController
     }
 
     /**
-     * @Route("/DataTable/{table_id}/row/{row_ids}/delete", name="DataTable_row_delete", methods={"POST"})
      * @param Request $request
      * @param $table_id
      * @param string $row_ids
      * @return Response
      */
+    #[Route('/DataTable/{table_id}/row/{row_ids}/delete', name: 'DataTable_row_delete', methods: ['POST'])]
     public function deleteRowAction(Request $request, $table_id, $row_ids)
     {
         if (!$this->service->canBeModified($table_id, $request->get("objectTimestamp"), $errorMessages)) {
@@ -273,11 +272,11 @@ class DataTableController extends AExportableTabController
     }
 
     /**
-     * @Route("/DataTable/{table_id}/truncate", name="DataTable_truncate", methods={"POST"})
      * @param Request $request
      * @param $table_id
      * @return Response
      */
+    #[Route('/DataTable/{table_id}/truncate', name: 'DataTable_truncate', methods: ['POST'])]
     public function truncateAction(Request $request, $table_id)
     {
         if (!$this->service->canBeModified($table_id, $request->get("objectTimestamp"), $errorMessages)) {
@@ -293,11 +292,11 @@ class DataTableController extends AExportableTabController
     }
 
     /**
-     * @Route("/DataTable/{table_id}/deleteAll", name="DataTable_deleteAll", methods={"POST"})
      * @param Request $request
      * @param $table_id
      * @return Response
      */
+    #[Route('/DataTable/{table_id}/deleteAll', name: 'DataTable_deleteAll', methods: ['POST'])]
     public function deleteAllAction(Request $request, $table_id)
     {
         if (!$this->service->canBeModified($table_id, $request->get("objectTimestamp"), $errorMessages)) {
@@ -316,12 +315,12 @@ class DataTableController extends AExportableTabController
     }
 
     /**
-     * @Route("/DataTable/{table_id}/column/{column_name}/save", name="DataTable_column_save", methods={"POST"})
      * @param Request $request
      * @param $table_id
      * @param string $column_name
      * @return Response
      */
+    #[Route('/DataTable/{table_id}/column/{column_name}/save', name: 'DataTable_column_save', methods: ['POST'])]
     public function saveColumnAction(Request $request, $table_id, $column_name)
     {
         if (!$this->service->canBeModified($table_id, $request->get("objectTimestamp"), $errorMessages)) {
@@ -349,11 +348,11 @@ class DataTableController extends AExportableTabController
     }
 
     /**
-     * @Route("/DataTable/{table_id}/row/insert", name="DataTable_row_insert", methods={"POST"})
      * @param Request $request
      * @param $table_id
      * @return Response
      */
+    #[Route('/DataTable/{table_id}/row/insert', name: 'DataTable_row_insert', methods: ['POST'])]
     public function insertRowAction(Request $request, $table_id)
     {
         if (!$this->service->canBeModified($table_id, $request->get("objectTimestamp"), $errorMessages)) {
@@ -372,13 +371,13 @@ class DataTableController extends AExportableTabController
     }
 
     /**
-     * @Route("/DataTable/{table_id}/row/{row_id}/update/{prefixed}", name="DataTable_row_update", defaults={"prefixed":0}, methods={"POST"})
      * @param Request $request
      * @param $table_id
      * @param $row_id
      * @param int $prefixed
      * @return Response
      */
+    #[Route('/DataTable/{table_id}/row/{row_id}/update/{prefixed}', name: 'DataTable_row_update', defaults: ['prefixed' => 0], methods: ['POST'])]
     public function updateRowAction(Request $request, $table_id, $row_id, $prefixed = 0)
     {
         if (!$this->service->canBeModified($table_id, $request->get("objectTimestamp"), $errorMessages)) {
@@ -397,48 +396,47 @@ class DataTableController extends AExportableTabController
     }
 
     /**
-     * @Route("/DataTable/{instructions}/export/{format}", name="DataTable_export", defaults={"format":"yml"})
      * @param string $instructions
      * @param string $format
      * @return Response
      */
+    #[Route('/DataTable/{instructions}/export/{format}', name: 'DataTable_export', defaults: ['format' => 'yml'])]
     public function exportAction($instructions, $format = "yml")
     {
         return parent::exportAction($instructions, $format);
     }
 
     /**
-     * @Route("/DataTable/{object_ids}/instructions/export", name="DataTable_export_instructions")
      * @param $object_ids
      * @return Response
      */
+    #[Route('/DataTable/{object_ids}/instructions/export', name: 'DataTable_export_instructions')]
     public function exportInstructionsAction($object_ids)
     {
         return parent::exportInstructionsAction($object_ids);
     }
 
     /**
-     * @Route("/DataTable/import", name="DataTable_import", methods={"POST"})
      * @param Request $request
      * @return Response
      */
+    #[Route('/DataTable/import', name: 'DataTable_import', methods: ['POST'])]
     public function scheduleImportAction(Request $request)
     {
         return parent::scheduleImportAction($request);
     }
 
     /**
-     * @Route("/DataTable/import/status", name="DataTable_pre_import_status")
      * @param Request $request
      * @return Response
      */
+    #[Route('/DataTable/import/status', name: 'DataTable_pre_import_status')]
     public function preImportStatusAction(Request $request)
     {
         return parent::preImportStatusAction($request);
     }
 
     /**
-     * @Route("/DataTable/{table_id}/csv/{restructure}/{header}/{delimiter}/{enclosure}/import", name="DataTable_csv_import", methods={"POST"})
      * @param Request $request
      * @param $table_id
      * @param $restructure
@@ -447,6 +445,7 @@ class DataTableController extends AExportableTabController
      * @param $enclosure
      * @return Response
      */
+    #[Route('/DataTable/{table_id}/csv/{restructure}/{header}/{delimiter}/{enclosure}/import', name: 'DataTable_csv_import', methods: ['POST'])]
     public function importCsvAction(Request $request, $table_id, $restructure, $header, $delimiter, $enclosure)
     {
         if (!$this->service->canBeModified($table_id, $request->get("objectTimestamp"), $errorMessages)) {

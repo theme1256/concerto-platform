@@ -22,7 +22,7 @@ class ConcertoGitResetCommand extends Command
         parent::__construct();
     }
 
-    protected function configure()
+    protected function configure(): void
     {
         $this->setName("concerto:git:reset")->setDescription("Performs git reset");
     }

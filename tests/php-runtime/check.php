@@ -68,6 +68,9 @@ function request($script, $query = '', $body = '', $contentType = '')
     return isset($parts[1]) ? json_decode($parts[1], true) : null;
 }
 
+preg_match('/^PHP_VERSION=(\S+)$/m', (string) @file_get_contents('/usr/local/share/concerto/php/source.lock'), $lock);
+$expectedVersion = $lock[1] ?? null;
+
 $directory = sys_get_temp_dir() . '/concerto-php-check-' . bin2hex(random_bytes(6));
 mkdir($directory, 0777);
 chmod($directory, 0777);
@@ -77,7 +80,8 @@ file_put_contents($probe, <<<'PHP'
 if (isset($_GET['oom'])) {
     ini_set('memory_limit', '16M');
     register_shutdown_function(function () {
-        file_put_contents(__DIR__ . '/unsafe-shutdown', 'executed');
+        $error = error_get_last();
+        file_put_contents(__DIR__ . '/oom-error', $error['message'] ?? '');
     });
     str_repeat('x', 32 * 1024 * 1024);
 }
@@ -110,8 +114,8 @@ foreach ([
     putenv("$name=$value");
 }
 $process = proc_open([
-    '/usr/sbin/php-fpm7.4', '--nodaemonize', '--php-ini', '/etc/php/7.4/fpm/php.ini',
-    '--fpm-config', '/etc/php/7.4/fpm/php-fpm.conf',
+    '/usr/sbin/php-fpm8.5', '--nodaemonize', '--php-ini', '/etc/php/8.5/fpm/php.ini',
+    '--fpm-config', '/etc/php/8.5/fpm/php-fpm.conf',
 ], [0 => ['file', '/dev/null', 'r'], 1 => ['file', $directory . '/fpm.log', 'a'],
     2 => ['file', $directory . '/fpm.log', 'a']], $pipes);
 $failed = false;
@@ -129,7 +133,7 @@ try {
     }
     check($ready, 'FPM listens on loopback');
     $first = request($probe);
-    check($first && $first['sapi'] === 'fpm-fcgi' && $first['version'] === '7.4.34-dev', 'Actual FPM serves the pinned PHP version');
+    check($first && $first['sapi'] === 'fpm-fcgi' && $first['version'] === $expectedVersion, 'Actual FPM serves the pinned PHP version');
     check(!$first['progress'] && $first['body_parts'] === 1020 && $first['memory'] === '128M'
         && $first['post_limit'] === '50M' && $first['file_limit'] === '48M'
         && $first['file_count_limit'] === 20, 'Actual FPM applies hardened parser settings');
@@ -144,21 +148,25 @@ try {
     check($upload && $upload['fields']['title'] === 'CSV import' && $upload['upload']['error'] === UPLOAD_ERR_OK
         && $upload['upload']['text'] === "name,score\nexample,42\n", 'Multipart fields and file uploads remain functional');
 
-    // Empty file controls used to evade max_file_uploads. The backport counts
-    // multipart parts independently, including these controls.
+    // Empty file controls used to evade max_file_uploads. max_multipart_body_parts
+    // counts multipart parts independently, including these controls.
     $body = '';
     for ($i = 0; $i < 1021; $i++) {
         $body .= "--$boundary\r\nContent-Disposition: form-data; name=\"empty$i\"; filename=\"\"\r\n\r\n\r\n";
     }
     $body .= "--$boundary--\r\n";
     $bounded = request($probe, '', $body, 'multipart/form-data; boundary=' . $boundary);
-    check($bounded && $bounded['files'] === 1020, 'Backported multipart limit bounds empty file controls');
+    check($bounded && $bounded['files'] === 1020, 'Multipart body parts limit bounds empty file controls');
 
+    // CVE-2026-109618: PHP 8.5.12 replaced the longjmp() out of the allocator with a
+    // soft OOM raised at the next VM safe point, so the request fails with the regular
+    // fatal error and shutdown runs on fully initialised state.
     $beforeOom = request($probe);
     request($probe, 'oom=1');
     $afterOom = request($probe);
-    check(!file_exists($directory . '/unsafe-shutdown'), 'OOM exits without invoking unsafe request shutdown');
-    check($afterOom && $afterOom['pid'] !== $beforeOom['pid'], 'FPM replaces the exhausted worker and serves the next request');
+    $oomError = (string) @file_get_contents($directory . '/oom-error');
+    check(strpos($oomError, 'Allowed memory size of 16777216 bytes exhausted') === 0, 'OOM ends the request with the regular memory limit fatal error');
+    check($afterOom && $afterOom['requests'] === $beforeOom['requests'] + 1, 'FPM keeps serving requests with intact sessions after OOM');
 } catch (Throwable $error) {
     $failed = true;
     fwrite(STDERR, 'FAIL: ' . $error->getMessage() . "\n");

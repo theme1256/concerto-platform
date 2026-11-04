@@ -26,7 +26,7 @@ class ConcertoTaskGitPullCommand extends ConcertoScheduledTaskCommand
         parent::__construct($administrationService, $administration, $doctrine, $scheduledTaskRepository);
     }
 
-    protected function configure()
+    protected function configure(): void
     {
         parent::configure();
         $this->setName("concerto:task:git:pull")->setDescription("Git pull");

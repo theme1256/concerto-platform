@@ -21,28 +21,29 @@
     ]
   },
   "require": {
-    "php": ">=7.2",
-    "cocur/slugify": "~1.0",
+    "php": ">=8.2",
+    "cocur/slugify": "^4.7",
+    "doctrine/annotations": "^1.14",
     "doctrine/dbal": "^2.13",
     "doctrine/doctrine-bundle": "^2.7",
     "doctrine/inflector": "^2.0",
     "doctrine/orm": "^2.14",
     "doctrine/persistence": "^2.5",
     "incenteev/composer-parameter-handler": "^2.0",
-    "league/oauth2-server-bundle": "^0.5",
-    "lexik/jwt-authentication-bundle": "^2.10",
-    "onelogin/php-saml": "^3.3",
-    "scheb/2fa-bundle": "^5.13",
-    "scheb/2fa-google-authenticator": "^5.13",
-    "sensio/framework-extra-bundle": "^5.5",
-    "symfony/doctrine-messenger": "5.4.*",
+    "league/oauth2-server-bundle": "^0.8",
+    "lexik/jwt-authentication-bundle": "^3.2",
+    "onelogin/php-saml": "^4.3",
+    "scheb/2fa-bundle": "^7.14",
+    "scheb/2fa-google-authenticator": "^7.14",
+    "symfony/doctrine-messenger": "6.4.*",
     "symfony/monolog-bundle": "^3.7",
     "symfony/polyfill-apcu": "^1.0",
-    "symfony/symfony": "5.4.*",
-    "twig/twig": "2.16.*"
+    "symfony/symfony": "6.4.*",
+    "twig/twig": "^3.27"
   },
   "require-dev": {
-    "symfony/phpunit-bridge": "^5.4"
+    "masterminds/html5": "^2.9",
+    "symfony/phpunit-bridge": "^6.4"
   },
   "scripts": {
     "symfony-scripts": [
@@ -63,7 +64,7 @@
       "composer/package-versions-deprecated": true
     },
     "platform": {
-      "php": "7.4.33"
+      "php": "8.5.12"
     }
   },
   "extra": {

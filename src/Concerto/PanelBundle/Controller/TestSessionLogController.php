@@ -6,14 +6,13 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Twig\Environment;
 use Concerto\PanelBundle\Service\TestSessionLogService;
-use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Contracts\Translation\TranslatorInterface;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
+use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\ExpressionLanguage\Expression;
+use Symfony\Component\Security\Http\Attribute\IsGranted;
 
-/**
- * @Route("/admin")
- * @Security("is_granted('ROLE_TEST') or is_granted('ROLE_SUPER_ADMIN')")
- */
+#[Route('/admin')]
+#[IsGranted(new Expression("is_granted('ROLE_TEST') or is_granted('ROLE_SUPER_ADMIN')"))]
 class TestSessionLogController extends ASectionController
 {
 
@@ -27,20 +26,20 @@ class TestSessionLogController extends ASectionController
     }
 
     /**
-     * @Route("/TestSessionLog/collection", name="TestSessionLog_collection")
      * @param string $format
      * @return Response
      */
+    #[Route('/TestSessionLog/collection', name: 'TestSessionLog_collection')]
     public function collectionAction($format = "json")
     {
         return parent::collectionAction($format);
     }
 
     /**
-     * @Route("/TestSessionLog/Test/{test_id}/collection", name="TestSessionLog_collection_by_test")
      * @param $test_id
      * @return Response
      */
+    #[Route('/TestSessionLog/Test/{test_id}/collection', name: 'TestSessionLog_collection_by_test')]
     public function collectionByTestAction($test_id)
     {
         return new Response($this->templating->render('@ConcertoPanel/collection.json.twig', array(
@@ -50,21 +49,21 @@ class TestSessionLogController extends ASectionController
     }
 
     /**
-     * @Route("/TestSessionLog/{object_ids}/delete", name="TestSessionLog_delete", methods={"POST"})
      * @param Request $request
      * @param string $object_ids
      * @return Response
      */
+    #[Route('/TestSessionLog/{object_ids}/delete', name: 'TestSessionLog_delete', methods: ['POST'])]
     public function deleteAction(Request $request, $object_ids)
     {
         return parent::deleteAction($request, $object_ids);
     }
 
     /**
-     * @Route("/TestSessionLog/Test/{test_id}/clear", name="TestSessionLog_clear", methods={"POST"})
      * @param $test_id
      * @return Response
      */
+    #[Route('/TestSessionLog/Test/{test_id}/clear', name: 'TestSessionLog_clear', methods: ['POST'])]
     public function clearAction($test_id)
     {
         $this->service->clear($test_id);

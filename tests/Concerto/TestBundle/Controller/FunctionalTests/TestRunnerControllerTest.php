@@ -15,8 +15,8 @@ class TestRunnerControllerTest extends AFunctionalTest {
 
     public static function setUpBeforeClass(): void {
         parent::setUpBeforeClass();
-        self::$repository = static::$entityManager->getRepository("ConcertoPanelBundle:TestSession");
-        self::$testRepository = static::$entityManager->getRepository("ConcertoPanelBundle:Test");
+        self::$repository = static::$entityManager->getRepository(\Concerto\PanelBundle\Entity\TestSession::class);
+        self::$testRepository = static::$entityManager->getRepository(\Concerto\PanelBundle\Entity\Test::class);
     }
 
     protected function setUp(): void {
@@ -54,6 +54,23 @@ class TestRunnerControllerTest extends AFunctionalTest {
             "test_node_hash" => "someHash"
         ));
         $this->assertEquals(403, $client->getResponse()->getStatusCode());
+    }
+
+    /**
+     * Query and form parameters are passed on to the test as its parameters, including arrays.
+     */
+    public function testStartTestAcceptsArrayParameters() {
+        $client = self::createClient();
+        $client->request("GET", "/test/no_such_test");
+        $expected = $client->getResponse()->getStatusCode();
+
+        $client->request("GET", "/test/no_such_test?answers[]=a&answers[]=b");
+        $this->assertNotEquals(400, $client->getResponse()->getStatusCode());
+        $this->assertEquals($expected, $client->getResponse()->getStatusCode());
+
+        $client->request("POST", "/test/no_such_test", array("answers" => array("a", "b")));
+        $this->assertNotEquals(400, $client->getResponse()->getStatusCode());
+        $this->assertEquals($expected, $client->getResponse()->getStatusCode());
     }
 
 }

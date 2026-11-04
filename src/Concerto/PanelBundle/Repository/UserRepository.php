@@ -12,7 +12,7 @@ class UserRepository extends AEntityRepository {
     public function findAllExcept(User $user) {
         $query = $this->getEntityManager()->createQuery(
                         'SELECT u
-            FROM ConcertoPanelBundle:User u
+            FROM Concerto\PanelBundle\Entity\User u
             WHERE u.id != :id'
                 )->setParameter('id', $user->getId());
         return $query->getResult();

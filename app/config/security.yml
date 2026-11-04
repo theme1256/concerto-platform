@@ -1,6 +1,4 @@
 security:
-    enable_authenticator_manager: true
-
     # Legacy salted SHA-1, unchanged so existing password hashes keep working.
     password_hashers:
         Concerto\PanelBundle\Entity\User:
@@ -10,7 +8,7 @@ security:
 
     providers:
         users:
-          entity: { class: ConcertoPanelBundle:User, property: username }
+          entity: { class: Concerto\PanelBundle\Entity\User, property: username }
 
     firewalls:
         admin_area:

@@ -12,18 +12,18 @@ use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 /**
  * @ORM\Table
  * @ORM\Entity(repositoryClass="Concerto\PanelBundle\Repository\TestWizardParamRepository")
- * @UniqueEntity(fields={"wizard", "variable"}, message="validate.test.wizards.params.variable.unique")
  * @ORM\HasLifecycleCallbacks
  */
+#[UniqueEntity(fields: ['wizard', 'variable'], message: 'validate.test.wizards.params.variable.unique')]
 class TestWizardParam extends AEntity implements \JsonSerializable
 {
 
     /**
      * @var string
-     * @Assert\Length(min="1", max="64", minMessage="validate.test.wizards.params.label.min", maxMessage="validate.test.wizards.params.label.max")
-     * @Assert\NotBlank(message="validate.test.wizards.params.label.blank")
      * @ORM\Column(type="string", length=64)
      */
+    #[Assert\Length(min: 1, max: 64, minMessage: 'validate.test.wizards.params.label.min', maxMessage: 'validate.test.wizards.params.label.max')]
+    #[Assert\NotBlank(message: 'validate.test.wizards.params.label.blank')]
     private $label;
 
     /**
@@ -55,9 +55,9 @@ class TestWizardParam extends AEntity implements \JsonSerializable
     private $passableThroughUrl;
 
     /**
-     * @Assert\NotNull(message="validate.test.wizards.params.step.null")
      * @ORM\ManyToOne(targetEntity="TestWizardStep", inversedBy="params")
      */
+    #[Assert\NotNull(message: 'validate.test.wizards.params.step.null')]
     private $step;
 
     /**
@@ -73,9 +73,9 @@ class TestWizardParam extends AEntity implements \JsonSerializable
     private $wizard;
 
     /**
-     * @Assert\NotNull(message="validate.test.wizards.params.variable.null")
      * @ORM\ManyToOne(targetEntity="TestVariable", inversedBy="params")
      */
+    #[Assert\NotNull(message: 'validate.test.wizards.params.variable.null')]
     private $variable;
 
     /**

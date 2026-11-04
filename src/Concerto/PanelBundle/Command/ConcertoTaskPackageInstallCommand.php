@@ -25,7 +25,7 @@ class ConcertoTaskPackageInstallCommand extends ConcertoScheduledTaskCommand
         parent::__construct($administrationService, $administration, $doctrine, $scheduledTaskRepository);
     }
 
-    protected function configure()
+    protected function configure(): void
     {
         parent::configure();
         $this->setName("concerto:task:package:install")->setDescription("Installs R package");

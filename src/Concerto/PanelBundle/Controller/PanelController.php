@@ -7,10 +7,11 @@ use Twig\Environment;
 use Concerto\PanelBundle\Service\PanelService;
 use Concerto\PanelBundle\Service\FileService;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\Routing\Annotation\Route;
-use Symfony\Component\Security\Core\Security;
+use Symfony\Bundle\SecurityBundle\Security;
+use Symfony\Component\Security\Http\SecurityRequestAttributes;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\RedirectResponse;
+use Symfony\Component\Routing\Attribute\Route;
 
 class PanelController
 {
@@ -31,41 +32,41 @@ class PanelController
     }
 
     /**
-     * @Route("/admin", name="index")
      * @return Response
      */
+    #[Route('/admin', name: 'index')]
     public function indexAction()
     {
         return new Response($this->templating->render('@ConcertoPanel/Panel/index.html.twig'));
     }
 
     /**
-     * @Route("/admin/breadcrumbs", name="breadcrumbs_template")
      * @return Response
      */
+    #[Route('/admin/breadcrumbs', name: 'breadcrumbs_template')]
     public function breadcrumbsAction()
     {
         return new Response($this->templating->render('@ConcertoPanel/breadcrumbs.html.twig'));
     }
 
     /**
-     * @Route("/login", name="login")
      * @param Request $request
      * @return Response
      */
+    #[Route('/login', name: 'login')]
     public function loginAction(Request $request)
     {
         return new Response($this->templating->render('@ConcertoPanel/Panel/login.html.twig', array(
-            'last_username' => $request->getSession()->get(Security::LAST_USERNAME),
-            'error' => $this->service->getLoginErrors($request->get(Security::AUTHENTICATION_ERROR), $request->getSession()))));
+            'last_username' => $request->getSession()->get(SecurityRequestAttributes::LAST_USERNAME),
+            'error' => $this->service->getLoginErrors($request->get(SecurityRequestAttributes::AUTHENTICATION_ERROR), $request->getSession()))));
     }
 
     /**
-     * @Route("/admin/locale/{locale}", name="locale_change")
      * @param Request $request
      * @param string $locale
      * @return Response
      */
+    #[Route('/admin/locale/{locale}', name: 'locale_change')]
     public function changeLocaleAction(Request $request, $locale)
     {
         $request->setLocale($locale);
@@ -76,10 +77,10 @@ class PanelController
     }
 
     /**
-     * @Route("/admin/disable_mfa", name="disable_mfa")
      * @param Request $request
      * @return Response
      */
+    #[Route('/admin/disable_mfa', name: 'disable_mfa')]
     public function disableMFA(Request $request)
     {
         $user = $this->security->getUser();
@@ -88,10 +89,10 @@ class PanelController
     }
 
     /**
-     * @Route("/admin/enable_mfa", name="enable_mfa")
      * @param Request $request
      * @return Response
      */
+    #[Route('/admin/enable_mfa', name: 'enable_mfa')]
     public function enableMFA(Request $request)
     {
         $user = $this->security->getUser();

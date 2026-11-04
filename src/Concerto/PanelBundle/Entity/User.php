@@ -14,9 +14,9 @@ use Scheb\TwoFactorBundle\Model\Google\TwoFactorInterface;
 /**
  * @ORM\Table(name="ConcertoUser")
  * @ORM\Entity(repositoryClass="Concerto\PanelBundle\Repository\UserRepository")
- * @UniqueEntity(fields="username", message="validate.user.username.unique")
- * @UniqueEntity(fields="email", message="validate.user.email.unique")
  */
+#[UniqueEntity(fields: 'username', message: 'validate.user.username.unique')]
+#[UniqueEntity(fields: 'email', message: 'validate.user.email.unique')]
 class User extends ATopEntity implements UserInterface, LegacyPasswordAuthenticatedUserInterface, \Serializable, \JsonSerializable, EquatableInterface, TwoFactorInterface
 {
     const ROLE_SUPER_ADMIN = "ROLE_SUPER_ADMIN";
@@ -31,10 +31,10 @@ class User extends ATopEntity implements UserInterface, LegacyPasswordAuthentica
 
     /**
      * @var string
-     * @Assert\Length(min="3", max="25", minMessage="validate.user.username.min", maxMessage="validate.user.username.max")
-     * @Assert\NotBlank(message="validate.user.username.blank")
      * @ORM\Column(type="string", length=25, unique=true)
      */
+    #[Assert\Length(min: 3, max: 25, minMessage: 'validate.user.username.min', maxMessage: 'validate.user.username.max')]
+    #[Assert\NotBlank(message: 'validate.user.username.blank')]
     private $username;
 
     /**
@@ -46,10 +46,10 @@ class User extends ATopEntity implements UserInterface, LegacyPasswordAuthentica
 
     /**
      * @var string
-     * @Assert\Length(min="4", max="40", minMessage="validate.user.password.min", maxMessage="validate.user.password.max")
-     * @Assert\NotBlank(message="validate.user.password.blank", groups={"create"});
      * @ORM\Column(type="string", length=40)
      */
+    #[Assert\Length(min: 4, max: 40, minMessage: 'validate.user.password.min', maxMessage: 'validate.user.password.max')]
+    #[Assert\NotBlank(message: 'validate.user.password.blank', groups: ['create'])]
     private $password;
 
     /**
@@ -62,10 +62,10 @@ class User extends ATopEntity implements UserInterface, LegacyPasswordAuthentica
      * @var string
      *
      * @ORM\Column(type="string", length=60, unique=true)
-     * @Assert\Email(message="validate.user.email")
-     * @Assert\Length(max="60",maxMessage="validate.user.email.max")
-     * @Assert\NotBlank(message="validate.user.email.blank")
      */
+    #[Assert\Email(message: 'validate.user.email')]
+    #[Assert\Length(max: 60, maxMessage: 'validate.user.email.max')]
+    #[Assert\NotBlank(message: 'validate.user.email.blank')]
     private $email;
 
     /**
@@ -103,7 +103,7 @@ class User extends ATopEntity implements UserInterface, LegacyPasswordAuthentica
         parent::__construct();
 
         $this->roles = new ArrayCollection();
-        $this->salt = md5(uniqid(null, true));
+        $this->salt = md5(uniqid('', true));
         $this->failedAuthenticationStreak = 0;
         $this->googleAuthenticatorEnabled = false;
     }
@@ -111,7 +111,7 @@ class User extends ATopEntity implements UserInterface, LegacyPasswordAuthentica
     /**
      * @inheritDoc
      */
-    public function eraseCredentials()
+    public function eraseCredentials(): void
     {
 
     }
@@ -332,8 +332,8 @@ class User extends ATopEntity implements UserInterface, LegacyPasswordAuthentica
      * Checks if password is correct by comparing password and password confirmation
      *
      * @return boolean
-     * @Assert\IsTrue(message = "validate.user.password.match", groups={"create"})
      */
+    #[Assert\IsTrue(message: 'validate.user.password.match', groups: ['create'])]
     public function isPasswordCorrect()
     {
         return $this->password === $this->passwordConfirmation;

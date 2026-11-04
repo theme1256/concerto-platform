@@ -10,18 +10,18 @@ use \Doctrine\Common\Collections\ArrayCollection;
 /**
  * @ORM\Table
  * @ORM\Entity(repositoryClass="Concerto\PanelBundle\Repository\TestWizardRepository")
- * @UniqueEntity(fields="name", message="validate.test.wizards.name.unique")
  * @ORM\HasLifecycleCallbacks
  */
+#[UniqueEntity(fields: 'name', message: 'validate.test.wizards.name.unique')]
 class TestWizard extends ATopEntity implements \JsonSerializable
 {
 
     /**
      * @var string
-     * @Assert\Length(min="1", max="64", minMessage="validate.test.wizards.name.min", maxMessage="validate.test.wizards.name.max")
-     * @Assert\NotBlank(message="validate.test.wizards.name.blank")
      * @ORM\Column(type="string", length=64, unique=true)
      */
+    #[Assert\Length(min: 1, max: 64, minMessage: 'validate.test.wizards.name.min', maxMessage: 'validate.test.wizards.name.max')]
+    #[Assert\NotBlank(message: 'validate.test.wizards.name.blank')]
     private $name;
 
     /**
@@ -32,9 +32,9 @@ class TestWizard extends ATopEntity implements \JsonSerializable
     private $description;
 
     /**
-     * @Assert\NotNull(message="validate.test.wizards.test.null")
      * @ORM\ManyToOne(targetEntity="Test", inversedBy="wizards")
      */
+    #[Assert\NotNull(message: 'validate.test.wizards.test.null')]
     private $test;
 
     /**

@@ -13,12 +13,12 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Request;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\HttpFoundation\Session\SessionInterface;
-use Symfony\Component\Routing\Annotation\Route;
 use Twig\Environment;
 use Concerto\PanelBundle\Entity\TestSessionLog;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Twig\Extension\EscaperExtension;
 use Twig\Loader\ArrayLoader;
+use Symfony\Component\Routing\Attribute\Route;
 
 class TestRunnerController
 {
@@ -46,17 +46,8 @@ class TestRunnerController
     /**
      * Returns start new test template.
      *
-     * @Route("/test/session/{existing_session_hash}", name="test_runner_test_resume")
-     * @Route("/test/{test_slug}/{params}", name="test_runner_test_start", defaults={"params":"{}"})
-     * @Route("/test_n/{test_name}/{params}", name="test_runner_test_start_name", defaults={"params":"{}"})
      *
-     * @Route("/admin/test/session/{existing_session_hash}/debug", name="test_runner_test_resume_debug", defaults={"debug": true, "protected": true})
-     * @Route("/admin/test/{test_slug}/debug/{params}", name="test_runner_test_start_debug", defaults={"params":"{}", "debug": true, "protected": true})
-     * @Route("/admin/test/{test_slug}/session/{existing_session_hash}/debug/{params}", name="test_runner_resume_debug", defaults={"params":"{}", "debug": true, "protected": true})
      *
-     * @Route("/admin/test/session/{existing_session_hash}", name="test_runner_protected_test_resume", defaults={"protected": true})
-     * @Route("/admin/test/{test_slug}/{params}", name="test_runner_protected_test_start", defaults={"params":"{}", "protected": true})
-     * @Route("/admin/test_n/{test_name}/{params}", name="test_runner_test_protected_start_name", defaults={"params":"{}", "protected": true})
      *
      * @param Request $request
      * @param SessionInterface $session
@@ -67,6 +58,15 @@ class TestRunnerController
      * @param string|null $existing_session_hash
      * @return Response
      */
+    #[Route('/test/session/{existing_session_hash}', name: 'test_runner_test_resume')]
+    #[Route('/test/{test_slug}/{params}', name: 'test_runner_test_start', defaults: ['params' => '{}'])]
+    #[Route('/test_n/{test_name}/{params}', name: 'test_runner_test_start_name', defaults: ['params' => '{}'])]
+    #[Route('/admin/test/session/{existing_session_hash}/debug', name: 'test_runner_test_resume_debug', defaults: ['debug' => true, 'protected' => true])]
+    #[Route('/admin/test/{test_slug}/debug/{params}', name: 'test_runner_test_start_debug', defaults: ['params' => '{}', 'debug' => true, 'protected' => true])]
+    #[Route('/admin/test/{test_slug}/session/{existing_session_hash}/debug/{params}', name: 'test_runner_resume_debug', defaults: ['params' => '{}', 'debug' => true, 'protected' => true])]
+    #[Route('/admin/test/session/{existing_session_hash}', name: 'test_runner_protected_test_resume', defaults: ['protected' => true])]
+    #[Route('/admin/test/{test_slug}/{params}', name: 'test_runner_protected_test_start', defaults: ['params' => '{}', 'protected' => true])]
+    #[Route('/admin/test_n/{test_name}/{params}', name: 'test_runner_test_protected_start_name', defaults: ['params' => '{}', 'protected' => true])]
     public function startTestAction(Request $request, SessionInterface $session, $test_slug = null, $test_name = null, $params = "{}", $debug = false, $existing_session_hash = null, $protected = false)
     {
         $this->logger->info(__CLASS__ . ":" . __FUNCTION__ . " - $test_slug, $test_name, $params");
@@ -80,9 +80,8 @@ class TestRunnerController
         }
 
         $params = json_decode($params, true);
-        $requestKeys = $request->request->keys();
-        foreach ($requestKeys as $k) {
-            $params[$k] = $request->request->get($k);
+        foreach ($request->request->all() as $k => $v) {
+            $params[$k] = $v;
         }
         $bodyParams = json_decode($request->getContent(), true);
         if ($bodyParams !== null) {
@@ -90,9 +89,8 @@ class TestRunnerController
                 $params[$k] = $v;
             }
         }
-        $queryKeys = $request->query->keys();
-        foreach ($queryKeys as $k) {
-            $params[$k] = $request->query->get($k);
+        foreach ($request->query->all() as $k => $v) {
+            $params[$k] = $v;
         }
         $params = json_encode($params);
 
@@ -135,12 +133,8 @@ class TestRunnerController
     }
 
     /**
-     * @Route("/test/{test_slug}/start_session/{params}", name="test_runner_session_start", methods={"POST"}, defaults={"params":"{}"})
-     * @Route("/test_n/{test_name}/start_session/{params}", name="test_runner_session_start_name", methods={"POST"}, defaults={"params":"{}"})
      *
-     * @Route("/admin/test/{test_slug}/start_session/debug/{params}", name="test_runner_session_start_debug", defaults={"params":"{}", "debug": true}, methods={"POST"})
      *
-     * @Route("/admin/test/{test_slug}/start_session/{params}", name="test_runner_protected_session_start", defaults={"params":"{}"}, methods={"POST"})
      *
      * @param Request $request
      * @param $test_slug
@@ -149,14 +143,17 @@ class TestRunnerController
      * @param bool $debug
      * @return RedirectResponse|Response
      */
+    #[Route('/test/{test_slug}/start_session/{params}', name: 'test_runner_session_start', methods: ['POST'], defaults: ['params' => '{}'])]
+    #[Route('/test_n/{test_name}/start_session/{params}', name: 'test_runner_session_start_name', methods: ['POST'], defaults: ['params' => '{}'])]
+    #[Route('/admin/test/{test_slug}/start_session/debug/{params}', name: 'test_runner_session_start_debug', defaults: ['params' => '{}', 'debug' => true], methods: ['POST'])]
+    #[Route('/admin/test/{test_slug}/start_session/{params}', name: 'test_runner_protected_session_start', defaults: ['params' => '{}'], methods: ['POST'])]
     public function startNewSessionAction(Request $request, $test_slug, $test_name = null, $params = "{}", $debug = false)
     {
         $this->logger->info(__CLASS__ . ":" . __FUNCTION__ . " - $test_slug, $test_name, $params, $debug");
 
         $params = json_decode($params, true);
-        $requestKeys = $request->request->keys();
-        foreach ($requestKeys as $k) {
-            $params[$k] = $request->request->get($k);
+        foreach ($request->request->all() as $k => $v) {
+            $params[$k] = $v;
         }
         $bodyParams = json_decode($request->getContent(), true);
         if ($bodyParams !== null) {
@@ -164,9 +161,8 @@ class TestRunnerController
                 $params[$k] = $v;
             }
         }
-        $queryKeys = $request->query->keys();
-        foreach ($queryKeys as $k) {
-            $params[$k] = $request->query->get($k);
+        foreach ($request->query->all() as $k => $v) {
+            $params[$k] = $v;
         }
         $params = json_encode($params);
 
@@ -189,11 +185,11 @@ class TestRunnerController
     }
 
     /**
-     * @Route("/test/session/{session_hash}/resume", name="test_runner_session_resume", methods={"POST"})
      * @param Request $request
      * @param string $session_hash
      * @return RedirectResponse|Response
      */
+    #[Route('/test/session/{session_hash}/resume', name: 'test_runner_session_resume', methods: ['POST'])]
     public function resumeSessionAction(Request $request, $session_hash)
     {
         $this->logger->info(__CLASS__ . ":" . __FUNCTION__ . " - $session_hash");
@@ -215,11 +211,11 @@ class TestRunnerController
     }
 
     /**
-     * @Route("/test/session/{session_hash}/submit", name="test_runner_session_submit", methods={"POST"})
      * @param Request $request
      * @param string $session_hash
      * @return RedirectResponse|Response
      */
+    #[Route('/test/session/{session_hash}/submit', name: 'test_runner_session_submit', methods: ['POST'])]
     public function submitToSessionAction(Request $request, $session_hash)
     {
         $this->logger->info(__CLASS__ . ":" . __FUNCTION__ . " - $session_hash");
@@ -242,11 +238,11 @@ class TestRunnerController
     }
 
     /**
-     * @Route("/test/session/{session_hash}/worker", name="test_runner_worker", methods={"POST"})
      * @param Request $request
      * @param string $session_hash
      * @return RedirectResponse|Response
      */
+    #[Route('/test/session/{session_hash}/worker', name: 'test_runner_worker', methods: ['POST'])]
     public function backgroundWorkerAction(Request $request, string $session_hash)
     {
         $this->logger->info(__CLASS__ . ":" . __FUNCTION__ . " - $session_hash");
@@ -269,11 +265,11 @@ class TestRunnerController
     }
 
     /**
-     * @Route("/test/session/{session_hash}/kill", name="test_runner_session_kill", methods={"POST"})
      * @param Request $request
      * @param $session_hash
      * @return RedirectResponse|Response
      */
+    #[Route('/test/session/{session_hash}/kill', name: 'test_runner_session_kill', methods: ['POST'])]
     public function killSessionAction(Request $request, $session_hash)
     {
         $this->logger->info(__CLASS__ . ":" . __FUNCTION__ . " - $session_hash");
@@ -292,11 +288,11 @@ class TestRunnerController
     }
 
     /**
-     * @Route("/test/session/{session_hash}/keepalive", name="test_runner_session_keepalive", methods={"POST"})
      * @param Request $request
      * @param string $session_hash
      * @return RedirectResponse|Response
      */
+    #[Route('/test/session/{session_hash}/keepalive', name: 'test_runner_session_keepalive', methods: ['POST'])]
     public function keepAliveSessionAction(Request $request, $session_hash)
     {
         $this->logger->info(__CLASS__ . ":" . __FUNCTION__ . " - $session_hash");
@@ -316,11 +312,11 @@ class TestRunnerController
     }
 
     /**
-     * @Route("/test/session/{session_hash}/upload", name="test_runner_upload_file", methods={"POST","OPTIONS"})
      * @param Request $request
      * @param string $session_hash
      * @return RedirectResponse|Response
      */
+    #[Route('/test/session/{session_hash}/upload', name: 'test_runner_upload_file', methods: ['POST', 'OPTIONS'])]
     public function uploadFileAction(Request $request, $session_hash)
     {
         $this->logger->info(__CLASS__ . ":" . __FUNCTION__ . " - $session_hash");
@@ -340,12 +336,12 @@ class TestRunnerController
     }
 
     /**
-     * @Route("/files/protected/{name}", name="files_protected", methods={"GET","POST"}, requirements={"name"=".+"})
      * @param Request $request
      * @param string $name
      * @return BinaryFileResponse | Response
      *
      */
+    #[Route('/files/protected/{name}', name: 'files_protected', methods: ['GET', 'POST'], requirements: ['name' => '.+'])]
     public function getProtectedFile(Request $request, $name)
     {
         if (!$this->checkAuthorizationToken($request, null, true)) return new Response("", 403);
@@ -359,12 +355,12 @@ class TestRunnerController
     }
 
     /**
-     * @Route("/files/session/{name}", name="files_session", methods={"GET","POST"}, requirements={"name"=".+"})
      * @param Request $request
      * @param string $name
      * @return BinaryFileResponse | Response
      *
      */
+    #[Route('/files/session/{name}', name: 'files_session', methods: ['GET', 'POST'], requirements: ['name' => '.+'])]
     public function getSessionFile(Request $request, $name)
     {
         $sessionHash = $this->getSessionHashFromAuthorizationToken($request);
@@ -379,11 +375,11 @@ class TestRunnerController
     }
 
     /**
-     * @Route("/test/session/{session_hash}/log", name="test_runner_log_error", methods={"POST"})
      * @param Request $request
      * @param string $session_hash
      * @return RedirectResponse|Response
      */
+    #[Route('/test/session/{session_hash}/log', name: 'test_runner_log_error', methods: ['POST'])]
     public function logErrorAction(Request $request, $session_hash)
     {
         if (!$this->checkAuthorizationToken($request, $session_hash, false, false)) return new Response("", 403);
@@ -424,13 +420,24 @@ class TestRunnerController
         return $token;
     }
 
+    /**
+     * @return array|null decoded token, or null when it is missing or invalid
+     */
+    private function decodeAuthorizationToken(Request $request)
+    {
+        $token = $request->get("token");
+        if (!is_string($token) || $token === "") return null;
+        try {
+            return $this->jwtEncoder->decode($token);
+        } catch (JWTDecodeFailureException $e) {
+            return null;
+        }
+    }
+
     private function extendAuthorizationToken(Request $request)
     {
-        try {
-            $decodedToken = $this->jwtEncoder->decode($request->get("token"));
-        } catch (JWTDecodeFailureException $e) {
-            return false;
-        }
+        $decodedToken = $this->decodeAuthorizationToken($request);
+        if ($decodedToken === null) return false;
 
         try {
             $token = $this->jwtEncoder->encode([
@@ -447,11 +454,8 @@ class TestRunnerController
 
     private function checkAuthorizationToken(Request $request, $sessionHash = null, $protectedFilesAccess = false, $sessionFilesAccess = false)
     {
-        try {
-            $token = $this->jwtEncoder->decode($request->get("token"));
-        } catch (JWTDecodeFailureException $e) {
-            return false;
-        }
+        $token = $this->decodeAuthorizationToken($request);
+        if ($token === null) return false;
         if ($sessionHash !== null && $token["sessionHash"] !== $sessionHash) return false;
         if ($protectedFilesAccess === true && $token["protectedFilesAccess"] !== true) return false;
         if ($sessionFilesAccess === true && $token["sessionFilesAccess"] !== true) return false;
@@ -460,12 +464,8 @@ class TestRunnerController
 
     private function getSessionHashFromAuthorizationToken(Request $request)
     {
-        try {
-            $token = $this->jwtEncoder->decode($request->get("token"));
-        } catch (JWTDecodeFailureException $e) {
-            return null;
-        }
-        return $token["sessionHash"];
+        $token = $this->decodeAuthorizationToken($request);
+        return $token === null ? null : $token["sessionHash"];
     }
 
     private function setCookies(Response &$response, $result)

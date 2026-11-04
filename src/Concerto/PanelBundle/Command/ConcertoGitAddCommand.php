@@ -22,7 +22,7 @@ class ConcertoGitAddCommand extends Command
         parent::__construct();
     }
 
-    protected function configure()
+    protected function configure(): void
     {
         $this->setName("concerto:git:add")->setDescription("Performs git add");
     }

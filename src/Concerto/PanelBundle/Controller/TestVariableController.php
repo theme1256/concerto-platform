@@ -4,18 +4,17 @@ namespace Concerto\PanelBundle\Controller;
 
 use Doctrine\Common\Collections\ArrayCollection;
 use Twig\Environment;
-use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Contracts\Translation\TranslatorInterface;
 use Concerto\PanelBundle\Service\TestVariableService;
 use Symfony\Component\HttpFoundation\Request;
 use Concerto\PanelBundle\Service\TestService;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\ExpressionLanguage\Expression;
+use Symfony\Component\Security\Http\Attribute\IsGranted;
 
-/**
- * @Route("/admin")
- * @Security("is_granted('ROLE_TEST') or is_granted('ROLE_SUPER_ADMIN')")
- */
+#[Route('/admin')]
+#[IsGranted(new Expression("is_granted('ROLE_TEST') or is_granted('ROLE_SUPER_ADMIN')"))]
 class TestVariableController extends ASectionController
 {
 
@@ -32,21 +31,21 @@ class TestVariableController extends ASectionController
     }
 
     /**
-     * @Route("/TestVariable/fetch/{object_id}/{format}", name="TestVariable_object", defaults={"format":"json"})
      * @param $object_id
      * @param string $format
      * @return Response
      */
+    #[Route('/TestVariable/fetch/{object_id}/{format}', name: 'TestVariable_object', defaults: ['format' => 'json'])]
     public function objectAction($object_id, $format = "json")
     {
         return parent::objectAction($object_id, $format);
     }
 
     /**
-     * @Route("/TestVariable/Test/{test_id}/collection", name="TestVariable_by_test_collection")
      * @param $test_id
      * @return Response
      */
+    #[Route('/TestVariable/Test/{test_id}/collection', name: 'TestVariable_by_test_collection')]
     public function collectionByTestAction($test_id)
     {
         $collection = $this->service->getAllVariables($test_id);
@@ -54,10 +53,10 @@ class TestVariableController extends ASectionController
     }
 
     /**
-     * @Route("/TestVariable/Test/{test_id}/parameters/collection", name="TestVariable_parameters_collection")
      * @param $test_id
      * @return Response
      */
+    #[Route('/TestVariable/Test/{test_id}/parameters/collection', name: 'TestVariable_parameters_collection')]
     public function parametersCollectionAction($test_id)
     {
         $collection = $this->service->getParameters($test_id);
@@ -65,10 +64,10 @@ class TestVariableController extends ASectionController
     }
 
     /**
-     * @Route("/TestVariable/Test/{test_id}/returns/collection", name="TestVariable_returns_collection")
      * @param $test_id
      * @return Response
      */
+    #[Route('/TestVariable/Test/{test_id}/returns/collection', name: 'TestVariable_returns_collection')]
     public function returnsCollectionAction($test_id)
     {
         $collection = $this->service->getReturns($test_id);
@@ -76,10 +75,10 @@ class TestVariableController extends ASectionController
     }
 
     /**
-     * @Route("/TestVariable/Test/{test_id}/branches/collection", name="TestVariable_branches_collection")
      * @param $test_id
      * @return Response
      */
+    #[Route('/TestVariable/Test/{test_id}/branches/collection', name: 'TestVariable_branches_collection')]
     public function branchesCollectionAction($test_id)
     {
         $collection = $this->service->getBranches($test_id);
@@ -87,11 +86,11 @@ class TestVariableController extends ASectionController
     }
 
     /**
-     * @Route("/TestVariable/{object_id}/save", name="TestVariable_save", methods={"POST"})
      * @param Request $request
      * @param $object_id
      * @return Response
      */
+    #[Route('/TestVariable/{object_id}/save', name: 'TestVariable_save', methods: ['POST'])]
     public function saveAction(Request $request, $object_id)
     {
         if (!$this->service->canBeModified($object_id, $request->get("objectTimestamp"), $errorMessages)) {
@@ -113,11 +112,11 @@ class TestVariableController extends ASectionController
     }
 
     /**
-     * @Route("/TestVariable/{object_ids}/delete", name="TestVariable_delete", methods={"POST"})
      * @param Request $request
      * @param string $object_ids
      * @return Response
      */
+    #[Route('/TestVariable/{object_ids}/delete', name: 'TestVariable_delete', methods: ['POST'])]
     public function deleteAction(Request $request, $object_ids)
     {
         return parent::deleteAction($request, $object_ids);

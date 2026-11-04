@@ -19,7 +19,7 @@ class OtpAuthorize extends Command
         $this->googleAuthenticator = $googleAuthenticator;
     }
 
-    protected function configure()
+    protected function configure(): void
     {
         $this->setName("otp:authorize")->setDescription("OTP authorization");
         $this->addArgument("username", InputArgument::REQUIRED);

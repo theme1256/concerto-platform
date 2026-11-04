@@ -16,8 +16,8 @@ class TestControllerTest extends AFunctionalTest
     public static function setUpBeforeClass(): void
     {
         parent::setUpBeforeClass();
-        self::$repository = static::$entityManager->getRepository("ConcertoPanelBundle:Test");
-        self::$varRepository = static::$entityManager->getRepository("ConcertoPanelBundle:TestVariable");
+        self::$repository = static::$entityManager->getRepository(\Concerto\PanelBundle\Entity\Test::class);
+        self::$varRepository = static::$entityManager->getRepository(\Concerto\PanelBundle\Entity\TestVariable::class);
     }
 
     protected function setUp(): void

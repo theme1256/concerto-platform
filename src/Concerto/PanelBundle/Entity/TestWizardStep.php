@@ -10,18 +10,18 @@ use Doctrine\Common\Collections\ArrayCollection;
 /**
  * @ORM\Table
  * @ORM\Entity(repositoryClass="Concerto\PanelBundle\Repository\TestWizardStepRepository")
- * @UniqueEntity(fields={"wizard","title"}, message="validate.test.wizards.steps.unique")
  * @ORM\HasLifecycleCallbacks
  */
+#[UniqueEntity(fields: ['wizard', 'title'], message: 'validate.test.wizards.steps.unique')]
 class TestWizardStep extends AEntity implements \JsonSerializable
 {
 
     /**
      * @var string
-     * @Assert\Length(min="1", max="64", minMessage="validate.test.wizards.steps.title.min", maxMessage="validate.test.wizards.steps.title.max")
-     * @Assert\NotBlank(message="validate.test.wizards.steps.title.blank")
      * @ORM\Column(type="string", length=64)
      */
+    #[Assert\Length(min: 1, max: 64, minMessage: 'validate.test.wizards.steps.title.min', maxMessage: 'validate.test.wizards.steps.title.max')]
+    #[Assert\NotBlank(message: 'validate.test.wizards.steps.title.blank')]
     private $title;
 
     /**

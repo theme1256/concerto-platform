@@ -27,7 +27,7 @@ class ConcertoGitCommitCommand extends Command
         parent::__construct();
     }
 
-    protected function configure()
+    protected function configure(): void
     {
         $this->setName("concerto:git:commit")->setDescription("Performs git commit");
         $this->addArgument("message", InputArgument::REQUIRED, "Commit message");

@@ -15,10 +15,18 @@ class DBDataDAO
         $this->connection = $con;
     }
 
+    /**
+     * Configured driver name (pdo_mysql, pdo_pgsql, ...); Driver::getName() is deprecated.
+     */
+    private function getDriverName()
+    {
+        return $this->connection->getParams()["driver"] ?? "";
+    }
+
     public function getData($table_name, $id = null, $filter = null)
     {
         $stmt = $this->getFilteredDataResult($table_name, $id, $filter);
-        return $stmt->fetchAll();
+        return $stmt->fetchAllAssociative();
     }
 
     public function getFilteredDataResult($table_name, $id = null, $filter = null)
@@ -61,7 +69,7 @@ class DBDataDAO
         $builder = $this->connection->createQueryBuilder()->select("*")->from($table_name, "d");
 
         if (!$filters) {
-            return $builder->execute()->fetchAll();
+            return $builder->execute()->fetchAllAssociative();
         }
         $f = json_decode($filters, true);
 
@@ -73,7 +81,7 @@ class DBDataDAO
             $builder->addOrderBy("d." . $sort["name"], $sort["dir"]);
         }
 
-        return $builder->setFirstResult(($f["paging"]["page"] - 1) * $f["paging"]["pageSize"])->setMaxResults($f["paging"]["pageSize"])->execute()->fetchAll();
+        return $builder->setFirstResult(($f["paging"]["page"] - 1) * $f["paging"]["pageSize"])->setMaxResults($f["paging"]["pageSize"])->execute()->fetchAllAssociative();
     }
 
     public function countMatchingData($table_name, $filters)
@@ -89,7 +97,7 @@ class DBDataDAO
             }
         }
 
-        return (int)$builder->execute()->fetchColumn(0);
+        return (int)$builder->execute()->fetchOne();
     }
 
     public function updateRow($table_name, $row_id, $values, $id_field = "id")
@@ -150,16 +158,15 @@ class DBDataDAO
 
     public function addBlankRow($table_name)
     {
-        $driver = $this->connection->getDriver()->getName();
-        switch ($driver) {
+        switch ($this->getDriverName()) {
             case 'pdo_pgsql':
             {
-                $this->connection->query('INSERT INTO ' . $table_name . ' ( id )  VALUES ( DEFAULT )');
+                $this->connection->executeStatement('INSERT INTO ' . $table_name . ' ( id )  VALUES ( DEFAULT )');
                 break;
             }
             case 'pdo_sqlsrv':
             {
-                $this->connection->query('INSERT INTO ' . $table_name . ' DEFAULT VALUES ');
+                $this->connection->executeStatement('INSERT INTO ' . $table_name . ' DEFAULT VALUES ');
                 break;
             }
             default:
@@ -196,11 +203,11 @@ class DBDataDAO
     {
         //TODO check sqlite and sql server
 
-        if ($this->connection->getDriver()->getName() == "pdo_sqlsrv") {
-            $this->connection->prepare("SET IDENTITY_INSERT $table_name ON")->execute();
+        if ($this->getDriverName() == "pdo_sqlsrv") {
+            $this->connection->executeStatement("SET IDENTITY_INSERT $table_name ON");
         }
 
-        if ($this->connection->getDriver()->getName() !== "pdo_mysql") {
+        if ($this->getDriverName() !== "pdo_mysql") {
             $this->insertRow($table_name, $data);
         } else {
 
@@ -238,10 +245,10 @@ class DBDataDAO
 
     public function flushInsertBatch($batch)
     {
-        if ($this->connection->getDriver()->getName() === "pdo_mysql") {
+        if ($this->getDriverName() === "pdo_mysql") {
             if ($batch !== null && $batch["index"] > 0) {
                 $this->connection->connect();
-                $this->connection->executeUpdate($batch["sql"], $batch["params"]);
+                $this->connection->executeStatement($batch["sql"], $batch["params"]);
                 $batch["sql"] = "";
                 $batch["params"] = array();
                 $batch["index"] = 0;
@@ -253,14 +260,14 @@ class DBDataDAO
     public function truncate($table_name)
     {
         $dbPlatform = $this->connection->getDatabasePlatform();
-        if ($this->connection->getDriver()->getName() === "pdo_mysql")
-            $this->connection->query('SET FOREIGN_KEY_CHECKS=0');
+        if ($this->getDriverName() === "pdo_mysql")
+            $this->connection->executeStatement('SET FOREIGN_KEY_CHECKS=0');
 
         $q = $dbPlatform->getTruncateTableSql($table_name);
-        $this->connection->executeUpdate($q);
+        $this->connection->executeStatement($q);
 
-        if ($this->connection->getDriver()->getName() === "pdo_mysql")
-            $this->connection->query('SET FOREIGN_KEY_CHECKS=1');
+        if ($this->getDriverName() === "pdo_mysql")
+            $this->connection->executeStatement('SET FOREIGN_KEY_CHECKS=1');
 
         return array();
     }

@@ -16,8 +16,8 @@ class TestSessionLogControllerTest extends AFunctionalTest
     public static function setUpBeforeClass(): void
     {
         parent::setUpBeforeClass();
-        self::$repository = static::$entityManager->getRepository("ConcertoPanelBundle:TestSessionLog");
-        self::$testRepository = static::$entityManager->getRepository("ConcertoPanelBundle:Test");
+        self::$repository = static::$entityManager->getRepository(\Concerto\PanelBundle\Entity\TestSessionLog::class);
+        self::$testRepository = static::$entityManager->getRepository(\Concerto\PanelBundle\Entity\Test::class);
     }
 
     protected function setUp(): void

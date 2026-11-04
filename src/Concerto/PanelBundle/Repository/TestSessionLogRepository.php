@@ -17,7 +17,7 @@ class TestSessionLogRepository extends AEntityRepository {
     public function findLatestNewerThan($time, $limit = 100) {
         $dt = new DateTime();
         $dt->setTimestamp($time);
-        $builder = $this->getEntityManager()->getRepository("ConcertoPanelBundle:TestSessionLog")->createQueryBuilder( 'tsl' );
+        $builder = $this->getEntityManager()->getRepository(\Concerto\PanelBundle\Entity\TestSessionLog::class)->createQueryBuilder( 'tsl' );
         $builder->where("tsl.created > :tslc")->orderBy("tsl.created", "DESC")->setMaxResults($limit)->setParameter("tslc", $dt);
         return $builder->getQuery()->execute();
     }

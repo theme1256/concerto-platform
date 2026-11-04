@@ -43,7 +43,7 @@ class ContentImportCommand extends Command
         parent::__construct();
     }
 
-    protected function configure()
+    protected function configure(): void
     {
         $this->setName("concerto:content:import")->setDescription("Imports content");
         $this->addArgument("input", InputArgument::OPTIONAL, "Input directory", null);

@@ -19,7 +19,7 @@ class ConcertoSessionsClearCommand extends Command
         $this->maintenanceService = $maintenanceService;
     }
 
-    protected function configure()
+    protected function configure(): void
     {
         $this->setName("concerto:sessions:clear")->setDescription("Clearing session files.");
     }

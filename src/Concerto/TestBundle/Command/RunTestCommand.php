@@ -20,7 +20,7 @@ class RunTestCommand extends Command
         $this->sessionService = $sessionService;
     }
 
-    protected function configure()
+    protected function configure(): void
     {
         $this->setName("concerto:test:run")->setDescription("Run test");
         $this->addArgument("name", InputArgument::REQUIRED, "Test name");

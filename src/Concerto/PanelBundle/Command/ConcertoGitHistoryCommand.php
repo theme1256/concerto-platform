@@ -22,7 +22,7 @@ class ConcertoGitHistoryCommand extends Command
         parent::__construct();
     }
 
-    protected function configure()
+    protected function configure(): void
     {
         $this->setName("concerto:git:history")->setDescription("Returns commit history");
     }

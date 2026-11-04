@@ -222,7 +222,7 @@ abstract class ATopEntity extends AEntity
      */
     public function setTags($tags)
     {
-        $this->tags = trim($tags);
+        $this->tags = trim((string)$tags);
 
         return $this;
     }
@@ -262,7 +262,7 @@ abstract class ATopEntity extends AEntity
      */
     public function setGroups($groups)
     {
-        $this->groups = trim($groups);
+        $this->groups = trim((string)$groups);
 
         return $this;
     }
@@ -303,7 +303,7 @@ abstract class ATopEntity extends AEntity
      */
     public function hasGroup($group)
     {
-        if (!trim($group)) {
+        if (!trim((string)$group)) {
             return false;
         }
         $groups = $this->getGroupsArray();

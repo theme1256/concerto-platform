@@ -5,11 +5,9 @@ namespace Concerto\APIBundle\Controller;
 use Concerto\APIBundle\Service\CheckService;
 use Concerto\PanelBundle\Service\AdministrationService;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Routing\Attribute\Route;
 
-/**
- * @Route("/api/check")
- */
+#[Route('/api/check')]
 class ChecksController
 {
     private $service;
@@ -22,9 +20,9 @@ class ChecksController
     }
 
     /**
-     * @Route("/health", methods={"GET"})
      * @return Response
      */
+    #[Route('/health', methods: ['GET'])]
     public function healthAction()
     {
         if (!$this->administrationService->isApiEnabled())
@@ -36,9 +34,9 @@ class ChecksController
     }
 
     /**
-     * @Route("/session_count", methods={"GET"})
      * @return Response
      */
+    #[Route('/session_count', methods: ['GET'])]
     public function sessionCountAction()
     {
         if (!$this->administrationService->isApiEnabled())
@@ -48,9 +46,9 @@ class ChecksController
     }
 
     /**
-     * @Route("/prometheus", methods={"GET"})
      * @return Response
      */
+    #[Route('/prometheus', methods: ['GET'])]
     public function prometheusAction()
     {
         if (!$this->administrationService->isApiEnabled())

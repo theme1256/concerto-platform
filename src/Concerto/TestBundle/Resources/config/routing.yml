@@ -1,4 +1,4 @@
 concerto_test:
     resource: "@ConcertoTestBundle/Controller/"
-    type:     annotation
+    type:     attribute
     

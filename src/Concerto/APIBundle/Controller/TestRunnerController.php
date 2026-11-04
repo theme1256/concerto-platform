@@ -2,15 +2,13 @@
 
 namespace Concerto\APIBundle\Controller;
 
-use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Concerto\TestBundle\Service\TestRunnerService;
 use Concerto\PanelBundle\Service\AdministrationService;
+use Symfony\Component\Routing\Attribute\Route;
 
-/**
- * @Route("/api/runner")
- */
+#[Route('/api/runner')]
 class TestRunnerController
 {
 
@@ -24,9 +22,6 @@ class TestRunnerController
     }
 
     /**
-     * @Route("/test/{test_slug}/session/start/{params}", defaults={"test_name":null,"params":"{}","debug":false}, methods={"POST"})
-     * @Route("/test_n/{test_name}/session/start/{params}", defaults={"test_slug":null,"params":"{}","debug":false}, methods={"POST"})
-     * @Route("/test/{test_slug}/run/{params}", defaults={"test_name":null,"params":"{}","debug":false}, methods={"POST"})
      * @param Request $request
      * @param $test_slug
      * @param $test_name
@@ -34,6 +29,9 @@ class TestRunnerController
      * @param bool $debug
      * @return Response
      */
+    #[Route('/test/{test_slug}/session/start/{params}', defaults: ['test_name' => null, 'params' => '{}', 'debug' => false], methods: ['POST'])]
+    #[Route('/test_n/{test_name}/session/start/{params}', defaults: ['test_slug' => null, 'params' => '{}', 'debug' => false], methods: ['POST'])]
+    #[Route('/test/{test_slug}/run/{params}', defaults: ['test_name' => null, 'params' => '{}', 'debug' => false], methods: ['POST'])]
     public function startNewSessionAction(Request $request, $test_slug, $test_name = null, $params = "{}", $debug = false)
     {
         if (!$this->administrationService->isApiEnabled())
@@ -63,11 +61,11 @@ class TestRunnerController
     }
 
     /**
-     * @Route("/test/session/{session_hash}/submit", methods={"POST"})
      * @param Request $request
      * @param string $session_hash
      * @return Response
      */
+    #[Route('/test/session/{session_hash}/submit', methods: ['POST'])]
     public function submitToSessionAction(Request $request, $session_hash)
     {
         if (!$this->administrationService->isApiEnabled())
@@ -90,11 +88,11 @@ class TestRunnerController
     }
 
     /**
-     * @Route("/test/session/{session_hash}/worker", methods={"POST"})
      * @param Request $request
      * @param string $session_hash
      * @return Response
      */
+    #[Route('/test/session/{session_hash}/worker', methods: ['POST'])]
     public function backgroundWorkerAction(Request $request, string $session_hash)
     {
         if (!$this->administrationService->isApiEnabled())
@@ -117,11 +115,11 @@ class TestRunnerController
     }
 
     /**
-     * @Route("/test/session/{session_hash}/kill", methods={"POST"})
      * @param Request $request
      * @param $session_hash
      * @return Response
      */
+    #[Route('/test/session/{session_hash}/kill', methods: ['POST'])]
     public function killSessionAction(Request $request, $session_hash)
     {
         if (!$this->administrationService->isApiEnabled())
@@ -138,11 +136,11 @@ class TestRunnerController
     }
 
     /**
-     * @Route("/test/session/{session_hash}/keepalive", methods={"POST"})
      * @param Request $request
      * @param string $session_hash
      * @return Response
      */
+    #[Route('/test/session/{session_hash}/keepalive', methods: ['POST'])]
     public function keepAliveSessionAction(Request $request, $session_hash)
     {
         if (!$this->administrationService->isApiEnabled())
@@ -159,11 +157,11 @@ class TestRunnerController
     }
 
     /**
-     * @Route("/test/session/{session_hash}/upload", methods={"POST","OPTIONS"})
      * @param Request $request
      * @param string $session_hash
      * @return Response
      */
+    #[Route('/test/session/{session_hash}/upload', methods: ['POST', 'OPTIONS'])]
     public function uploadFileAction(Request $request, $session_hash)
     {
         if (!$this->administrationService->isApiEnabled())

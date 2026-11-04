@@ -11,18 +11,18 @@ use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 /**
  * @ORM\Table
  * @ORM\Entity(repositoryClass="Concerto\PanelBundle\Repository\ViewTemplateRepository")
- * @UniqueEntity(fields="name", message="validate.table.name.unique")
  * @ORM\HasLifecycleCallbacks
  */
+#[UniqueEntity(fields: 'name', message: 'validate.table.name.unique')]
 class ViewTemplate extends ATopEntity implements \JsonSerializable
 {
 
     /**
      * @var string
-     * @Assert\Length(min="1", max="64", minMessage="validate.template.name.min", maxMessage="validate.template.name.max")
-     * @Assert\NotBlank(message="validate.template.name.blank")
      * @ORM\Column(type="string", length=64, unique=true)
      */
+    #[Assert\Length(min: 1, max: 64, minMessage: 'validate.template.name.min', maxMessage: 'validate.template.name.max')]
+    #[Assert\NotBlank(message: 'validate.template.name.blank')]
     private $name;
 
     /**

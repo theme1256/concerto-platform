@@ -26,18 +26,18 @@ abstract class AFunctionalTest extends WebTestCase {
     protected function setUp(): void {
         parent::setUp();
 
-        static::truncateClass("ConcertoPanelBundle:DataTable");
-        static::truncateClass("ConcertoPanelBundle:Test");
-        static::truncateClass("ConcertoPanelBundle:TestNode");
-        static::truncateClass("ConcertoPanelBundle:TestNodePort");
-        static::truncateClass("ConcertoPanelBundle:TestNodeConnection");
-        static::truncateClass("ConcertoPanelBundle:TestSession");
-        static::truncateClass("ConcertoPanelBundle:TestSessionLog");
-        static::truncateClass("ConcertoPanelBundle:TestWizardParam");
-        static::truncateClass("ConcertoPanelBundle:TestWizardStep");
-        static::truncateClass("ConcertoPanelBundle:TestWizard");
-        static::truncateClass("ConcertoPanelBundle:TestVariable");
-        static::truncateClass("ConcertoPanelBundle:ViewTemplate");
+        static::truncateClass(\Concerto\PanelBundle\Entity\DataTable::class);
+        static::truncateClass(\Concerto\PanelBundle\Entity\Test::class);
+        static::truncateClass(\Concerto\PanelBundle\Entity\TestNode::class);
+        static::truncateClass(\Concerto\PanelBundle\Entity\TestNodePort::class);
+        static::truncateClass(\Concerto\PanelBundle\Entity\TestNodeConnection::class);
+        static::truncateClass(\Concerto\PanelBundle\Entity\TestSession::class);
+        static::truncateClass(\Concerto\PanelBundle\Entity\TestSessionLog::class);
+        static::truncateClass(\Concerto\PanelBundle\Entity\TestWizardParam::class);
+        static::truncateClass(\Concerto\PanelBundle\Entity\TestWizardStep::class);
+        static::truncateClass(\Concerto\PanelBundle\Entity\TestWizard::class);
+        static::truncateClass(\Concerto\PanelBundle\Entity\TestVariable::class);
+        static::truncateClass(\Concerto\PanelBundle\Entity\ViewTemplate::class);
     }
 
     public static function setUpBeforeClass(): void {
@@ -46,13 +46,13 @@ abstract class AFunctionalTest extends WebTestCase {
         self::$passwordHasher = $client->getContainer()->get("test.security.user_password_hasher");
         self::$entityManager = $client->getContainer()->get("doctrine")->getManager();
 
-        $repo = self::$entityManager->getRepository("ConcertoPanelBundle:User");
+        $repo = self::$entityManager->getRepository(\Concerto\PanelBundle\Entity\User::class);
         foreach ($repo->findAll() as $user) {
             self::$entityManager->remove($user);
         }
         self::$entityManager->flush();
-        static::truncateClass("ConcertoPanelBundle:User");
-        static::truncateClass("ConcertoPanelBundle:Role");
+        static::truncateClass(\Concerto\PanelBundle\Entity\User::class);
+        static::truncateClass(\Concerto\PanelBundle\Entity\Role::class);
 
         $role = null;
         $roles = array(
@@ -107,9 +107,14 @@ abstract class AFunctionalTest extends WebTestCase {
             $suffix.='SET FOREIGN_KEY_CHECKS=1;';
         }
 
-        $connection->beginTransaction();
-        $connection->executeUpdate($prefix . $q . $suffix);
-        $connection->commit();
+        // No transaction: TRUNCATE commits implicitly, and PHP 8 PDO throws on the commit() that follows.
+        $connection->executeStatement($prefix . $q . $suffix);
+
+        // The deleted rows' entities must leave the identity map: new rows will reuse their ids.
+        $identityMap = self::$entityManager->getUnitOfWork()->getIdentityMap();
+        foreach ($identityMap[$cmd->rootEntityName] ?? array() as $entity) {
+            self::$entityManager->detach($entity);
+        }
     }
 
     /**
@@ -119,7 +124,7 @@ abstract class AFunctionalTest extends WebTestCase {
     public static function createLoggedClient() {
         $client = static::createClient();
         $client->followRedirects();
-        $repo = $client->getContainer()->get("doctrine")->getRepository("ConcertoPanelBundle:User");
+        $repo = $client->getContainer()->get("doctrine")->getRepository(\Concerto\PanelBundle\Entity\User::class);
         $user = $repo->findOneBy(array("username" => "admin"));
         $client->loginUser($user, 'admin_area');
         return $client;

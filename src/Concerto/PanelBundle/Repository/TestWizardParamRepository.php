@@ -15,7 +15,7 @@ class TestWizardParamRepository extends AEntityRepository
 
     public function findByTestWizardAndType($wizard_id, $type)
     {
-        $wizard = $this->getEntityManager()->getRepository("ConcertoPanelBundle:TestWizard")->find($wizard_id);
+        $wizard = $this->getEntityManager()->getRepository(\Concerto\PanelBundle\Entity\TestWizard::class)->find($wizard_id);
         if ($wizard) {
             return $wizard->getParamsByType($type);
         }

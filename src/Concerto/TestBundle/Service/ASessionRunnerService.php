@@ -53,19 +53,20 @@ abstract class ASessionRunnerService
     public function getDbConnectionParams()
     {
         $con = $this->doctrine->getConnection($this->testRunnerSettings["connection"]);
+        // The Connection getters for these are deprecated; they only read the same params.
+        $params = $con->getParams();
         $con_array = array(
-            "driver" => $con->getDriver()->getName(),
-            "host" => $con->getHost(),
-            "port" => $con->getPort(),
+            "driver" => $params["driver"] ?? null,
+            "host" => $params["host"] ?? null,
+            "port" => $params["port"] ?? null,
             "dbname" => $con->getDatabase(),
-            "username" => $con->getUsername(),
-            "password" => $con->getPassword());
+            "username" => $params["user"] ?? null,
+            "password" => $params["password"] ?? null);
 
         //@TODO there should be no default port
         if (!$con_array["port"]) {
             $con_array["port"] = 3306;
         }
-        $params = $con->getParams();
         if (isset($params["path"])) {
             $con_array["path"] = $params["path"];
         }

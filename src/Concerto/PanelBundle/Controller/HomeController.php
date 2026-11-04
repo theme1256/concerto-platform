@@ -7,7 +7,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Twig\Environment;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Routing\Attribute\Route;
 
 class HomeController extends AbstractController
 {
@@ -21,19 +21,18 @@ class HomeController extends AbstractController
     }
 
     /**
-     * @Route("/", name="home")
      * @param Request $request
      * @return Response
      */
+    #[Route('/', name: 'home')]
     public function indexAction(Request $request)
     {
         $test = $this->administrationService->getHomeTest();
         if ($test === null) return new Response("", Response::HTTP_NOT_FOUND);
 
         $params = [];
-        $keys = $request->query->keys();
-        foreach ($keys as $k) {
-            $params[$k] = $request->query->get($k);
+        foreach ($request->query->all() as $k => $v) {
+            $params[$k] = $v;
         }
 
         return $this->forward("Concerto\TestBundle\Controller\TestRunnerController::startTestAction", [

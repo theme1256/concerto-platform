@@ -37,32 +37,32 @@ class ImportServiceTest extends AFunctionalTest
     public static function setUpBeforeClass(): void
     {
         parent::setUpBeforeClass();
-        self::$testRepository = static::$entityManager->getRepository("ConcertoPanelBundle:Test");
-        self::$testVariableRepository = static::$entityManager->getRepository("ConcertoPanelBundle:TestVariable");
-        self::$testWizardRepository = static::$entityManager->getRepository("ConcertoPanelBundle:TestWizard");
-        self::$testWizardStepRepository = static::$entityManager->getRepository("ConcertoPanelBundle:TestWizardStep");
-        self::$testWizardParamRepository = static::$entityManager->getRepository("ConcertoPanelBundle:TestWizardParam");
-        self::$testNodeRepository = static::$entityManager->getRepository("ConcertoPanelBundle:TestNode");
-        self::$testNodePortRepository = static::$entityManager->getRepository("ConcertoPanelBundle:TestNodePort");
-        self::$testNodeConnectionRepository = static::$entityManager->getRepository("ConcertoPanelBundle:TestNodeConnection");
-        self::$testNodeConnectionRepository = static::$entityManager->getRepository("ConcertoPanelBundle:TestNodeConnection");
-        self::$viewTemplateRepository = static::$entityManager->getRepository("ConcertoPanelBundle:ViewTemplate");
-        self::$dataTableRepository = static::$entityManager->getRepository("ConcertoPanelBundle:DataTable");
+        self::$testRepository = static::$entityManager->getRepository(\Concerto\PanelBundle\Entity\Test::class);
+        self::$testVariableRepository = static::$entityManager->getRepository(\Concerto\PanelBundle\Entity\TestVariable::class);
+        self::$testWizardRepository = static::$entityManager->getRepository(\Concerto\PanelBundle\Entity\TestWizard::class);
+        self::$testWizardStepRepository = static::$entityManager->getRepository(\Concerto\PanelBundle\Entity\TestWizardStep::class);
+        self::$testWizardParamRepository = static::$entityManager->getRepository(\Concerto\PanelBundle\Entity\TestWizardParam::class);
+        self::$testNodeRepository = static::$entityManager->getRepository(\Concerto\PanelBundle\Entity\TestNode::class);
+        self::$testNodePortRepository = static::$entityManager->getRepository(\Concerto\PanelBundle\Entity\TestNodePort::class);
+        self::$testNodeConnectionRepository = static::$entityManager->getRepository(\Concerto\PanelBundle\Entity\TestNodeConnection::class);
+        self::$testNodeConnectionRepository = static::$entityManager->getRepository(\Concerto\PanelBundle\Entity\TestNodeConnection::class);
+        self::$viewTemplateRepository = static::$entityManager->getRepository(\Concerto\PanelBundle\Entity\ViewTemplate::class);
+        self::$dataTableRepository = static::$entityManager->getRepository(\Concerto\PanelBundle\Entity\DataTable::class);
     }
 
     protected function setUp(): void
     {
-        self::truncateClass("ConcertoPanelBundle:Test");
-        self::truncateClass("ConcertoPanelBundle:TestSession");
-        self::truncateClass("ConcertoPanelBundle:TestVariable");
-        self::truncateClass("ConcertoPanelBundle:TestWizard");
-        self::truncateClass("ConcertoPanelBundle:TestWizardStep");
-        self::truncateClass("ConcertoPanelBundle:TestWizardParam");
-        self::truncateClass("ConcertoPanelBundle:TestNode");
-        self::truncateClass("ConcertoPanelBundle:TestNodeConnection");
-        self::truncateClass("ConcertoPanelBundle:TestNodePort");
-        self::truncateClass("ConcertoPanelBundle:ViewTemplate");
-        self::truncateClass("ConcertoPanelBundle:DataTable");
+        self::truncateClass(\Concerto\PanelBundle\Entity\Test::class);
+        self::truncateClass(\Concerto\PanelBundle\Entity\TestSession::class);
+        self::truncateClass(\Concerto\PanelBundle\Entity\TestVariable::class);
+        self::truncateClass(\Concerto\PanelBundle\Entity\TestWizard::class);
+        self::truncateClass(\Concerto\PanelBundle\Entity\TestWizardStep::class);
+        self::truncateClass(\Concerto\PanelBundle\Entity\TestWizardParam::class);
+        self::truncateClass(\Concerto\PanelBundle\Entity\TestNode::class);
+        self::truncateClass(\Concerto\PanelBundle\Entity\TestNodeConnection::class);
+        self::truncateClass(\Concerto\PanelBundle\Entity\TestNodePort::class);
+        self::truncateClass(\Concerto\PanelBundle\Entity\ViewTemplate::class);
+        self::truncateClass(\Concerto\PanelBundle\Entity\DataTable::class);
         $this->dropTable("data");
     }
 

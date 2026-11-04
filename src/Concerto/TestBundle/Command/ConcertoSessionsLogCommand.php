@@ -20,7 +20,7 @@ class ConcertoSessionsLogCommand extends Command {
         $this->sessionCountService = $sessionCountService;
     }
 
-    protected function configure() {
+    protected function configure(): void {
         $this->setName("concerto:sessions:log")->setDescription("Log session count.");
     }
 

@@ -7,11 +7,9 @@ use Twig\Environment;
 use Concerto\PanelBundle\Service\PanelService;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
-use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Routing\Attribute\Route;
 
-/**
- * @Route("/admin")
- */
+#[Route('/admin')]
 class DialogController
 {
     private $templating;
@@ -28,9 +26,9 @@ class DialogController
     /**
      * Extended action with added custom parameters.
      *
-     * @Route("/dialog/r_documentation_generation_help.html", name="Dialog_rdoc")
      * @return Response
      */
+    #[Route('/dialog/r_documentation_generation_help.html', name: 'Dialog_rdoc')]
     public function rDocumentationWindowAction()
     {
         return $this->genericWindowAction(
@@ -44,12 +42,12 @@ class DialogController
     /**
      * Used to display generic modal windows which don't need any data in their templates.
      *
-     * @Route("/dialog/{template_name}", name="Dialog_generic")
-     * @Route("/dialog/", name="Dialog_root")
      * @param string $template_name
      * @param array $params
      * @return Response
      */
+    #[Route('/dialog/{template_name}', name: 'Dialog_generic')]
+    #[Route('/dialog/', name: 'Dialog_root')]
     public function genericWindowAction($template_name, $params = array())
     {
         $filtered_template_name = filter_var(basename($template_name), FILTER_SANITIZE_SPECIAL_CHARS, FILTER_FLAG_STRIP_LOW | FILTER_FLAG_STRIP_HIGH);

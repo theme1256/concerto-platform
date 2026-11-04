@@ -31,7 +31,8 @@ class AccessTokenParameterSubscriber implements EventSubscriberInterface
             return;
         }
 
-        $token = $request->query->get(self::PARAMETER, $request->request->get(self::PARAMETER));
+        // all() rather than get(): an array value must be ignored, not turned into a 400.
+        $token = $request->query->all()[self::PARAMETER] ?? $request->request->all()[self::PARAMETER] ?? null;
         if (is_string($token) && $token !== '') {
             $request->headers->set('Authorization', 'Bearer ' . $token);
         }

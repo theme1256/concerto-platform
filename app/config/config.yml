@@ -26,7 +26,7 @@ framework:
         strict_requirements: ~
     form:            ~
     csrf_protection: ~
-    validation: { enable_annotations: true }
+    validation: { enable_attributes: true }
     #serializer: { enable_annotations: true }
     default_locale:  "%locale%"
     trusted_hosts: ~
@@ -43,14 +43,9 @@ framework:
     translator: 
         fallback: en_GB
 
-sensio_framework_extra:
-    router:
-        annotations: false
-
 # Twig Configuration
 twig:
     default_path:     "%kernel.project_dir%/app/Resources/views"
-    exception_controller: null
     debug:            "%kernel.debug%"
     strict_variables: "%kernel.debug%"
     globals:
@@ -114,7 +109,8 @@ scheb_two_factor:
     google:
         enabled: true
         digits: 6
-        window: 1
+        # One 30 s period either side, as the former "window: 1" (otphp requires leeway < period).
+        leeway: 29
         #server_name: Server Name
         #issuer: Issuer Name
         template: "@ConcertoPanel/Panel/login_mfa.html.twig"

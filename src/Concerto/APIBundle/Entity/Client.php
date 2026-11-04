@@ -22,7 +22,7 @@ class Client extends AbstractClient implements \JsonSerializable
      * @ORM\Id
      * @ORM\Column(type="string", length=128)
      */
-    protected $identifier;
+    protected string $identifier;
 
     public function getId()
     {

@@ -15,8 +15,8 @@ class TestWizardStepControllerTest extends AFunctionalTest
     public static function setUpBeforeClass(): void
     {
         parent::setUpBeforeClass();
-        self::$repository = static::$entityManager->getRepository("ConcertoPanelBundle:TestWizardStep");
-        self::$paramsRepository = static::$entityManager->getRepository("ConcertoPanelBundle:TestWizardParam");
+        self::$repository = static::$entityManager->getRepository(\Concerto\PanelBundle\Entity\TestWizardStep::class);
+        self::$paramsRepository = static::$entityManager->getRepository(\Concerto\PanelBundle\Entity\TestWizardParam::class);
     }
 
     protected function setUp(): void

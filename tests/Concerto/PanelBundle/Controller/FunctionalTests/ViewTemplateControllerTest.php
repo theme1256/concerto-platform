@@ -14,7 +14,7 @@ class ViewTemplateControllerTest extends AFunctionalTest
     public static function setUpBeforeClass(): void
     {
         parent::setUpBeforeClass();
-        self::$repository = static::$entityManager->getRepository("ConcertoPanelBundle:ViewTemplate");
+        self::$repository = static::$entityManager->getRepository(\Concerto\PanelBundle\Entity\ViewTemplate::class);
     }
 
     protected function setUp(): void

@@ -10,9 +10,9 @@ use \Doctrine\Common\Collections\ArrayCollection;
 /**
  * @ORM\Table
  * @ORM\Entity(repositoryClass="Concerto\PanelBundle\Repository\TestRepository")
- * @UniqueEntity(fields="name", message="validate.test.name.unique")
  * @ORM\HasLifecycleCallbacks
  */
+#[UniqueEntity(fields: 'name', message: 'validate.test.name.unique')]
 class Test extends ATopEntity implements \JsonSerializable
 {
 
@@ -24,10 +24,10 @@ class Test extends ATopEntity implements \JsonSerializable
 
     /**
      * @var string
-     * @Assert\Length(min="1", max="64", minMessage="validate.test.name.min", maxMessage="validate.test.name.max")
-     * @Assert\NotBlank(message="validate.test.name.blank")
      * @ORM\Column(type="string", length=64, unique=true)
      */
+    #[Assert\Length(min: 1, max: 64, minMessage: 'validate.test.name.min', maxMessage: 'validate.test.name.max')]
+    #[Assert\NotBlank(message: 'validate.test.name.blank')]
     private $name;
 
     /**
@@ -101,10 +101,10 @@ class Test extends ATopEntity implements \JsonSerializable
     /**
      *
      * @var string
-     * @Assert\Length(min="1", max="64", minMessage="validate.test.slug.min", maxMessage="validate.test.slug.max")
-     * @Assert\NotBlank(message="validate.test.slug.blank")
      * @ORM\Column(type="string", length=64, unique=true )
      */
+    #[Assert\Length(min: 1, max: 64, minMessage: 'validate.test.slug.min', maxMessage: 'validate.test.slug.max')]
+    #[Assert\NotBlank(message: 'validate.test.slug.blank')]
     private $slug;
 
     /**
@@ -654,8 +654,8 @@ class Test extends ATopEntity implements \JsonSerializable
      * Checks if source test is selected for test wizard.
      *
      * @return boolean
-     * @Assert\IsTrue(message = "validate.test.wizard.source")
      */
+    #[Assert\IsTrue(message: 'validate.test.wizard.source')]
     public function hasWizardSource()
     {
         return $this->type != self::TYPE_WIZARD || ($this->type == self::TYPE_WIZARD && $this->sourceWizard != null);

@@ -22,7 +22,7 @@ class ConcertoGitFetchCommand extends Command
         parent::__construct();
     }
 
-    protected function configure()
+    protected function configure(): void
     {
         $this->setName("concerto:git:fetch")->setDescription("Performs git fetch");
     }

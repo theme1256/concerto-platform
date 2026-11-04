@@ -11,13 +11,12 @@ use Twig\Environment;
 use Concerto\PanelBundle\Service\AdministrationService;
 use Concerto\TestBundle\Service\TestSessionCountService;
 use Symfony\Component\HttpFoundation\Request;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
-use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Contracts\Translation\TranslatorInterface;
+use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\ExpressionLanguage\Expression;
+use Symfony\Component\Security\Http\Attribute\IsGranted;
 
-/**
- * @Route("/admin")
- */
+#[Route('/admin')]
 class AdministrationController
 {
     private $templating;
@@ -40,9 +39,9 @@ class AdministrationController
     }
 
     /**
-     * @Route("/AdministrationSetting/map", name="AdministrationSetting_map")
      * @return Response
      */
+    #[Route('/AdministrationSetting/map', name: 'AdministrationSetting_map')]
     public function settingsMapAction()
     {
         return new Response($this->templating->render('@ConcertoPanel/collection.json.twig', array(
@@ -54,10 +53,10 @@ class AdministrationController
     }
 
     /**
-     * @Route("/Administration/Messages/collection", name="Administration_messages_collection")
-     * @Security("is_granted('ROLE_SUPER_ADMIN')")
      * @return Response
      */
+    #[Route('/Administration/Messages/collection', name: 'Administration_messages_collection')]
+    #[IsGranted(new Expression("is_granted('ROLE_SUPER_ADMIN')"))]
     public function messagesCollectionAction()
     {
         return new Response($this->templating->render('@ConcertoPanel/collection.json.twig', array(
@@ -66,11 +65,11 @@ class AdministrationController
     }
 
     /**
-     * @Route("/AdministrationSetting/map/update", name="AdministrationSetting_map_update", methods={"POST"})
-     * @Security("is_granted('ROLE_SUPER_ADMIN')")
      * @param Request $request
      * @return Response
      */
+    #[Route('/AdministrationSetting/map/update', name: 'AdministrationSetting_map_update', methods: ['POST'])]
+    #[IsGranted(new Expression("is_granted('ROLE_SUPER_ADMIN')"))]
     public function updateSettingsMapAction(Request $request)
     {
         $this->service->setSettings(json_decode($request->get("map")), true);
@@ -81,11 +80,11 @@ class AdministrationController
     }
 
     /**
-     * @Route("/Administration/SessionCount/{filter}/collection", name="Administration_session_count_collection", defaults={"filter"="{}"})
-     * @Security("is_granted('ROLE_SUPER_ADMIN')")
      * @param string $filter
      * @return Response
      */
+    #[Route('/Administration/SessionCount/{filter}/collection', name: 'Administration_session_count_collection', defaults: ['filter' => '{}'])]
+    #[IsGranted(new Expression("is_granted('ROLE_SUPER_ADMIN')"))]
     public function sessionCountCollectionAction($filter)
     {
         $collection = $this->sessionCountService->getCollection(json_decode($filter, true));
@@ -95,10 +94,10 @@ class AdministrationController
     }
 
     /**
-     * @Route("/AdministrationSetting/SessionCount/clear", name="AdministrationSetting_session_count_clear", methods={"POST"})
-     * @Security("is_granted('ROLE_SUPER_ADMIN')")
      * @return Response
      */
+    #[Route('/AdministrationSetting/SessionCount/clear', name: 'AdministrationSetting_session_count_clear', methods: ['POST'])]
+    #[IsGranted(new Expression("is_granted('ROLE_SUPER_ADMIN')"))]
     public function clearSessionCountAction()
     {
         $this->sessionCountService->clear();
@@ -109,11 +108,11 @@ class AdministrationController
     }
 
     /**
-     * @Route("/Administration/Messages/{object_ids}/delete", name="Administration_messages_delete")
-     * @Security("is_granted('ROLE_SUPER_ADMIN')")
      * @param string $object_ids
      * @return Response
      */
+    #[Route('/Administration/Messages/{object_ids}/delete', name: 'Administration_messages_delete')]
+    #[IsGranted(new Expression("is_granted('ROLE_SUPER_ADMIN')"))]
     public function deleteMessageAction($object_ids)
     {
         $this->service->deleteMessage($object_ids);
@@ -123,10 +122,10 @@ class AdministrationController
     }
 
     /**
-     * @Route("/Administration/Messages/clear", name="Administration_messages_clear")
-     * @Security("is_granted('ROLE_SUPER_ADMIN')")
      * @return Response
      */
+    #[Route('/Administration/Messages/clear', name: 'Administration_messages_clear')]
+    #[IsGranted(new Expression("is_granted('ROLE_SUPER_ADMIN')"))]
     public function clearMessagesAction()
     {
         $this->service->clearMessages();
@@ -136,10 +135,10 @@ class AdministrationController
     }
 
     /**
-     * @Route("/Administration/ScheduledTask/collection", name="Administration_tasks_collection")
-     * @Security("is_granted('ROLE_SUPER_ADMIN')")
      * @return Response
      */
+    #[Route('/Administration/ScheduledTask/collection', name: 'Administration_tasks_collection')]
+    #[IsGranted(new Expression("is_granted('ROLE_SUPER_ADMIN')"))]
     public function tasksCollectionAction()
     {
         return new Response($this->templating->render('@ConcertoPanel/collection.json.twig', array(
@@ -148,11 +147,11 @@ class AdministrationController
     }
 
     /**
-     * @Route("/Administration/ScheduledTask/package_install", name="Administration_tasks_package_install")
-     * @Security("is_granted('ROLE_SUPER_ADMIN')")
      * @param Request $request
      * @return Response
      */
+    #[Route('/Administration/ScheduledTask/package_install', name: 'Administration_tasks_package_install')]
+    #[IsGranted(new Expression("is_granted('ROLE_SUPER_ADMIN')"))]
     public function taskPackageInstallAction(Request $request)
     {
         $installOptions = json_decode($request->get("install_options"), true);
@@ -169,11 +168,11 @@ class AdministrationController
     }
 
     /**
-     * @Route("/Administration/ScheduledTask/git_pull", name="Administration_tasks_git_pull")
      * @param Request $request
-     * @Security("is_granted('ROLE_SUPER_ADMIN')")
      * @return Response
      */
+    #[Route('/Administration/ScheduledTask/git_pull', name: 'Administration_tasks_git_pull')]
+    #[IsGranted(new Expression("is_granted('ROLE_SUPER_ADMIN')"))]
     public function taskGitPullAction(Request $request)
     {
         $exportInstructions = $request->get("exportInstructions");
@@ -190,11 +189,11 @@ class AdministrationController
     }
 
     /**
-     * @Route("/Administration/ScheduledTask/git_enable", name="Administration_tasks_git_enable")
      * @param Request $request
-     * @Security("is_granted('ROLE_SUPER_ADMIN')")
      * @return Response
      */
+    #[Route('/Administration/ScheduledTask/git_enable', name: 'Administration_tasks_git_enable')]
+    #[IsGranted(new Expression("is_granted('ROLE_SUPER_ADMIN')"))]
     public function taskGitEnableAction(Request $request)
     {
         $instructions = $request->get("instructions");
@@ -220,11 +219,11 @@ class AdministrationController
     }
 
     /**
-     * @Route("/Administration/ScheduledTask/git_update", name="Administration_tasks_git_update")
      * @param Request $request
-     * @Security("is_granted('ROLE_SUPER_ADMIN')")
      * @return Response
      */
+    #[Route('/Administration/ScheduledTask/git_update', name: 'Administration_tasks_git_update')]
+    #[IsGranted(new Expression("is_granted('ROLE_SUPER_ADMIN')"))]
     public function taskGitUpdateAction(Request $request)
     {
         $exportInstructions = $request->get("exportInstructions");
@@ -241,11 +240,11 @@ class AdministrationController
     }
 
     /**
-     * @Route("/Administration/ScheduledTask/git_reset", name="Administration_tasks_git_reset")
      * @param Request $request
-     * @Security("is_granted('ROLE_SUPER_ADMIN')")
      * @return Response
      */
+    #[Route('/Administration/ScheduledTask/git_reset', name: 'Administration_tasks_git_reset')]
+    #[IsGranted(new Expression("is_granted('ROLE_SUPER_ADMIN')"))]
     public function taskGitResetAction(Request $request)
     {
         $exportInstructions = $request->get("exportInstructions");
@@ -262,10 +261,10 @@ class AdministrationController
     }
 
     /**
-     * @Route("/Administration/api_clients/collection", name="Administration_api_clients_collection")
-     * @Security("is_granted('ROLE_SUPER_ADMIN')")
      * @return Response
      */
+    #[Route('/Administration/api_clients/collection', name: 'Administration_api_clients_collection')]
+    #[IsGranted(new Expression("is_granted('ROLE_SUPER_ADMIN')"))]
     public function apiClientCollectionAction()
     {
         return new Response($this->templating->render('@ConcertoPanel/collection.json.twig', array(
@@ -274,11 +273,11 @@ class AdministrationController
     }
 
     /**
-     * @Route("/Administration/api_clients/{object_ids}/delete", name="Administration_api_clients_delete")
-     * @Security("is_granted('ROLE_SUPER_ADMIN')")
      * @param string $object_ids
      * @return Response
      */
+    #[Route('/Administration/api_clients/{object_ids}/delete', name: 'Administration_api_clients_delete')]
+    #[IsGranted(new Expression("is_granted('ROLE_SUPER_ADMIN')"))]
     public function deleteApiClientAction($object_ids)
     {
         $this->service->deleteApiClient($object_ids);
@@ -288,10 +287,10 @@ class AdministrationController
     }
 
     /**
-     * @Route("/Administration/api_clients/clear", name="Administration_api_clients_clear")
-     * @Security("is_granted('ROLE_SUPER_ADMIN')")
      * @return Response
      */
+    #[Route('/Administration/api_clients/clear', name: 'Administration_api_clients_clear')]
+    #[IsGranted(new Expression("is_granted('ROLE_SUPER_ADMIN')"))]
     public function clearApiClientAction()
     {
         $this->service->clearApiClients();
@@ -301,10 +300,10 @@ class AdministrationController
     }
 
     /**
-     * @Route("/Administration/api_clients/add", name="Administration_api_clients_add")
-     * @Security("is_granted('ROLE_SUPER_ADMIN')")
      * @return Response
      */
+    #[Route('/Administration/api_clients/add', name: 'Administration_api_clients_add')]
+    #[IsGranted(new Expression("is_granted('ROLE_SUPER_ADMIN')"))]
     public function addApiClientAction()
     {
         $this->service->addApiClient();
@@ -314,10 +313,10 @@ class AdministrationController
     }
 
     /**
-     * @Route("/Administration/packages/status", name="Administration_packages_status")
-     * @Security("is_granted('ROLE_SUPER_ADMIN')")
      * @return Response
      */
+    #[Route('/Administration/packages/status', name: 'Administration_packages_status')]
+    #[IsGranted(new Expression("is_granted('ROLE_SUPER_ADMIN')"))]
     public function packagesStatusAction()
     {
         $return_var = $this->service->packageStatus($output);
@@ -327,11 +326,11 @@ class AdministrationController
     }
 
     /**
-     * @Route("/Administration/ScheduledTask/content_import", name="Administration_tasks_content_import")
-     * @Security("is_granted('ROLE_SUPER_ADMIN')")
      * @param Request $request
      * @return Response
      */
+    #[Route('/Administration/ScheduledTask/content_import', name: 'Administration_tasks_content_import')]
+    #[IsGranted(new Expression("is_granted('ROLE_SUPER_ADMIN')"))]
     public function taskContentImportAction(Request $request)
     {
         $file = $request->get("file");
@@ -356,11 +355,11 @@ class AdministrationController
     }
 
     /**
-     * @Route("/Administration/content/export/{instructions}", name="Administration_content_export", defaults={"instructions"="[]"})
-     * @Security("is_granted('ROLE_SUPER_ADMIN')")
      * @param string $instructions
      * @return Response
      */
+    #[Route('/Administration/content/export/{instructions}', name: 'Administration_content_export', defaults: ['instructions' => '[]'])]
+    #[IsGranted(new Expression("is_granted('ROLE_SUPER_ADMIN')"))]
     public function exportContentAction($instructions = "[]")
     {
         $returnCode = $this->service->exportContent($instructions, $zipPath, $output);
@@ -376,9 +375,9 @@ class AdministrationController
     }
 
     /**
-     * @Route("/Administration/user", name="Administration_user")
      * @return Response
      */
+    #[Route('/Administration/user', name: 'Administration_user')]
     public function getAuthUserAction()
     {
         $user = $this->service->getAuthorizedUser();
@@ -404,11 +403,11 @@ class AdministrationController
     }
 
     /**
-     * @Route("/Administration/git/disable", name="Administration_git_disable")
-     * @Security("is_granted('ROLE_SUPER_ADMIN')")
      * @param Request $request
      * @return Response
      */
+    #[Route('/Administration/git/disable', name: 'Administration_git_disable')]
+    #[IsGranted(new Expression("is_granted('ROLE_SUPER_ADMIN')"))]
     public function disableGitAction(Request $request)
     {
         $success = $this->gitService->disableGit();
@@ -419,11 +418,11 @@ class AdministrationController
     }
 
     /**
-     * @Route("/Administration/git/status", name="Administration_git_status")
      * @param Request $request
-     * @Security("is_granted('ROLE_SUPER_ADMIN')")
      * @return Response
      */
+    #[Route('/Administration/git/status', name: 'Administration_git_status')]
+    #[IsGranted(new Expression("is_granted('ROLE_SUPER_ADMIN')"))]
     public function gitStatusAction(Request $request)
     {
         $status = $this->gitService->getStatus($errorMessages);
@@ -439,11 +438,11 @@ class AdministrationController
     }
 
     /**
-     * @Route("/Administration/git/diff/{sha}", name="Administration_git_diff")
      * @param string|null $sha
-     * @Security("is_granted('ROLE_SUPER_ADMIN')")
      * @return Response
      */
+    #[Route('/Administration/git/diff/{sha}', name: 'Administration_git_diff')]
+    #[IsGranted(new Expression("is_granted('ROLE_SUPER_ADMIN')"))]
     public function gitDiffAction($sha)
     {
         $diff = $this->gitService->getDiff($sha, $errorMessages);
@@ -459,11 +458,11 @@ class AdministrationController
     }
 
     /**
-     * @Route("/Administration/git/commit", name="Administration_git_commit")
      * @param Request $request
-     * @Security("is_granted('ROLE_SUPER_ADMIN')")
      * @return Response
      */
+    #[Route('/Administration/git/commit', name: 'Administration_git_commit')]
+    #[IsGranted(new Expression("is_granted('ROLE_SUPER_ADMIN')"))]
     public function gitCommitAction(Request $request)
     {
         $commit = $this->gitService->commit(
@@ -483,10 +482,10 @@ class AdministrationController
     }
 
     /**
-     * @Route("/Administration/git/push", name="Administration_git_push")
-     * @Security("is_granted('ROLE_SUPER_ADMIN')")
      * @return Response
      */
+    #[Route('/Administration/git/push', name: 'Administration_git_push')]
+    #[IsGranted(new Expression("is_granted('ROLE_SUPER_ADMIN')"))]
     public function gitPushAction()
     {
         $push = $this->gitService->push(

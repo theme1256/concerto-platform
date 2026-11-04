@@ -2,15 +2,13 @@
 
 namespace Concerto\APIBundle\Controller;
 
-use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Concerto\APIBundle\Service\DataRecordService;
 use Concerto\PanelBundle\Service\AdministrationService;
+use Symfony\Component\Routing\Attribute\Route;
 
-/**
- * @Route("/api/data/{table_id}")
- */
+#[Route('/api/data/{table_id}')]
 class DataRecordController
 {
 
@@ -24,11 +22,11 @@ class DataRecordController
     }
 
     /**
-     * @Route("", methods={"GET","POST","PUT"})
      * @param Request $request
      * @param int $table_id
      * @return Response
      */
+    #[Route('', methods: ['GET', 'POST', 'PUT'])]
     public function dataCollectionAction(Request $request, $table_id)
     {
         if (!$this->administrationService->isApiEnabled() || !$this->administrationService->isDataApiEnabled())
@@ -44,12 +42,12 @@ class DataRecordController
     }
 
     /**
-     * @Route("/{id}", methods={"GET","POST","PUT","DELETE"})
      * @param Request $request
      * @param int $table_id
      * @param int $id
      * @return Response
      */
+    #[Route('/{id}', methods: ['GET', 'POST', 'PUT', 'DELETE'])]
     public function dataObjectAction(Request $request, $table_id, $id)
     {
         if (!$this->administrationService->isApiEnabled() || !$this->administrationService->isDataApiEnabled())

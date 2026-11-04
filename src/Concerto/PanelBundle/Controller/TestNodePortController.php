@@ -7,15 +7,14 @@ use Concerto\PanelBundle\Service\TestNodeService;
 use Concerto\PanelBundle\Service\TestNodePortService;
 use Concerto\PanelBundle\Service\TestVariableService;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Contracts\Translation\TranslatorInterface;
 use Symfony\Component\HttpFoundation\Response;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
+use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\ExpressionLanguage\Expression;
+use Symfony\Component\Security\Http\Attribute\IsGranted;
 
-/**
- * @Route("/admin")
- * @Security("is_granted('ROLE_TEST') or is_granted('ROLE_SUPER_ADMIN')")
- */
+#[Route('/admin')]
+#[IsGranted(new Expression("is_granted('ROLE_TEST') or is_granted('ROLE_SUPER_ADMIN')"))]
 class TestNodePortController extends ASectionController
 {
 
@@ -35,43 +34,43 @@ class TestNodePortController extends ASectionController
     }
 
     /**
-     * @Route("/TestNodePort/fetch/{object_id}/{format}", name="TestNodePort_object", defaults={"format":"json"})
      * @param $object_id
      * @param string $format
      * @return Response
      */
+    #[Route('/TestNodePort/fetch/{object_id}/{format}', name: 'TestNodePort_object', defaults: ['format' => 'json'])]
     public function objectAction($object_id, $format = "json")
     {
         return parent::objectAction($object_id, $format);
     }
 
     /**
-     * @Route("/TestNodePort/collection/{format}", name="TestNodePort_collection", defaults={"format":"json"})
      * @param string $format
      * @return Response
      */
+    #[Route('/TestNodePort/collection/{format}', name: 'TestNodePort_collection', defaults: ['format' => 'json'])]
     public function collectionAction($format = "json")
     {
         return parent::collectionAction($format);
     }
 
     /**
-     * @Route("/TestNodePort/{object_ids}/delete", name="TestNodePort_delete", methods={"POST"})
      * @param Request $request
      * @param string $object_ids
      * @return Response
      */
+    #[Route('/TestNodePort/{object_ids}/delete', name: 'TestNodePort_delete', methods: ['POST'])]
     public function deleteAction(Request $request, $object_ids)
     {
         return parent::deleteAction($request, $object_ids);
     }
 
     /**
-     * @Route("/TestNodePort/{object_id}/save", name="TestNodePort_save", methods={"POST"})
      * @param Request $request
      * @param $object_id
      * @return Response
      */
+    #[Route('/TestNodePort/{object_id}/save', name: 'TestNodePort_save', methods: ['POST'])]
     public function saveAction(Request $request, $object_id)
     {
         if (!$this->service->canBeModified($object_id, $request->get("objectTimestamp"), $errorMessages)) {
@@ -110,10 +109,10 @@ class TestNodePortController extends ASectionController
     }
 
     /**
-     * @Route("/TestNodePort/save", name="TestNodePort_save_collection", methods={"POST"})
      * @param Request $request
      * @return Response
      */
+    #[Route('/TestNodePort/save', name: 'TestNodePort_save_collection', methods: ['POST'])]
     public function saveCollectionAction(Request $request)
     {
         if (!$this->testNodeService->canBeModified($request->get("node_id"), $request->get("objectTimestamp"), $errorMessages)) {
@@ -137,11 +136,11 @@ class TestNodePortController extends ASectionController
     }
 
     /**
-     * @Route("/TestNodePort/{object_id}/hide", name="TestNodePort_hide", methods={"POST"})
      * @param Request $request
      * @param integer $object_id
      * @return Response
      */
+    #[Route('/TestNodePort/{object_id}/hide', name: 'TestNodePort_hide', methods: ['POST'])]
     public function hideAction(Request $request, $object_id)
     {
         if (!$this->service->canBeModified($object_id, $request->get("objectTimestamp"), $errorMessages)) {

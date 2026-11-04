@@ -7,14 +7,13 @@ use Twig\Environment;
 use Concerto\PanelBundle\Service\TestWizardService;
 use Concerto\PanelBundle\Service\TestWizardStepService;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Contracts\Translation\TranslatorInterface;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
+use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\ExpressionLanguage\Expression;
+use Symfony\Component\Security\Http\Attribute\IsGranted;
 
-/**
- * @Route("/admin")
- * @Security("is_granted('ROLE_WIZARD') or is_granted('ROLE_SUPER_ADMIN')")
- */
+#[Route('/admin')]
+#[IsGranted(new Expression("is_granted('ROLE_WIZARD') or is_granted('ROLE_SUPER_ADMIN')"))]
 class TestWizardStepController extends ASectionController
 {
 
@@ -31,22 +30,22 @@ class TestWizardStepController extends ASectionController
     }
 
     /**
-     * @Route("/TestWizardStep/fetch/{object_id}/{format}", name="TestWizardStep_object", defaults={"format":"json"})
      * @param $object_id
      * @param string $format
      * @return Response
      */
+    #[Route('/TestWizardStep/fetch/{object_id}/{format}', name: 'TestWizardStep_object', defaults: ['format' => 'json'])]
     public function objectAction($object_id, $format = "json")
     {
         return parent::objectAction($object_id, $format);
     }
 
     /**
-     * @Route("/TestWizardStep/TestWizard/{wizard_id}/collection/{format}", name="TestWizardStep_collection_by_wizard", defaults={"format":"json"})
      * @param $wizard_id
      * @param string $format
      * @return Response
      */
+    #[Route('/TestWizardStep/TestWizard/{wizard_id}/collection/{format}', name: 'TestWizardStep_collection_by_wizard', defaults: ['format' => 'json'])]
     public function collectionByWizardAction($wizard_id, $format = "json")
     {
         return new Response($this->templating->render('@ConcertoPanel/collection.' . $format . '.twig', array(
@@ -55,32 +54,32 @@ class TestWizardStepController extends ASectionController
     }
 
     /**
-     * @Route("/TestWizardStep/collection/{format}", name="TestWizardStep_collection", defaults={"format":"json"})
      * @param string $format
      * @return Response
      */
+    #[Route('/TestWizardStep/collection/{format}', name: 'TestWizardStep_collection', defaults: ['format' => 'json'])]
     public function collectionAction($format = "json")
     {
         return parent::collectionAction($format);
     }
 
     /**
-     * @Route("/TestWizardStep/{object_ids}/delete", name="TestWizardStep_delete", methods={"POST"})
      * @param Request $request
      * @param string $object_ids
      * @return Response
      */
+    #[Route('/TestWizardStep/{object_ids}/delete', name: 'TestWizardStep_delete', methods: ['POST'])]
     public function deleteAction(Request $request, $object_ids)
     {
         return parent::deleteAction($request, $object_ids);
     }
 
     /**
-     * @Route("/TestWizardStep/{object_id}/save", name="TestWizardStep_save", methods={"POST"})
      * @param Request $request
      * @param $object_id
      * @return Response
      */
+    #[Route('/TestWizardStep/{object_id}/save', name: 'TestWizardStep_save', methods: ['POST'])]
     public function saveAction(Request $request, $object_id)
     {
         if (!$this->service->canBeModified($object_id, $request->get("objectTimestamp"), $errorMessages)) {
@@ -99,11 +98,11 @@ class TestWizardStepController extends ASectionController
     }
 
     /**
-     * @Route("/TestWizardStep/TestWizard/{wizard_id}/clear", name="TestWizardStep_clear", methods={"POST"})
      * @param Request $request
      * @param $wizard_id
      * @return Response
      */
+    #[Route('/TestWizardStep/TestWizard/{wizard_id}/clear', name: 'TestWizardStep_clear', methods: ['POST'])]
     public function clearAction(Request $request, $wizard_id)
     {
         if (!$this->service->canBeModified($wizard_id, $request->get("objectTimestamp"), $errorMessages)) {

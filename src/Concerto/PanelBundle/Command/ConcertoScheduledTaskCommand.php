@@ -31,7 +31,7 @@ abstract class ConcertoScheduledTaskCommand extends Command
         parent::__construct();
     }
 
-    protected function configure()
+    protected function configure(): void
     {
         $this->addOption("task", null, InputOption::VALUE_OPTIONAL, "Task id", null);
         $this->addOption("cancel-pending-on-fail", null, InputOption::VALUE_NONE, "Cancels all other pending tasks when this task fails", null);

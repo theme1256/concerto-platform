@@ -25,7 +25,7 @@ class ConcertoGitPullCommand extends Command
         parent::__construct();
     }
 
-    protected function configure()
+    protected function configure(): void
     {
         $this->setName("concerto:git:pull")->setDescription("Performs git pull");
         $this->addArgument("username", InputArgument::REQUIRED, "Commit username");

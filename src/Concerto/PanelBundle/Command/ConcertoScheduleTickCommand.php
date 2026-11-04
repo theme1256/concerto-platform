@@ -54,7 +54,7 @@ class ConcertoScheduleTickCommand extends Command
         parent::__construct();
     }
 
-    protected function configure()
+    protected function configure(): void
     {
         $this->setName("concerto:schedule:tick")->setDescription("Administrative tasks tick.");
     }

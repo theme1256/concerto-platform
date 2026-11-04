@@ -4,16 +4,15 @@ namespace Concerto\PanelBundle\Controller;
 
 use Twig\Environment;
 use Concerto\PanelBundle\Service\UserService;
-use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Contracts\Translation\TranslatorInterface;
 use Symfony\Component\HttpFoundation\Request;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\ExpressionLanguage\Expression;
+use Symfony\Component\Security\Http\Attribute\IsGranted;
 
-/**
- * @Route("/admin")
- * @Security("is_granted('ROLE_SUPER_ADMIN')")
- */
+#[Route('/admin')]
+#[IsGranted(new Expression("is_granted('ROLE_SUPER_ADMIN')"))]
 class UserController extends ASectionController
 {
 
@@ -27,43 +26,43 @@ class UserController extends ASectionController
     }
 
     /**
-     * @Route("/User/fetch/{object_id}/{format}", name="User_object", defaults={"format":"json"})
      * @param $object_id
      * @param string $format
      * @return Response
      */
+    #[Route('/User/fetch/{object_id}/{format}', name: 'User_object', defaults: ['format' => 'json'])]
     public function objectAction($object_id, $format = "json")
     {
         return parent::objectAction($object_id, $format);
     }
 
     /**
-     * @Route("/User/collection/{format}", name="User_collection", defaults={"format":"json"})
      * @param string $format
      * @return Response
      */
+    #[Route('/User/collection/{format}', name: 'User_collection', defaults: ['format' => 'json'])]
     public function collectionAction($format = "json")
     {
         return parent::collectionAction($format);
     }
 
     /**
-     * @Route("/User/form/{action}", name="User_form", defaults={"action":"edit"})
      * @param string $action
      * @param array $params
      * @return Response
      */
+    #[Route('/User/form/{action}', name: 'User_form', defaults: ['action' => 'edit'])]
     public function formAction($action = "edit", $params = array())
     {
         return parent::formAction($action, $params);
     }
 
     /**
-     * @Route("/User/{object_id}/save", name="User_save", methods={"POST"})
      * @param Request $request
      * @param $object_id
      * @return Response
      */
+    #[Route('/User/{object_id}/save', name: 'User_save', methods: ['POST'])]
     public function saveAction(Request $request, $object_id)
     {
         $result = $this->service->save(
@@ -87,11 +86,11 @@ class UserController extends ASectionController
     }
 
     /**
-     * @Route("/User/{object_ids}/delete", name="User_delete", methods={"POST"})
      * @param Request $request
      * @param $object_ids
      * @return Response
      */
+    #[Route('/User/{object_ids}/delete', name: 'User_delete', methods: ['POST'])]
     public function deleteAction(Request $request, $object_ids)
     {
         return parent::deleteAction($request, $object_ids);

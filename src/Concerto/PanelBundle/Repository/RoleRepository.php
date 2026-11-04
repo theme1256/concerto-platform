@@ -8,7 +8,7 @@ namespace Concerto\PanelBundle\Repository;
 class RoleRepository extends AEntityRepository {
 
     public function findOneByRole($role) {
-        return $this->getEntityManager()->getRepository("ConcertoPanelBundle:Role")->findOneBy(array("role" => $role));
+        return $this->getEntityManager()->getRepository(\Concerto\PanelBundle\Entity\Role::class)->findOneBy(array("role" => $role));
     }
 
 }

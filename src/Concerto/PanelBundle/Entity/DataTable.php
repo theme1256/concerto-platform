@@ -9,19 +9,19 @@ use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 /**
  * @ORM\Table
  * @ORM\Entity(repositoryClass="Concerto\PanelBundle\Repository\DataTableRepository")
- * @UniqueEntity(fields="name", message="validate.table.name.unique")
  * @ORM\HasLifecycleCallbacks
  */
+#[UniqueEntity(fields: 'name', message: 'validate.table.name.unique')]
 class DataTable extends ATopEntity implements \JsonSerializable
 {
 
     /**
      * @var string
-     * @Assert\Length(min="1", max="64", minMessage="validate.table.name.min", maxMessage="validate.table.name.max")
-     * @Assert\NotBlank(message="validate.table.name.blank")
-     * @Assert\Regex("/^[a-zA-Z][a-zA-Z0-9_]*(?<!_)$/", message="validate.table.name.incorrect")
      * @ORM\Column(type="string", length=64, unique=true)
      */
+    #[Assert\Length(min: 1, max: 64, minMessage: 'validate.table.name.min', maxMessage: 'validate.table.name.max')]
+    #[Assert\NotBlank(message: 'validate.table.name.blank')]
+    #[Assert\Regex('/^[a-zA-Z][a-zA-Z0-9_]*(?<!_)$/', message: 'validate.table.name.incorrect')]
     private $name;
 
     /**

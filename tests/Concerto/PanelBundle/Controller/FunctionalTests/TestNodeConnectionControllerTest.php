@@ -14,7 +14,7 @@ class TestNodeConnectionControllerTest extends AFunctionalTest
     public static function setUpBeforeClass(): void
     {
         parent::setUpBeforeClass();
-        self::$repository = static::$entityManager->getRepository("ConcertoPanelBundle:TestNodeConnection");
+        self::$repository = static::$entityManager->getRepository(\Concerto\PanelBundle\Entity\TestNodeConnection::class);
     }
 
     protected function setUp(): void

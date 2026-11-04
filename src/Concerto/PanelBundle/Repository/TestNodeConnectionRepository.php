@@ -10,6 +10,6 @@ class TestNodeConnectionRepository extends AEntityRepository
 
     public function findByNodes($sourceNode, $destinationNode)
     {
-        return $this->getEntityManager()->getRepository("ConcertoPanelBundle:TestNodeConnection")->findBy(array("sourceNode" => $sourceNode, "destinationNode" => $destinationNode));
+        return $this->getEntityManager()->getRepository(\Concerto\PanelBundle\Entity\TestNodeConnection::class)->findBy(array("sourceNode" => $sourceNode, "destinationNode" => $destinationNode));
     }
 }

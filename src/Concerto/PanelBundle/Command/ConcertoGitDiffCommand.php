@@ -27,7 +27,7 @@ class ConcertoGitDiffCommand extends Command
         parent::__construct();
     }
 
-    protected function configure()
+    protected function configure(): void
     {
         $this->setName("concerto:git:diff")->setDescription("Performs git diff");
         $this->addOption("sha", null, InputOption::VALUE_OPTIONAL, "Commit to get a diff for", null);

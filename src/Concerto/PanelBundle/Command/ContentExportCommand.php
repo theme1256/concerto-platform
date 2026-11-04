@@ -38,7 +38,7 @@ class ContentExportCommand extends Command
         parent::__construct();
     }
 
-    protected function configure()
+    protected function configure(): void
     {
         $files_dir = realpath(__DIR__ . "/../Resources/export") . "/";
 
@@ -114,7 +114,7 @@ class ContentExportCommand extends Command
         $normalizedIdsMap = $normIds ? array() : null;
 
         foreach ($classes as $class_name) {
-            $repo = $em->getRepository("ConcertoPanelBundle:" . $class_name);
+            $repo = $em->getRepository("Concerto\\PanelBundle\\Entity\\" . $class_name);
             $content = $repo->findBy(array(), array("id" => "ASC"));
             $class_service = $this->importService->serviceMap[$class_name];
             foreach ($content as $ent) {

@@ -7,18 +7,17 @@ use Concerto\PanelBundle\Service\TestService;
 use Twig\Environment;
 use Concerto\PanelBundle\Service\TestWizardService;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Contracts\Translation\TranslatorInterface;
 use Concerto\PanelBundle\Service\ImportService;
 use Concerto\PanelBundle\Service\ExportService;
 use Concerto\PanelBundle\Service\UserService;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\ExpressionLanguage\Expression;
+use Symfony\Component\Security\Http\Attribute\IsGranted;
 
-/**
- * @Route("/admin")
- * @Security("is_granted('ROLE_WIZARD') or is_granted('ROLE_SUPER_ADMIN')")
- */
+#[Route('/admin')]
+#[IsGranted(new Expression("is_granted('ROLE_WIZARD') or is_granted('ROLE_SUPER_ADMIN')"))]
 class TestWizardController extends AExportableTabController
 {
 
@@ -40,54 +39,54 @@ class TestWizardController extends AExportableTabController
     }
 
     /**
-     * @Route("/TestWizard/fetch/{object_id}/{format}", name="TestWizard_object", defaults={"format":"json"})
      * @param $object_id
      * @param string $format
      * @return Response
      */
+    #[Route('/TestWizard/fetch/{object_id}/{format}', name: 'TestWizard_object', defaults: ['format' => 'json'])]
     public function objectAction($object_id, $format = "json")
     {
         return parent::objectAction($object_id, $format);
     }
 
     /**
-     * @Route("/TestWizard/collection/{format}", name="TestWizard_collection", defaults={"format":"json"})
      * @param string $format
      * @return Response
      */
+    #[Route('/TestWizard/collection/{format}', name: 'TestWizard_collection', defaults: ['format' => 'json'])]
     public function collectionAction($format = "json")
     {
         return parent::collectionAction($format);
     }
 
     /**
-     * @Route("/TestWizard/{object_id}/toggleLock", name="TestWizard_toggleLock")
      * @param Request $request
      * @param $object_id
      * @return Response
      */
+    #[Route('/TestWizard/{object_id}/toggleLock', name: 'TestWizard_toggleLock')]
     public function toggleLock(Request $request, $object_id)
     {
         return parent::toggleLock($request, $object_id);
     }
 
     /**
-     * @Route("/TestWizard/form/{action}", name="TestWizard_form", defaults={"action":"edit"})
      * @param string $action
      * @param array $params
      * @return Response
      */
+    #[Route('/TestWizard/form/{action}', name: 'TestWizard_form', defaults: ['action' => 'edit'])]
     public function formAction($action = "edit", $params = array())
     {
         return parent::formAction($action, $params);
     }
 
     /**
-     * @Route("/TestWizard/{object_id}/save", name="TestWizard_save", methods={"POST"})
      * @param Request $request
      * @param $object_id
      * @return Response
      */
+    #[Route('/TestWizard/{object_id}/save', name: 'TestWizard_save', methods: ['POST'])]
     public function saveAction(Request $request, $object_id)
     {
         if (!$this->service->canBeModified($object_id, $request->get("objectTimestamp"), $errorMessages)) {
@@ -111,63 +110,63 @@ class TestWizardController extends AExportableTabController
     }
 
     /**
-     * @Route("/TestWizard/{object_id}/copy", name="TestWizard_copy", methods={"POST"})
      * @param Request $request
      * @param $object_id
      * @return Response
      */
+    #[Route('/TestWizard/{object_id}/copy', name: 'TestWizard_copy', methods: ['POST'])]
     public function copyAction(Request $request, $object_id)
     {
         return parent::copyAction($request, $object_id);
     }
 
     /**
-     * @Route("/TestWizard/{object_ids}/delete", name="TestWizard_delete", methods={"POST"})
      * @param Request $request
      * @param string $object_ids
      * @return Response
      */
+    #[Route('/TestWizard/{object_ids}/delete', name: 'TestWizard_delete', methods: ['POST'])]
     public function deleteAction(Request $request, $object_ids)
     {
         return parent::deleteAction($request, $object_ids);
     }
 
     /**
-     * @Route("/TestWizard/{instructions}/export/{format}", name="TestWizard_export", defaults={"format":"yml"})
      * @param string $instructions
      * @param string $format
      * @return Response
      */
+    #[Route('/TestWizard/{instructions}/export/{format}', name: 'TestWizard_export', defaults: ['format' => 'yml'])]
     public function exportAction($instructions, $format = "yml")
     {
         return parent::exportAction($instructions, $format);
     }
 
     /**
-     * @Route("/TestWizard/{object_ids}/instructions/export", name="TestWizard_export_instructions")
      * @param $object_ids
      * @return Response
      */
+    #[Route('/TestWizard/{object_ids}/instructions/export', name: 'TestWizard_export_instructions')]
     public function exportInstructionsAction($object_ids)
     {
         return parent::exportInstructionsAction($object_ids);
     }
 
     /**
-     * @Route("/TestWizard/import", name="TestWizard_import", methods={"POST"})
      * @param Request $request
      * @return Response
      */
+    #[Route('/TestWizard/import', name: 'TestWizard_import', methods: ['POST'])]
     public function scheduleImportAction(Request $request)
     {
         return parent::scheduleImportAction($request);
     }
 
     /**
-     * @Route("/TestWizard/import/status", name="TestWizard_pre_import_status")
      * @param Request $request
      * @return Response
      */
+    #[Route('/TestWizard/import/status', name: 'TestWizard_pre_import_status')]
     public function preImportStatusAction(Request $request)
     {
         return parent::preImportStatusAction($request);

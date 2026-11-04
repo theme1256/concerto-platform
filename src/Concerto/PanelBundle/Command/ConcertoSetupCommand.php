@@ -37,7 +37,7 @@ class ConcertoSetupCommand extends Command
         parent::__construct();
     }
 
-    protected function configure()
+    protected function configure(): void
     {
         $this->setName("concerto:setup")->setDescription("Sets up Concerto.");
         $this->addOption("admin-pass", null, InputOption::VALUE_REQUIRED, "Password for admin user", "admin");
@@ -72,7 +72,7 @@ class ConcertoSetupCommand extends Command
     {
         $output->writeln("checking for user roles...");
         $em = $this->doctrine->getManager();
-        $roleRepo = $em->getRepository("ConcertoPanelBundle:Role");
+        $roleRepo = $em->getRepository(\Concerto\PanelBundle\Entity\Role::class);
 
         $role_names = array(User::ROLE_TEST, User::ROLE_TABLE, User::ROLE_TEMPLATE, User::ROLE_WIZARD, User::ROLE_FILE, User::ROLE_SUPER_ADMIN);
         foreach ($role_names as $role_name) {
@@ -91,7 +91,7 @@ class ConcertoSetupCommand extends Command
         }
 
         $output->writeln("checking for default user...");
-        $userRepo = $em->getRepository("ConcertoPanelBundle:User");
+        $userRepo = $em->getRepository(\Concerto\PanelBundle\Entity\User::class);
         $users = $userRepo->findBy(array("username" => "admin"));
         $user = null;
         if (count($users) === 0) {

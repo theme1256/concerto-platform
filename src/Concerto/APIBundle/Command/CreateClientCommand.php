@@ -33,7 +33,7 @@ class CreateClientCommand extends Command
         parent::__construct();
     }
 
-    protected function configure()
+    protected function configure(): void
     {
         $this
             ->setName('oauth-server:client:create')

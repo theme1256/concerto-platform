@@ -1,6 +1,6 @@
 concerto_api:
     resource: "@ConcertoAPIBundle/Controller/"
-    type:     annotation
+    type:     attribute
     
 # OAuth2 token endpoint (client_credentials), same path as with FOSOAuthServerBundle.
 oauth2_token:

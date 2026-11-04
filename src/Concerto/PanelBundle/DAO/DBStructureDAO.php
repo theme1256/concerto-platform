@@ -175,7 +175,7 @@ class DBStructureDAO
 
     public function applyLengthStringToColumnOptions($type, $string, &$options)
     {
-        $string = trim($string);
+        $string = trim((string)$string);
         switch ($type) {
             case "string":
                 if (is_numeric($string)) $options["length"] = $string;

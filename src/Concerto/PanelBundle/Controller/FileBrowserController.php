@@ -3,17 +3,16 @@
 namespace Concerto\PanelBundle\Controller;
 
 use Concerto\PanelBundle\Service\FileService;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 use Twig\Environment;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Contracts\Translation\TranslatorInterface;
+use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\ExpressionLanguage\Expression;
+use Symfony\Component\Security\Http\Attribute\IsGranted;
 
-/**
- * @Route("/admin")
- * @Security("is_granted('ROLE_FILE') or is_granted('ROLE_SUPER_ADMIN')")
- */
+#[Route('/admin')]
+#[IsGranted(new Expression("is_granted('ROLE_FILE') or is_granted('ROLE_SUPER_ADMIN')"))]
 class FileBrowserController
 {
 
@@ -29,10 +28,10 @@ class FileBrowserController
     }
 
     /**
-     * @Route("/file/list", name="FileBrowser_list", methods={"POST"})
      * @param Request $request
      * @return Response
      */
+    #[Route('/file/list', name: 'FileBrowser_list', methods: ['POST'])]
     public function listAction(Request $request)
     {
         $path = $request->get("path");
@@ -41,10 +40,10 @@ class FileBrowserController
     }
 
     /**
-     * @Route("/file/upload", name="FileBrowser_upload", methods={"POST"})
      * @param Request $request
      * @return Response
      */
+    #[Route('/file/upload', name: 'FileBrowser_upload', methods: ['POST'])]
     public function uploadAction(Request $request)
     {
         $dir = $request->get("dir");
@@ -56,10 +55,10 @@ class FileBrowserController
     }
 
     /**
-     * @Route("/file/rename", name="FileBrowser_rename", methods={"POST"})
      * @param Request $request
      * @return Response
      */
+    #[Route('/file/rename', name: 'FileBrowser_rename', methods: ['POST'])]
     public function renameAction(Request $request)
     {
         $item = $request->get("item");
@@ -70,10 +69,10 @@ class FileBrowserController
     }
 
     /**
-     * @Route("/file/copy", name="FileBrowser_copy", methods={"POST"})
      * @param Request $request
      * @return Response
      */
+    #[Route('/file/copy', name: 'FileBrowser_copy', methods: ['POST'])]
     public function copyAction(Request $request)
     {
         $items = $request->get("items");
@@ -85,10 +84,10 @@ class FileBrowserController
     }
 
     /**
-     * @Route("/file/move", name="FileBrowser_move", methods={"POST"})
      * @param Request $request
      * @return Response
      */
+    #[Route('/file/move', name: 'FileBrowser_move', methods: ['POST'])]
     public function moveAction(Request $request)
     {
         $items = $request->get("items");
@@ -99,10 +98,10 @@ class FileBrowserController
     }
 
     /**
-     * @Route("/file/delete", name="FileBrowser_delete", methods={"POST"})
      * @param Request $request
      * @return Response
      */
+    #[Route('/file/delete', name: 'FileBrowser_delete', methods: ['POST'])]
     public function deleteAction(Request $request)
     {
         $items = $request->get("items");
@@ -112,10 +111,10 @@ class FileBrowserController
     }
 
     /**
-     * @Route("/file/edit", name="FileBrowser_edit", methods={"POST"})
      * @param Request $request
      * @return Response
      */
+    #[Route('/file/edit', name: 'FileBrowser_edit', methods: ['POST'])]
     public function editAction(Request $request)
     {
         $item = $request->get("item");
@@ -126,10 +125,10 @@ class FileBrowserController
     }
 
     /**
-     * @Route("/file/content", name="FileBrowser_content", methods={"POST"})
      * @param Request $request
      * @return Response
      */
+    #[Route('/file/content', name: 'FileBrowser_content', methods: ['POST'])]
     public function getContentAction(Request $request)
     {
         $item = $request->get("item");
@@ -139,10 +138,10 @@ class FileBrowserController
     }
 
     /**
-     * @Route("/file/create_directory", name="FileBrowser_create_directory", methods={"POST"})
      * @param Request $request
      * @return Response
      */
+    #[Route('/file/create_directory', name: 'FileBrowser_create_directory', methods: ['POST'])]
     public function createDirectoryAction(Request $request)
     {
         $newPath = $request->get("newPath");
@@ -152,10 +151,10 @@ class FileBrowserController
     }
 
     /**
-     * @Route("/file/download", name="FileBrowser_download", methods={"GET"})
      * @param Request $request
      * @return Response
      */
+    #[Route('/file/download', name: 'FileBrowser_download', methods: ['GET'])]
     public function downloadAction(Request $request)
     {
         $path = $request->get("path");
@@ -178,10 +177,10 @@ class FileBrowserController
     }
 
     /**
-     * @Route("/file/download_multiple", name="FileBrowser_download_multiple", methods={"GET"})
      * @param Request $request
      * @return Response
      */
+    #[Route('/file/download_multiple', name: 'FileBrowser_download_multiple', methods: ['GET'])]
     public function downloadMultipleAction(Request $request)
     {
         $toFilename = $request->get("toFilename");
@@ -203,10 +202,10 @@ class FileBrowserController
     }
 
     /**
-     * @Route("/file/compress", name="FileBrowser_compress", methods={"POST"})
      * @param Request $request
      * @return Response
      */
+    #[Route('/file/compress', name: 'FileBrowser_compress', methods: ['POST'])]
     public function compressAction(Request $request)
     {
         $items = $request->get("items");
@@ -218,10 +217,10 @@ class FileBrowserController
     }
 
     /**
-     * @Route("/file/extract", name="FileBrowser_extract", methods={"POST"})
      * @param Request $request
      * @return Response
      */
+    #[Route('/file/extract', name: 'FileBrowser_extract', methods: ['POST'])]
     public function extractAction(Request $request)
     {
         $destination = $request->get("destination");
@@ -233,10 +232,10 @@ class FileBrowserController
     }
 
     /**
-     * @Route("/file/permissions", name="FileBrowser_permissions", methods={"POST"})
      * @param Request $request
      * @return Response
      */
+    #[Route('/file/permissions', name: 'FileBrowser_permissions', methods: ['POST'])]
     public function permissionsAction(Request $request)
     {
         $items = $request->get("items");
@@ -248,10 +247,10 @@ class FileBrowserController
     }
 
     /**
-     * @Route("/file/browser", name="FileBrowser_browser")
      * @param Request $request
      * @return Response
      */
+    #[Route('/file/browser', name: 'FileBrowser_browser')]
     public function fileBrowserAction(Request $request)
     {
         return new Response($this->templating->render('@ConcertoPanel/FileBrowser/file_browser.html.twig'));

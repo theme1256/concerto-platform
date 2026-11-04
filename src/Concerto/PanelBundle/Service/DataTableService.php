@@ -223,7 +223,7 @@ class DataTableService extends AExportableSectionService
             $result = $this->dbDataDao->getFilteredDataResult($object->getName());
             $j = 0;
             echo "[";
-            while ($row = $result->fetch()) {
+            while ($row = $result->fetchAssociative()) {
                 if ($j > 0) {
                     echo ",";
                 }
@@ -254,7 +254,7 @@ class DataTableService extends AExportableSectionService
             }
             fputcsv($fh, $header, ',', '"', "\0");
             $iterator = $this->dbDataDao->getFilteredDataResult($object->getName());
-            while (($row = $iterator->fetch()) !== false) {
+            while (($row = $iterator->fetchAssociative()) !== false) {
                 fputcsv($fh, $row, ',', '"', "\0");
             }
             fclose($fh);
@@ -480,7 +480,7 @@ class DataTableService extends AExportableSectionService
         $old_name = $instruction["existing_object_name"];
         $new_name = $this->getNextValidName($this->formatImportName($instruction["rename"], $obj), $instruction["action"], $old_name);
         if ($instruction["action"] != 2 && $old_name != $new_name) {
-            $renames["DataTable"][$old_name] = $new_name;
+            $renames["DataTable"][(string)$old_name] = $new_name;
         }
 
         $result = array();

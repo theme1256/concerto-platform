@@ -20,7 +20,7 @@ class TestSessionRepository extends AEntityRepository
         $builder->where("ts.status = :status")->setParameter('status', TestSession::STATUS_RUNNING);
         $builder->andWhere("ts.updated >= :updated")->setParameter('updated', $dt, Type::DATETIME);
 
-        return (int)$builder->execute()->fetchColumn(0);
+        return (int)$builder->execute()->fetchOne();
     }
 
     public function getUpdatedAgo($id)

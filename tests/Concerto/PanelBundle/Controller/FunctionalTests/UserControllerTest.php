@@ -17,18 +17,18 @@ class UserControllerTest extends AFunctionalTest
         $client = static::createClient();
         self::$passwordHasher = $client->getContainer()->get("test.security.user_password_hasher");
         self::$entityManager = $client->getContainer()->get("doctrine")->getManager();
-        self::$repository = static::$entityManager->getRepository("ConcertoPanelBundle:User");
+        self::$repository = static::$entityManager->getRepository(\Concerto\PanelBundle\Entity\User::class);
     }
 
     protected function setUp(): void
     {
-        $repo = self::$entityManager->getRepository("ConcertoPanelBundle:User");
+        $repo = self::$entityManager->getRepository(\Concerto\PanelBundle\Entity\User::class);
         foreach ($repo->findAll() as $user) {
             self::$entityManager->remove($user);
         }
         self::$entityManager->flush();
-        static::truncateClass("ConcertoPanelBundle:User");
-        static::truncateClass("ConcertoPanelBundle:Role");
+        static::truncateClass(\Concerto\PanelBundle\Entity\User::class);
+        static::truncateClass(\Concerto\PanelBundle\Entity\Role::class);
 
         $role = null;
         $roles = array(

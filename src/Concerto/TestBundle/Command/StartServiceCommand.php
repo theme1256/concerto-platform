@@ -27,7 +27,7 @@ class StartServiceCommand extends Command
         $this->administrationService = $administrationService;
     }
 
-    protected function configure()
+    protected function configure(): void
     {
         $this->setName("concerto:service:start")->setDescription("Start R service process.");
     }

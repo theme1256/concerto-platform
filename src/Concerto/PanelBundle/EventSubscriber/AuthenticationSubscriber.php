@@ -35,7 +35,8 @@ class AuthenticationSubscriber implements EventSubscriberInterface
         if ($passport !== null && $passport->hasBadge(UserBadge::class)) {
             return $passport->getBadge(UserBadge::class)->getUserIdentifier();
         }
-        return $event->getRequest()->request->get('_username');
+        $username = $event->getRequest()->request->all()['_username'] ?? null;
+        return is_string($username) ? $username : null;
     }
 
     public function onAuthenticationFailure(LoginFailureEvent $event)

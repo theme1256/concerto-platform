@@ -26,7 +26,7 @@ class ConcertoTaskGitResetCommand extends ConcertoScheduledTaskCommand
         parent::__construct($administrationService, $administration, $doctrine, $scheduledTaskRepository);
     }
 
-    protected function configure()
+    protected function configure(): void
     {
         parent::configure();
         $this->setName("concerto:task:git:reset")->setDescription("Resets working copy to latest commit");

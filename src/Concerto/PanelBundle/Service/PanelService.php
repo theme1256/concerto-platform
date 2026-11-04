@@ -2,7 +2,7 @@
 
 namespace Concerto\PanelBundle\Service;
 
-use Symfony\Component\Security\Core\Security;
+use Symfony\Component\Security\Http\SecurityRequestAttributes;
 use Symfony\Component\HttpFoundation\Session\Session;
 
 class PanelService {
@@ -12,8 +12,8 @@ class PanelService {
         if ($authError !== null) {
             $errors = $authError;
         } else {
-            $errors = $session->get(Security::AUTHENTICATION_ERROR);
-            $session->remove(Security::AUTHENTICATION_ERROR);
+            $errors = $session->get(SecurityRequestAttributes::AUTHENTICATION_ERROR);
+            $session->remove(SecurityRequestAttributes::AUTHENTICATION_ERROR);
         }
         return $errors;
     }
