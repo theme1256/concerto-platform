@@ -40,6 +40,7 @@ class TestRunnerController
 
         $params = json_decode($params, true);
         $content = json_decode($request->getContent(), true);
+        if (!is_array($content)) $content = array();
         foreach ($content as $k => $v) {
             $params[$k] = $content[$k];
         }
